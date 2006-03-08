@@ -1,7 +1,9 @@
 package pt.utl.ist.fenix.tools.smtp;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -14,25 +16,49 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import pt.utl.ist.fenix.tools.util.PropertiesManager;
+
 public class EmailSender {
 
-    public static Collection<String> send(
-    		final String server, final String fromName, final String fromAddress,
+	private static final int MAX_MAIL_RECIPIENTS;
+
+    private static final Session session;
+    static {
+		try {
+			final Properties properties = PropertiesManager.loadProperties("SMTPConfiguration.properties");
+			session = Session.getDefaultInstance(properties, null);
+			MAX_MAIL_RECIPIENTS = Integer.parseInt(properties.getProperty("mailSender.max.recipients"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+    }
+
+    public static Collection<String> send(final String fromName, final String fromAddress,
     		final Collection<String> toAddresses, final Collection<String> ccAddresses, final Collection<String> bccAddresses,
     		final String subject, final String body) {
 
         final Collection<String> unsentAddresses = new ArrayList<String>(0);
 
-        final MimeMessage mimeMessage = createNewMessage(server);
         try {
+        	final MimeMessage mimeMessage = new MimeMessage(session);
         	final String from = constructFromString(fromName, fromAddress);
             mimeMessage.setFrom(new InternetAddress(from));
-            addRecipients(mimeMessage, Message.RecipientType.TO, toAddresses, unsentAddresses);
-            addRecipients(mimeMessage, Message.RecipientType.CC, ccAddresses, unsentAddresses);
-            addRecipients(mimeMessage, Message.RecipientType.BCC, bccAddresses, unsentAddresses);
             mimeMessage.setSubject(subject);
             mimeMessage.setText(body);
+
+            addRecipients(mimeMessage, Message.RecipientType.TO, toAddresses, unsentAddresses);
+            addRecipients(mimeMessage, Message.RecipientType.CC, ccAddresses, unsentAddresses);
             Transport.send(mimeMessage);
+
+            mimeMessage.setRecipient(Message.RecipientType.TO, null);
+            mimeMessage.setRecipient(Message.RecipientType.CC, null);
+
+            final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
+            for (int i = 0; i < bccAddresses.size(); i = i + MAX_MAIL_RECIPIENTS) {
+            	final List<String> subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i + MAX_MAIL_RECIPIENTS));
+            	addRecipients(mimeMessage, Message.RecipientType.BCC, subList, unsentAddresses);
+            	Transport.send(mimeMessage);
+            }
         } catch (SendFailedException e) {
         	registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, bccAddresses);
         } catch (MessagingException e) {
@@ -60,13 +86,6 @@ public class EmailSender {
 	private static String constructFromString(final String fromName, String fromAddress) {
 		return (fromName == null || fromName.length() == 0) ?
 				"\"" + fromName + "\"" + " <" + fromAddress + ">" : fromAddress;
-	}
-
-	private static MimeMessage createNewMessage(final String server) {
-        final Properties properties = new Properties();
-        properties.put("mail.smtp.host", server);
-        final Session session = Session.getDefaultInstance(properties, null);
-        return new MimeMessage(session);
 	}
 
 	private static void addRecipients(final MimeMessage mensagem, final RecipientType recipientType,
