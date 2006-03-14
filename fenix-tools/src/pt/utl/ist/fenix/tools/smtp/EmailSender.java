@@ -41,24 +41,26 @@ public class EmailSender {
         final Collection<String> unsentAddresses = new ArrayList<String>(0);
 
         try {
-        	final MimeMessage mimeMessage = new MimeMessage(session);
+        	final MimeMessage mimeMessageTo = new MimeMessage(session);
         	final String from = constructFromString(fromName, fromAddress);
-            mimeMessage.setFrom(new InternetAddress(from));
-            mimeMessage.setSubject(subject);
-            mimeMessage.setText(body);
+            mimeMessageTo.setFrom(new InternetAddress(from));
+            mimeMessageTo.setSubject(subject);
+            mimeMessageTo.setText(body);
 
-            addRecipients(mimeMessage, Message.RecipientType.TO, toAddresses, unsentAddresses);
-            addRecipients(mimeMessage, Message.RecipientType.CC, ccAddresses, unsentAddresses);
-            Transport.send(mimeMessage);
+            addRecipients(mimeMessageTo, Message.RecipientType.TO, toAddresses, unsentAddresses);
+            addRecipients(mimeMessageTo, Message.RecipientType.CC, ccAddresses, unsentAddresses);
+            Transport.send(mimeMessageTo);
 
-            mimeMessage.setRecipient(Message.RecipientType.TO, null);
-            mimeMessage.setRecipient(Message.RecipientType.CC, null);
+            final MimeMessage mimeMessageBcc = new MimeMessage(session);
+            mimeMessageBcc.setFrom(new InternetAddress(from));
+            mimeMessageBcc.setSubject(subject);
+            mimeMessageBcc.setText(body);
 
             final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
             for (int i = 0; i < bccAddresses.size(); i = i + MAX_MAIL_RECIPIENTS) {
             	final List<String> subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i + MAX_MAIL_RECIPIENTS));
-            	addRecipients(mimeMessage, Message.RecipientType.BCC, subList, unsentAddresses);
-            	Transport.send(mimeMessage);
+            	addRecipients(mimeMessageBcc, Message.RecipientType.BCC, subList, unsentAddresses);
+            	Transport.send(mimeMessageBcc);
             }
         } catch (SendFailedException e) {
         	registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, bccAddresses);
