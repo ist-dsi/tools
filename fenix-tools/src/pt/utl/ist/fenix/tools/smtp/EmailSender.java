@@ -1,11 +1,10 @@
 package pt.utl.ist.fenix.tools.smtp;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -17,21 +16,21 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import pt.utl.ist.fenix.tools.util.PropertiesManager;
+
 public class EmailSender {
 
 	private static final int MAX_MAIL_RECIPIENTS;
 
     private static final Session session;
     static {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("SMTPConfiguration");
-        final Properties properties = new Properties();
-        for (final Enumeration<String> keys = resourceBundle.getKeys() ; keys.hasMoreElements(); ) {
-            final String key = keys.nextElement();
-            final String value = resourceBundle.getString(key);
-            properties.put(key, value);
+        try {
+            Properties properties = PropertiesManager.loadProperties("/SMTPConfiguration.properties");
+            session = Session.getDefaultInstance(properties, null);
+            MAX_MAIL_RECIPIENTS = Integer.parseInt(properties.getProperty("mailSender.max.recipients"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        session = Session.getDefaultInstance(properties, null);
-        MAX_MAIL_RECIPIENTS = Integer.parseInt(properties.getProperty("mailSender.max.recipients"));
     }
 
     public static Collection<String> send(final String fromName, final String fromAddress,
