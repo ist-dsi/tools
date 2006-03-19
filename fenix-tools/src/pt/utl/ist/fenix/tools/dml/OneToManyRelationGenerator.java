@@ -31,18 +31,24 @@ public class OneToManyRelationGenerator {
                     + oneDomainClass.getName().substring(1, oneDomainClass.getName().length());
             for (final Iterator<DomainClass> iterator = domainModel.getClasses() ; iterator.hasNext(); ) {
                 final DomainClass domainClass = iterator.next();
+                final String classname = domainClass.getFullName();
+                final Class clazz = Class.forName(classname);
 
-                final String tmpName = determineClassnameToUse(usedNames, domainClass);
-                final String name = tmpName.substring(0, 1).toLowerCase() + tmpName.substring(1, tmpName.length());
+                if (clazz.getSuperclass().getSuperclass().getName().equals("net.sourceforge.fenixedu.domain.DomainObject")) {
+                	final String tmpName = determineClassnameToUse(usedNames, domainClass);
+                	final String name = tmpName.substring(0, 1).toLowerCase() + tmpName.substring(1, tmpName.length());
 
-                fileWriter.write("\n\nrelation ");
-                fileWriter.write(oneDomainClass.getName());
-                fileWriter.write(tmpName);
-                fileWriter.write(" {\n\t");
-                writeRelationPart(fileWriter, oneDomainClass, oneDomainClassName);
-                fileWriter.write(";\n\t");
-                writeRelationPart(fileWriter, domainClass, name);
-                fileWriter.write("s {\n\t\tmultiplicity *;\n\t}\n}");
+                	fileWriter.write("\n\nrelation ");
+                	fileWriter.write(oneDomainClass.getName());
+                	fileWriter.write(tmpName);
+                	fileWriter.write(" {\n\t");
+                	writeRelationPart(fileWriter, oneDomainClass, oneDomainClassName);
+                	fileWriter.write(";\n\t");
+                	writeRelationPart(fileWriter, domainClass, name);
+                	fileWriter.write("s {\n\t\tmultiplicity *;\n\t}\n}");
+                } else {
+                	System.out.println("Ignoring " + domainClass.getFullName());
+                }
             }
             fileWriter.close();
         } catch (Exception e) {
