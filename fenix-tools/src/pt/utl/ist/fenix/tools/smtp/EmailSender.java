@@ -20,7 +20,7 @@ import pt.utl.ist.fenix.tools.util.PropertiesManager;
 
 public class EmailSender {
 
-	private static final int MAX_MAIL_RECIPIENTS;
+    private static final int MAX_MAIL_RECIPIENTS;
 
     private static final Session session;
     static {
@@ -34,14 +34,19 @@ public class EmailSender {
     }
 
     public static Collection<String> send(final String fromName, final String fromAddress,
-    		final Collection<String> toAddresses, final Collection<String> ccAddresses, final Collection<String> bccAddresses,
-    		final String subject, final String body) {
+            final Collection<String> toAddresses, final Collection<String> ccAddresses,
+            final Collection<String> bccAddresses, final String subject, final String body) {
+
+        if (fromAddress == null) {
+            throw new NullPointerException("error.from.address.cannot.be.null");
+        }
 
         final Collection<String> unsentAddresses = new ArrayList<String>(0);
 
+        final String from = constructFromString(fromName, fromAddress);
+
         try {
-        	final MimeMessage mimeMessageTo = new MimeMessage(session);
-        	final String from = constructFromString(fromName, fromAddress);
+            final MimeMessage mimeMessageTo = new MimeMessage(session);
             mimeMessageTo.setFrom(new InternetAddress(from));
             mimeMessageTo.setSubject(subject);
             mimeMessageTo.setText(body);
@@ -50,85 +55,93 @@ public class EmailSender {
             addRecipients(mimeMessageTo, Message.RecipientType.CC, ccAddresses, unsentAddresses);
             Transport.send(mimeMessageTo);
 
-            final MimeMessage mimeMessageBcc = new MimeMessage(session);
-            mimeMessageBcc.setFrom(new InternetAddress(from));
-            mimeMessageBcc.setSubject(subject);
-            mimeMessageBcc.setText(body);
-
-            final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
-            for (int i = 0; i < bccAddresses.size(); i = i + MAX_MAIL_RECIPIENTS) {
-            	final List<String> subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i + MAX_MAIL_RECIPIENTS));
-            	addRecipients(mimeMessageBcc, Message.RecipientType.BCC, subList, unsentAddresses);
-            	Transport.send(mimeMessageBcc);
-            }
         } catch (SendFailedException e) {
-        	registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, bccAddresses);
+            registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, bccAddresses);
         } catch (MessagingException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         }
+
+        final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
+        for (int i = 0; i < bccAddresses.size(); i = i + MAX_MAIL_RECIPIENTS) {
+            try {
+                final List<String> subList = bccAddressesList.subList(i, Math.min(bccAddressesList
+                        .size(), i + MAX_MAIL_RECIPIENTS));
+                final MimeMessage mimeMessageBcc = new MimeMessage(session);
+                mimeMessageBcc.setFrom(new InternetAddress(from));
+                mimeMessageBcc.setSubject(subject);
+                mimeMessageBcc.setText(body);
+                addRecipients(mimeMessageBcc, Message.RecipientType.BCC, subList, unsentAddresses);
+                Transport.send(mimeMessageBcc);
+            } catch (SendFailedException e) {
+                registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, bccAddresses);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+
         return unsentAddresses;
     }
 
-	private static void registerInvalidAddresses(final Collection<String> unsentAddresses,
-			final SendFailedException e, final Collection<String> toAddresses,
-			final Collection<String> ccAddresses, final Collection<String> bccAddresses) {
+    private static void registerInvalidAddresses(final Collection<String> unsentAddresses,
+            final SendFailedException e, final Collection<String> toAddresses,
+            final Collection<String> ccAddresses, final Collection<String> bccAddresses) {
         if (e.getValidUnsentAddresses() != null) {
             for (int i = 0; i < e.getValidUnsentAddresses().length; i++) {
-            	unsentAddresses.add(e.getValidUnsentAddresses()[i].toString());
+                unsentAddresses.add(e.getValidUnsentAddresses()[i].toString());
             }
         } else {
             if (e.getValidSentAddresses() == null || e.getValidSentAddresses().length == 0) {
-            	unsentAddresses.addAll(toAddresses);
-            	unsentAddresses.addAll(ccAddresses);
-            	unsentAddresses.addAll(bccAddresses);
+                unsentAddresses.addAll(toAddresses);
+                unsentAddresses.addAll(ccAddresses);
+                unsentAddresses.addAll(bccAddresses);
             }
         }
-	}
+    }
 
-	private static String constructFromString(final String fromName, String fromAddress) {
-		return (fromName == null || fromName.length() == 0) ?
-				"\"" + fromName + "\"" + " <" + fromAddress + ">" : fromAddress;
-	}
+    private static String constructFromString(final String fromName, String fromAddress) {
+        return (fromName == null || fromName.length() == 0) ? fromAddress : "\"" + fromName + "\""
+                + " <" + fromAddress + ">";
+    }
 
-	private static void addRecipients(final MimeMessage mensagem, final RecipientType recipientType,
-			final Collection<String> emailAddresses, Collection<String> unsentMails)
-			throws MessagingException {
-		if (emailAddresses != null) {
-			for (final String emailAddress : emailAddresses) {
-				try {
-					if (emailAddressFormatIsValid(emailAddress)) {
-						mensagem.addRecipient(recipientType, new InternetAddress(emailAddress));
-					}
-				} catch (AddressException e) {
-					unsentMails.add(emailAddress);
-				}
-			}
-		}
-	}
+    private static void addRecipients(final MimeMessage mensagem, final RecipientType recipientType,
+            final Collection<String> emailAddresses, Collection<String> unsentMails)
+            throws MessagingException {
+        if (emailAddresses != null) {
+            for (final String emailAddress : emailAddresses) {
+                try {
+                    if (emailAddressFormatIsValid(emailAddress)) {
+                        mensagem.addRecipient(recipientType, new InternetAddress(emailAddress));
+                    }
+                } catch (AddressException e) {
+                    unsentMails.add(emailAddress);
+                }
+            }
+        }
+    }
 
-	public static boolean emailAddressFormatIsValid(String emailAddress) {
-		if((emailAddress == null) || (emailAddress.length() == 0))
-			return false;
-						
-		if(emailAddress.indexOf(' ') > 0)
-			return false;
-		
-		String[] atSplit = emailAddress.split("@");
-		if(atSplit.length != 2)
-			return false;
+    public static boolean emailAddressFormatIsValid(String emailAddress) {
+        if ((emailAddress == null) || (emailAddress.length() == 0))
+            return false;
 
-		else if((atSplit[0].length() == 0) || (atSplit[1].length() == 0))
-			return false;
-		
-		String domain = new String(atSplit[1]);
+        if (emailAddress.indexOf(' ') > 0)
+            return false;
 
-		if(domain.lastIndexOf('.') == (domain.length() - 1))
-			return false;
-		
-		if(domain.indexOf('.') <= 0)
-			return false;
-				
-		return true;
-		
-	}
+        String[] atSplit = emailAddress.split("@");
+        if (atSplit.length != 2)
+            return false;
+
+        else if ((atSplit[0].length() == 0) || (atSplit[1].length() == 0))
+            return false;
+
+        String domain = new String(atSplit[1]);
+
+        if (domain.lastIndexOf('.') == (domain.length() - 1))
+            return false;
+
+        if (domain.indexOf('.') <= 0)
+            return false;
+
+        return true;
+
+    }
 }
