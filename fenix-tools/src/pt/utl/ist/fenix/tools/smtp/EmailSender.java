@@ -111,6 +111,8 @@ public class EmailSender {
                 try {
                     if (emailAddressFormatIsValid(emailAddress)) {
                         mensagem.addRecipient(recipientType, new InternetAddress(emailAddress));
+                    } else {
+                        unsentMails.add(emailAddress);
                     }
                 } catch (AddressException e) {
                     unsentMails.add(emailAddress);
