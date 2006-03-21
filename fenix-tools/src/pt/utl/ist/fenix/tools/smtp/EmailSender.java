@@ -91,9 +91,15 @@ public class EmailSender {
             }
         } else {
             if (e.getValidSentAddresses() == null || e.getValidSentAddresses().length == 0) {
-                unsentAddresses.addAll(toAddresses);
-                unsentAddresses.addAll(ccAddresses);
-                unsentAddresses.addAll(bccAddresses);
+                if (toAddresses != null) {
+                    unsentAddresses.addAll(toAddresses);
+                }
+                if (ccAddresses != null) {
+                    unsentAddresses.addAll(ccAddresses);
+                }
+                if (bccAddresses != null) {
+                    unsentAddresses.addAll(bccAddresses);
+                }
             }
         }
     }
