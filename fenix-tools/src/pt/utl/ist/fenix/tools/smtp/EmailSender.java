@@ -61,21 +61,23 @@ public class EmailSender {
             e.printStackTrace();
         }
 
-        final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
-        for (int i = 0; i < bccAddresses.size(); i = i + MAX_MAIL_RECIPIENTS) {
-            try {
-                final List<String> subList = bccAddressesList.subList(i, Math.min(bccAddressesList
-                        .size(), i + MAX_MAIL_RECIPIENTS));
-                final MimeMessage mimeMessageBcc = new MimeMessage(session);
-                mimeMessageBcc.setFrom(new InternetAddress(from));
-                mimeMessageBcc.setSubject(subject);
-                mimeMessageBcc.setText(body);
-                addRecipients(mimeMessageBcc, Message.RecipientType.BCC, subList, unsentAddresses);
-                Transport.send(mimeMessageBcc);
-            } catch (SendFailedException e) {
-                registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, bccAddresses);
-            } catch (MessagingException e) {
-                e.printStackTrace();
+        if (bccAddresses != null) {
+            final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
+            for (int i = 0; i < bccAddresses.size(); i = i + MAX_MAIL_RECIPIENTS) {
+                try {
+                    final List<String> subList = bccAddressesList.subList(i, Math.min(bccAddressesList
+                            .size(), i + MAX_MAIL_RECIPIENTS));
+                    final MimeMessage mimeMessageBcc = new MimeMessage(session);
+                    mimeMessageBcc.setFrom(new InternetAddress(from));
+                    mimeMessageBcc.setSubject(subject);
+                    mimeMessageBcc.setText(body);
+                    addRecipients(mimeMessageBcc, Message.RecipientType.BCC, subList, unsentAddresses);
+                    Transport.send(mimeMessageBcc);
+                } catch (SendFailedException e) {
+                    registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, bccAddresses);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
