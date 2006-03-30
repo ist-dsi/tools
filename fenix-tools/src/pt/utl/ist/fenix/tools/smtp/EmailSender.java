@@ -88,6 +88,7 @@ public class EmailSender {
     private static void registerInvalidAddresses(final Collection<String> unsentAddresses,
             final SendFailedException e, final Collection<String> toAddresses,
             final Collection<String> ccAddresses, final Collection<String> bccAddresses) {
+        e.printStackTrace();
         if (e.getValidUnsentAddresses() != null) {
             for (int i = 0; i < e.getValidUnsentAddresses().length; i++) {
                 unsentAddresses.add(e.getValidUnsentAddresses()[i].toString());
