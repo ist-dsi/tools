@@ -8,13 +8,13 @@ import com.chimpen.txt2png.Txt2PngFactory;
 
 public class TextPngCreator {
 
-    public static byte[] createPng(final String fontFace, final String fontSize, final String fontColor,
+    public static byte[] createPng(final String fontFace, final int fontSize, final String fontColor,
             final String text) throws IOException, FontFormatException {
         Txt2PngFactory tpf = new Txt2PngFactory();
 
         // Set font face and size
         tpf.setFontFace(fontFace);
-        tpf.setFontSize(Integer.parseInt(fontSize));
+        tpf.setFontSize(fontSize);
 
         // Convert rrggbb string to hex ints
         int r = Integer.parseInt(fontColor.substring(0, 2), 16);
