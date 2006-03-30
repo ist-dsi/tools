@@ -56,7 +56,7 @@ public class EmailSender {
             Transport.send(mimeMessageTo);
 
         } catch (SendFailedException e) {
-            registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, bccAddresses);
+            registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, null);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -64,8 +64,9 @@ public class EmailSender {
         if (bccAddresses != null) {
             final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
             for (int i = 0; i < bccAddresses.size(); i = i + MAX_MAIL_RECIPIENTS) {
+                List<String> subList = null;
                 try {
-                    final List<String> subList = bccAddressesList.subList(i, Math.min(bccAddressesList
+                    subList = bccAddressesList.subList(i, Math.min(bccAddressesList
                             .size(), i + MAX_MAIL_RECIPIENTS));
                     final MimeMessage mimeMessageBcc = new MimeMessage(session);
                     mimeMessageBcc.setFrom(new InternetAddress(from));
@@ -74,7 +75,7 @@ public class EmailSender {
                     addRecipients(mimeMessageBcc, Message.RecipientType.BCC, subList, unsentAddresses);
                     Transport.send(mimeMessageBcc);
                 } catch (SendFailedException e) {
-                    registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, bccAddresses);
+                    registerInvalidAddresses(unsentAddresses, e, null, null, subList);
                 } catch (MessagingException e) {
                     e.printStackTrace();
                 }
