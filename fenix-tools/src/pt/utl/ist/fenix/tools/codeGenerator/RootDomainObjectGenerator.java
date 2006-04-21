@@ -88,9 +88,20 @@ public class RootDomainObjectGenerator {
                     
                     usedNames.add(className);
 
+                    //appendAddToClosureAccessMap(resultSourceCode, otherDomainClass, slotName);
+                }
+            }
+
+        	resultSourceCode.append("\n\tpublic void initAccessClosures () {");
+            for (final Iterator<Role> iter = rootDomainObjectClass.getRoleSlots(); iter.hasNext();) {
+                final Role roleSlot = iter.next();
+                if (roleSlot.getMultiplicityUpper() != 1) {
+                    final String slotName = StringUtils.capitalize(roleSlot.getName());
+                    final DomainClass otherDomainClass = (DomainClass) roleSlot.getType();
                     appendAddToClosureAccessMap(resultSourceCode, otherDomainClass, slotName);
                 }
             }
+            resultSourceCode.append("\n\t}");
 
             resultSourceCode.append("\n\n}\n");
             //System.out.println(resultSourceCode.toString());
@@ -142,7 +153,6 @@ public class RootDomainObjectGenerator {
 	}
 
     private void appendAddToClosureAccessMap(final StringBuilder resultSourceCode, final DomainClass otherDomainClass, final String slotName) {
-    	resultSourceCode.append("\n\t{");
     	resultSourceCode.append("\n\t\tclosureAccessMap.put(");
     	resultSourceCode.append(otherDomainClass.getFullName());
     	resultSourceCode.append(".class.getName(), new DomainObjectReader() {");
@@ -157,7 +167,6 @@ public class RootDomainObjectGenerator {
     	resultSourceCode.append("Set();");
     	resultSourceCode.append("\n\t\t\t}");
     	resultSourceCode.append("\n\t\t});");
-    	resultSourceCode.append("\n\t}");
 	}
 
 	public static void main(String[] args) {
