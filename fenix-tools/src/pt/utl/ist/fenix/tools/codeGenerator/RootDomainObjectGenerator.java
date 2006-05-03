@@ -114,13 +114,6 @@ public class RootDomainObjectGenerator {
 
     }
     
-    private void test(){
-        
-        
-        
-        
-    }
-
 	private void appendClosureAccessMap(final StringBuilder resultSourceCode) {
         resultSourceCode.append("\n\tprivate interface DomainObjectReader {");
         resultSourceCode.append("\n\t\tpublic DomainObject readDomainObjectByOID(final Integer idInternal);");
