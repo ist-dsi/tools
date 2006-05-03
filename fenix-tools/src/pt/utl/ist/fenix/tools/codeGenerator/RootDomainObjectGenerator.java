@@ -67,6 +67,8 @@ public class RootDomainObjectGenerator {
             appendClosureAccessMap(resultSourceCode);
 
             Formatter methods = new Formatter(resultSourceCode);
+                     
+            
             DomainClass rootDomainObjectClass = getModel().findClass(CLASS_NAME);
             for (Iterator<Role> iter = rootDomainObjectClass.getRoleSlots(); iter.hasNext();) {
                 Role roleSlot = iter.next();
@@ -77,16 +79,18 @@ public class RootDomainObjectGenerator {
                     if(usedNames.contains(className)){
                         className = otherDomainClass.getSuperclassName() + className;
                     }
-                    methods.format("\n\tpublic %s read%sByOID(Integer idInternal){\n", otherDomainClass
-                            .getFullName(), className);
-                    methods.format("\t\tfor (%s iter%s : get%s()) {\n", otherDomainClass.getFullName(),
-                            className, slotName);
-                    methods.format("\t\t\tif(iter%s.getIdInternal().equals(idInternal)){\n",
-                            className);
-                    methods.format("\t\t\t\treturn iter%s;\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n",
-                            className);
                     
-                    usedNames.add(className);
+                    if(!className.equals("DomainObject")){
+                        methods.format("\n\tpublic %s read%sByOID(Integer idInternal){\n", otherDomainClass
+                                .getFullName(), className);
+                        
+                        methods.format("\t\tfinal net.sourceforge.fenixedu.persistenceTier.IPersistentObject persistentObject = net.sourceforge.fenixedu.persistenceTier.PersistenceSupportFactory.getDefaultPersistenceSupport().getIPersistentObject();\n");
+                        
+                        methods.format("\t\tfinal %s domainObject = (%s) persistentObject.readByOID(%s.class, idInternal);\n",otherDomainClass.getFullName(), otherDomainClass.getFullName(), otherDomainClass.getFullName());
+                        methods.format("return (domainObject.getRootDomainObject() == null) ? null : domainObject;\n\t}\n");
+                        
+                        usedNames.add(className);
+                    }
 
                     //appendAddToClosureAccessMap(resultSourceCode, otherDomainClass, slotName);
                 }
@@ -108,6 +112,13 @@ public class RootDomainObjectGenerator {
             writeFile(rootObjectSourceCodeFilePath, resultSourceCode.toString(), false);
         }
 
+    }
+    
+    private void test(){
+        
+        
+        
+        
     }
 
 	private void appendClosureAccessMap(final StringBuilder resultSourceCode) {
