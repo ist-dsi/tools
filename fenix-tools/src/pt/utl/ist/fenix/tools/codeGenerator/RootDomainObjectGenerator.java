@@ -87,7 +87,7 @@ public class RootDomainObjectGenerator {
                         methods.format("\t\tfinal net.sourceforge.fenixedu.persistenceTier.IPersistentObject persistentObject = net.sourceforge.fenixedu.persistenceTier.PersistenceSupportFactory.getDefaultPersistenceSupport().getIPersistentObject();\n");
                         
                         methods.format("\t\tfinal %s domainObject = (%s) persistentObject.readByOID(%s.class, idInternal);\n",otherDomainClass.getFullName(), otherDomainClass.getFullName(), otherDomainClass.getFullName());
-                        methods.format("return (domainObject.getRootDomainObject() == null) ? null : domainObject;\n\t}\n");
+                        methods.format("return (domainObject == null || domainObject.getRootDomainObject() == null) ? null : domainObject;\n\t}\n");
                         
                         usedNames.add(className);
                     }
