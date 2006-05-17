@@ -44,30 +44,40 @@ public class EmailSender {
         final Collection<String> unsentAddresses = new ArrayList<String>(0);
 
         final String from = constructFromString(fromName, fromAddress);
+        final boolean hasToAddresses = (toAddresses != null && !toAddresses.isEmpty()) ? true : false;
+        final boolean hasCCAddresses = (ccAddresses != null && !ccAddresses.isEmpty()) ? true : false;
 
-        try {
-            final MimeMessage mimeMessageTo = new MimeMessage(session);
-            mimeMessageTo.setFrom(new InternetAddress(from));
-            mimeMessageTo.setSubject(subject);
-            mimeMessageTo.setText(body);
+        if (hasToAddresses || hasCCAddresses) {
+            try {
+                final MimeMessage mimeMessageTo = new MimeMessage(session);
+                mimeMessageTo.setFrom(new InternetAddress(from));
+                mimeMessageTo.setSubject(subject);
+                mimeMessageTo.setText(body);
 
-            addRecipients(mimeMessageTo, Message.RecipientType.TO, toAddresses, unsentAddresses);
-            addRecipients(mimeMessageTo, Message.RecipientType.CC, ccAddresses, unsentAddresses);
-            Transport.send(mimeMessageTo);
+                if (hasToAddresses) {
+                    addRecipients(mimeMessageTo, Message.RecipientType.TO, toAddresses, unsentAddresses);
+                }
 
-        } catch (SendFailedException e) {
-            registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, null);
-        } catch (MessagingException e) {
-            e.printStackTrace();
+                if (hasCCAddresses) {
+                    addRecipients(mimeMessageTo, Message.RecipientType.CC, ccAddresses, unsentAddresses);
+                }
+
+                Transport.send(mimeMessageTo);
+
+            } catch (SendFailedException e) {
+                registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, null);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
         }
 
-        if (bccAddresses != null) {
+        if (bccAddresses != null && !bccAddresses.isEmpty()) {
             final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
             for (int i = 0; i < bccAddresses.size(); i = i + MAX_MAIL_RECIPIENTS) {
                 List<String> subList = null;
                 try {
-                    subList = bccAddressesList.subList(i, Math.min(bccAddressesList
-                            .size(), i + MAX_MAIL_RECIPIENTS));
+                    subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i
+                            + MAX_MAIL_RECIPIENTS));
                     final MimeMessage mimeMessageBcc = new MimeMessage(session);
                     mimeMessageBcc.setFrom(new InternetAddress(from));
                     mimeMessageBcc.setSubject(subject);
