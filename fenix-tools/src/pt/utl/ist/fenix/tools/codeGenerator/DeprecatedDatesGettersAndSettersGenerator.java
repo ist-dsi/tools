@@ -69,7 +69,7 @@ public class DeprecatedDatesGettersAndSettersGenerator {
         }
     }
 
-    private StringBuilder buildMethods(DomainClass domainClass) {
+private StringBuilder buildMethods(DomainClass domainClass) {
         StringBuilder resultSourceCode = new StringBuilder();
         Formatter methods = new Formatter(resultSourceCode);
 
@@ -88,7 +88,8 @@ public class DeprecatedDatesGettersAndSettersGenerator {
                     methods.format("\t}\n");
 
                     methods.format("\n\t@Deprecated\n\tpublic void set%s(java.util.Date date){\n", dateSlotName);
-                    methods.format("\t\tset%s(org.joda.time.YearMonthDay.fromDateFields(date));\n",
+                    methods.format("\t\tif(date == null) set%s(null);\n", originalSlotName);
+                    methods.format("\t\telse set%s(org.joda.time.YearMonthDay.fromDateFields(date));\n",
                             originalSlotName);
                     methods.format("\t}\n");
                 }
@@ -107,7 +108,8 @@ public class DeprecatedDatesGettersAndSettersGenerator {
                     methods.format("\t}\n");
 
                     methods.format("\n\t@Deprecated\n\tpublic void set%s(java.util.Date date){\n", dateSlotName);
-                    methods.format("\t\tset%s(new org.joda.time.DateTime(date.getTime()));\n",
+                    methods.format("\t\tif(date == null) set%s(null);\n", originalSlotName);
+                    methods.format("\t\telse set%s(new org.joda.time.DateTime(date.getTime()));\n",
                             originalSlotName);
                     methods.format("\t}\n");
                 }
@@ -128,9 +130,10 @@ public class DeprecatedDatesGettersAndSettersGenerator {
                     methods.format("\t}\n");
 
                     methods.format("\n\t@Deprecated\n\tpublic void set%s(java.util.Date date){\n", dateSlotName);
+                    methods.format("\t\tif(date == null) set%s(null);\n", originalSlotName);
                     methods
                             .format(
-                                    "\t\tset%s(net.sourceforge.fenixedu.util.HourMinuteSecond.fromDateFields(date));\n",
+                                    "\t\telse set%s(net.sourceforge.fenixedu.util.HourMinuteSecond.fromDateFields(date));\n",
                                     originalSlotName);
                     methods.format("\t}\n");
                 }
@@ -139,9 +142,7 @@ public class DeprecatedDatesGettersAndSettersGenerator {
 
         return resultSourceCode;
 
-    }
-
-    public static void main(String[] args) {
+    }    public static void main(String[] args) {
 
         if (args.length < 2) {
             System.err.println("Invalid Number of Arguments");
