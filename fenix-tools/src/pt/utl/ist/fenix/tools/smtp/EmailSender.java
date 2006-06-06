@@ -17,6 +17,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import pt.utl.ist.fenix.tools.util.PropertiesManager;
+import pt.utl.ist.fenix.tools.util.StringAppender;
 
 public class EmailSender {
 
@@ -33,23 +34,20 @@ public class EmailSender {
 	}
     }
 
-    public static Collection<String> forward(final MimeMessage message,
-	    final List<String> bccAddressesToforward) {
+    public static Collection<String> forward(final MimeMessage message, final List<String> bccAddressesToforward) {
 	if (message == null) {
 	    throw new NullPointerException("error.message.cannot.be.null");
 	}
 
-	ArrayList<String> unsent = new ArrayList<String>(0);
+	final ArrayList<String> unsent = new ArrayList<String>(0);
 
-	for (int i = 0; i < bccAddressesToforward.size(); i = i + MAX_MAIL_RECIPIENTS) {
-	    List<String> subList = null;
+	for (int i = 0; i < bccAddressesToforward.size(); i += MAX_MAIL_RECIPIENTS) {
+	    final List<String> subList = bccAddressesToforward.subList(i, Math.min(bccAddressesToforward.size(), i + MAX_MAIL_RECIPIENTS));
 	    try {
 		MimeMessage newMessage = new MimeMessage(message);
-		subList = bccAddressesToforward.subList(i, Math.min(bccAddressesToforward.size(), i
-			+ MAX_MAIL_RECIPIENTS));
 		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.TO, new InternetAddress[]{});
-		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.BCC, new InternetAddress[]{});
 		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.CC, new InternetAddress[]{});
+		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.BCC, new InternetAddress[]{});
 		addRecipients(newMessage, Message.RecipientType.BCC, subList, unsent);
 		Transport.send(newMessage);
 	    } catch (SendFailedException e) {
@@ -102,11 +100,10 @@ public class EmailSender {
 
 	if (bccAddresses != null && !bccAddresses.isEmpty()) {
 	    final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
-	    for (int i = 0; i < bccAddresses.size(); i = i + MAX_MAIL_RECIPIENTS) {
+	    for (int i = 0; i < bccAddresses.size(); i += MAX_MAIL_RECIPIENTS) {
 		List<String> subList = null;
 		try {
-		    subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i
-			    + MAX_MAIL_RECIPIENTS));
+		    subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i + MAX_MAIL_RECIPIENTS));
 		    final MimeMessage mimeMessageBcc = new MimeMessage(session);
 		    mimeMessageBcc.setFrom(new InternetAddress(from));
 		    mimeMessageBcc.setSubject(subject);
@@ -125,7 +122,7 @@ public class EmailSender {
 	return unsentAddresses;
     }
 
-    private static void registerInvalidAddresses(final Collection<String> unsentAddresses,
+    protected static void registerInvalidAddresses(final Collection<String> unsentAddresses,
 	    final SendFailedException e, final Collection<String> toAddresses,
 	    final Collection<String> ccAddresses, final Collection<String> bccAddresses) {
 	e.printStackTrace();
@@ -148,12 +145,12 @@ public class EmailSender {
 	}
     }
 
-    private static String constructFromString(final String fromName, String fromAddress) {
-	return (fromName == null || fromName.length() == 0) ? fromAddress : "\"" + fromName + "\""
-		+ " <" + fromAddress + ">";
+    protected static String constructFromString(final String fromName, String fromAddress) {
+	return (fromName == null || fromName.length() == 0) ? fromAddress
+		: StringAppender.append("\"", fromName, "\" <", fromAddress, ">");
     }
 
-    private static void addRecipients(final MimeMessage mensagem, final RecipientType recipientType,
+    protected static void addRecipients(final MimeMessage mensagem, final RecipientType recipientType,
 	    final Collection<String> emailAddresses, Collection<String> unsentMails)
 	    throws MessagingException {
 	if (emailAddresses != null) {
@@ -194,6 +191,6 @@ public class EmailSender {
 	    return false;
 
 	return true;
-
     }
+
 }
