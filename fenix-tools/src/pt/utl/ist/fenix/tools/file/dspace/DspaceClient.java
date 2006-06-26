@@ -17,14 +17,13 @@ import org.dspace.external.interfaces.remoteManager.objects.FileUpload;
 import org.dspace.external.interfaces.remoteManager.objects.FileUploadResponse;
 import org.dspace.external.interfaces.remoteManager.objects.UploadedFileDescriptor;
 
-
 public class DspaceClient {
 
     private static final String DSPACE_ENCODING = "UTF-8";
 
     private static final String SUCCESS_CODE = "SUCCESS";
 
-    //private static final String NOT_AUTHORIZED_CODE = "NOT_AUTHORIZED";
+    private static final String UNEXPECTED_ERROR_CODE = "UNEXPECTED_ERROR";
 
     private static final String DSPACE_REMOTE_MANAGER_SERVLET = "/DspaceRemoteManagerServlet";
 
@@ -181,7 +180,10 @@ public class DspaceClient {
 
     }
 
-    private static DspaceResponse getDspaceResponse(String rawResponse) {
+    private static DspaceResponse getDspaceResponse(String rawResponse) throws DspaceClientException {
+        if (rawResponse.length() == 0) {
+            throw new DspaceClientException(UNEXPECTED_ERROR_CODE);
+        }
 
         int firstIndexOfNewLine = rawResponse.indexOf('\n');
         String responseCode = rawResponse.substring(0, firstIndexOfNewLine);
