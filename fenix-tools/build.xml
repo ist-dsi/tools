@@ -44,7 +44,15 @@
 			depends="compile">
 		<mkdir dir="${deploy.home}"/>
 		<jar destfile="${deploy.home}/fenix-tools.jar">
-			<fileset dir="${build.home}"/>
+			<fileset dir="${build.home}">
+				<include name="pt/utl/**/*.class"/>
+				<include name="com/**/*.class"/>
+			</fileset>
+		</jar>
+		<jar destfile="${deploy.home}/ant-properties-configurator.jar">
+			<fileset dir="${build.home}">
+				<include name="pt/linkare/**/*.class"/>
+			</fileset>
 		</jar>
 	</target>
 
