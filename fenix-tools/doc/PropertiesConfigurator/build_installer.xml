@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="../../" default="build-properties-generator" name="Properties Configurator Test">
+
+	<property name="encoding" value="ISO-8859-15"/>
+
+    <property name="lib" location="${basedir}/lib" />
+	<property name="propconfig.lib" location="${basedir}/deploy/ant-properties-configurator.jar" />
+
+	<target name="compile-properties-configurator">
+		<ant antfile="build.xml" dir="${basedir}/" target="jar"/>
+	</target>
+	
+    <!--include the propconfig library and the propertiesConfigurator ant task taskdef-->
+	<target name="build-properties-generator"
+    		description="Generate properties" depends="compile-properties-configurator">
+    	 	<taskdef classname="pt.linkare.ant.PropertiesConfiguratorTask" name="propertiesConfigurator">
+			<classpath>
+			    <pathelement path="${propconfig.lib}"/>
+			</classpath>
+		</taskdef>
+		<!--
+			Generates a build.properties file and possibly a .build.properties.eser file
+			The build.properties will contain all the persistent properties and 
+			the .build.properties.eser property file will have all persistent and non 
+			persistent properties in an encrypted file. The purpose of this file is to
+			define the defaults for a future run if necessary.
+			This task exposes the read properties as the Property Core Task does...
+			The build.properties.spec file will have the definition of the properties
+			types for the installer to use... Please have a look at the example
+			build.properties.spec for the metadata specification use...
+		-->
+		<propertiesConfigurator specFile="doc/PropertiesConfigurator/build.properties.spec" file="doc/PropertiesConfigurator/build.properties">
+			<echo message="Properties configurator executed ok!"/>
+		</propertiesConfigurator>
+    </target>
+	
+</project>
