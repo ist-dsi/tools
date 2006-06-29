@@ -71,7 +71,12 @@
 #
 # type=url
 #   additional metadata: validate=y/n (must the url be validated it is a valid url string spec? -  defaults to no)
-#						 
+#	
+# type=default - just uses the default value specified for the property... does not ask user for info
+#   additional metadata: none
+#
+# type=nullableDefault - also uses the default value specified... but it does not complain of nulls
+#   additional metadata: none
 #
 # The rest of this file is an example to start with						 
 #
