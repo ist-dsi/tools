@@ -73,7 +73,7 @@ public class RootDomainObjectGenerator {
             for (Iterator<Role> iter = rootDomainObjectClass.getRoleSlots(); iter.hasNext();) {
                 Role roleSlot = iter.next();
                 if (roleSlot.getMultiplicityUpper() != 1) {
-                    String slotName = StringUtils.capitalize(roleSlot.getName());
+                    //String slotName = StringUtils.capitalize(roleSlot.getName());
                     DomainClass otherDomainClass = (DomainClass) roleSlot.getType();
                     String className = otherDomainClass.getName();
                     if(usedNames.contains(className)){
