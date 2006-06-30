@@ -2,14 +2,14 @@ package pt.linkare.ant;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.TaskContainer;
+import org.apache.tools.ant.taskdefs.Property;
 
-public class PropertiesConfiguratorTask extends Task implements TaskContainer {
+public class PropertiesConfiguratorTask extends Property implements TaskContainer {
 
 	private File specFile=null;
 	private File file=null;
@@ -25,10 +25,8 @@ public class PropertiesConfiguratorTask extends Task implements TaskContainer {
 		try
 		{
 			Properties props=InstallerPropertiesReader.readProperties(getSpecFile(),getFile());
-			
-			//The project properties are now set up on the project
-			for(Map.Entry<Object, Object> prop:props.entrySet())
-				getProject().setProperty(prop.getKey().toString(),prop.getValue().toString());
+			//Use addProperties of the base PropertyTask as it resolves and replaces values
+			addProperties(props);
 			
 			for(Task t:subTasks)
 			{
@@ -37,8 +35,7 @@ public class PropertiesConfiguratorTask extends Task implements TaskContainer {
 		}
 		catch(Exception e)
 		{
-			log(getTaskName()+" Problem occurred - "+e.getMessage());
-			e.printStackTrace();
+			throw new BuildException(e);
 		}
 	}
 
