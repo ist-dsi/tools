@@ -110,7 +110,7 @@ public class Txt2PngFactory {
 
   /**
    * Renders the current text to a .png file
-   * @param location Location to write the file out to
+   * @param outputStream The stream to write the file out to
    * @throws IOException if file cannot be created
    */
   public void createPngFile(OutputStream outputStream) throws IOException {
@@ -288,14 +288,15 @@ public class Txt2PngFactory {
     g2.setFont(cachedFont);
   }
 
-  /**
+  /* Commented out this method as it is private and never locally used...
+   * jpereira - Linkare TI
    * Get the FontMetrics object for the current font
    * @return FontMetrics object for current font
    */
-  private FontMetrics getFontMetrics() {
+  /*private FontMetrics getFontMetrics() {
 
     return g2.getFontMetrics();
-  }
+  }*/
 
   /**
    * Get a Font object for the current fontname and fontsize
