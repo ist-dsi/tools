@@ -27,7 +27,7 @@ public class FileDescriptor {
     /**
      * The file checksum
      * 
-     * @return
+     * @return The checksum for the file
      */
     public String getChecksum() {
         return checksum;
@@ -40,7 +40,7 @@ public class FileDescriptor {
     /**
      * The algorithm used to calculate the checksum
      * 
-     * @return
+     * @return The algorithm for checksum calculation
      */
     public String getChecksumAlgorithm() {
         return checksumAlgorithm;
@@ -53,7 +53,7 @@ public class FileDescriptor {
     /**
      * The filename only
      * 
-     * @return
+     * @return The name of the file
      */
     public String getFilename() {
         return filename;
@@ -66,7 +66,7 @@ public class FileDescriptor {
     /**
      * The mime type
      * 
-     * @return
+     * @return The mimetype of the file
      */
     public String getMimeType() {
         return mimeType;
@@ -79,7 +79,7 @@ public class FileDescriptor {
     /**
      * The file size
      * 
-     * @return
+     * @return the size of the file in bytes
      */
     public int getSize() {
         return size;
@@ -95,7 +95,7 @@ public class FileDescriptor {
      * On other content repositories will typically be the path (or equivalent)
      * to the file.
      * 
-     * @return
+     * @return the unique id for file access
      */
     public String getUniqueId() {
         return uniqueId;

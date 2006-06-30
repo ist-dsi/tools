@@ -8,7 +8,7 @@ public interface IFileManager {
     /**
      * Saves the file and returns the descriptor
      * 
-     * @return
+     * @return A FileDescriptor instance that enables access to the saved file
      * @throws FileManagerException
      */
     public FileDescriptor saveFile(FilePath filePath, String originalFilename, boolean privateFile,
@@ -17,7 +17,7 @@ public interface IFileManager {
     /**
      * Saves the file and returns the descriptor
      * 
-     * @return
+     * @return A FileDescriptor instance that enables access to the saved file
      * @throws FileManagerException
      */
     public FileDescriptor saveFile(FilePath filePath, String originalFilename, boolean privateFile,
@@ -47,14 +47,14 @@ public interface IFileManager {
      * http://dspacehost/bitstream/{0}/{1} where {0} should be replaced by the
      * Id and {1} by the filename
      * 
-     * @return
+     * @return An url schema for direct download of the file
      */
     public String getDirectDownloadUrlFormat();
 
     /**
      * Retrieves the file content
      * 
-     * @return
+     * @return the file contents as a byte[]
      */
     public byte[] retrieveFile(String uniqueId);
 
