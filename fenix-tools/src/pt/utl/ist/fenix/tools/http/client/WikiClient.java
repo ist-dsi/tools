@@ -47,6 +47,11 @@ public class WikiClient {
             loginNameValuePairs[4] = new NameValuePair("method", "POST");
             method.setQueryString(loginNameValuePairs);
             executeMethod(httpClient, method);
+            //Recycle should never be used as it is deprecated...
+            //TODO - Check with nadir what he needs - The default
+            //implementation of recycle sets a lot of nulls, clears state and 
+            //invalidates proxy and auth info from the previous request...
+            //see http://svn.apache.org/viewvc/jakarta/commons/proper/httpclient/trunk/src/java/org/apache/commons/httpclient/HttpMethodBase.java?view=markup
             method.recycle();
 
             method.setPath(wikiPage);

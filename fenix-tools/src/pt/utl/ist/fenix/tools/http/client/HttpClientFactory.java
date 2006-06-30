@@ -1,9 +1,13 @@
 package pt.utl.ist.fenix.tools.http.client;
 
-import org.apache.commons.httpclient.DefaultMethodRetryHandler;
+import java.io.IOException;
+
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.DefaultProtocolSocketFactory;
 import org.apache.commons.httpclient.protocol.Protocol;
 
@@ -21,10 +25,18 @@ public class HttpClientFactory {
         final Protocol protocol = getProtocol(host, serverPort);
 
         client.getHostConfiguration().setHost(host, serverPort, protocol);
-        client.getState().setCookiePolicy(CookiePolicy.getDefaultPolicy());
-        client.setConnectionTimeout(CONNECTION_TIMEOUT);
-        client.setStrictMode(false);
-
+        //The following is deprecated... should use Method.setCookiePolicy (done in getGetMethod)
+        //client.getState().setCookiePolicy(CookiePolicy.getDefaultPolicy());
+        
+        //This one is also deprecated... see below the new way
+        //client.setConnectionTimeout(CONNECTION_TIMEOUT);
+        client.getHttpConnectionManager().getParams().setConnectionTimeout(CONNECTION_TIMEOUT);
+        
+        //This one is also deprecated... see below the new way
+        //client.setStrictMode(false);
+        client.getParams().makeLenient();
+        
+        
         return client;
     }
 
@@ -35,11 +47,30 @@ public class HttpClientFactory {
     public static GetMethod getGetMethod(final String path) {
         final GetMethod method = new GetMethod(path);
 
-        DefaultMethodRetryHandler retryhandler = new DefaultMethodRetryHandler();
-        retryhandler.setRequestSentRetryEnabled(false);
-        retryhandler.setRetryCount(3);
-        method.setMethodRetryHandler(retryhandler);
+        //this is the not deprecated way of keeping cookie policies
+        method.getParams().setCookiePolicy(CookiePolicy.DEFAULT);
+        
+        //This one is deprecated...
+        //DefaultMethodRetryHandler retryhandler = new DefaultMethodRetryHandler();
+        //retryhandler.setRequestSentRetryEnabled(false);
+        //retryhandler.setRetryCount(3);
+        //method.setMethodRetryHandler(retryhandler);
 
+        //Here it is the right way
+        method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new 
+        		HttpMethodRetryHandler()
+        		{
+        			private int retryCount=3;
+        			private boolean requestSentRetryEnabled=false;
+
+					public boolean retryMethod(HttpMethod method, IOException exception, int executionCount) {
+						
+						return ((!method.isRequestSent() || requestSentRetryEnabled) && (executionCount<=retryCount));
+					}
+        		}
+        );
+        
+        
         return method;
     }
 
