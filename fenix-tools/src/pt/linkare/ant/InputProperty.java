@@ -208,12 +208,12 @@ public class InputProperty {
 	
 	public Collection<InputProperty> readNow(boolean fromDefault) throws InvalidPropertySpecException,NoPropertyReaderException
 	{
-		if(isRead()) return null;
+		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
+		
+		if(isRead()) return generatedProperties;
 		
 		//do not read the prop again in any case
 		this.setRead(true);
-		
-		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
 		
 		for(PropertyDependency dep:getDependencies())
 		{
@@ -223,10 +223,12 @@ public class InputProperty {
 			}
 		}
 		
+		
 		if(validateDependencies())
-			generatedProperties.addAll(PropertyReaderManager.getInstance().readProperty(this));
+			generatedProperties.addAll(PropertyReaderManager.getInstance().readProperty(this,fromDefault));
 		else
 			setPropertyValue(null);
+
 
 		return generatedProperties;
 	}

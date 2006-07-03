@@ -2,10 +2,14 @@ package pt.linkare.ant;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.input.InputHandler;
 import org.apache.tools.ant.input.InputRequest;
+
+import pt.linkare.ant.propreaders.AbstractPropertyReader;
 
 public class StdIn {
 
@@ -389,11 +393,15 @@ public class StdIn {
 	public String readMultipleOptionOrDefault(MenuMessage menuMessage, String propertyDefaultValue) {
 		StringBuffer fullMessage=new StringBuffer(menuMessage.getMessage());
 		int currentOptionCount=0;
+		List<String> defaultValuesList=Arrays.asList(AbstractPropertyReader.splitValues(propertyDefaultValue));
+		
 		for(String currentOptionMessage:menuMessage.getOptions())
 		{
 			++currentOptionCount;
-			fullMessage.append(CRLF).append(propertyDefaultValue.equals(menuMessage.getOptionValues().get(currentOptionCount-1))?"[":" ").append(currentOptionCount).append(" - ").append(currentOptionMessage).append(propertyDefaultValue.equals(menuMessage.getOptionValues().get(currentOptionCount-1))?"]":" ");
+			boolean isSelected=defaultValuesList.contains(menuMessage.getOptionValues().get(currentOptionCount-1));
+			fullMessage.append(CRLF).append(isSelected?"[":"").append(currentOptionCount).append(" - ").append(currentOptionMessage).append(isSelected?"]":"");
 		}
+		
 		fullMessage.append(CRLF).append("You may select many options by choosing their number in comma separated values e.g: 1,2,3").append(CRLF);
 	
 		while (true) {
@@ -540,10 +548,13 @@ public class StdIn {
 	public String readMultipleOptionOrQuitOrDefault(MenuMessage menuMessage, String propertyDefaultValue) {
 		StringBuffer fullMessage=new StringBuffer(menuMessage.getMessage());
 		int currentOptionCount=0;
+		List<String> defaultValuesList=Arrays.asList(AbstractPropertyReader.splitValues(propertyDefaultValue));
+		
 		for(String currentOptionMessage:menuMessage.getOptions())
 		{
 			++currentOptionCount;
-			fullMessage.append(CRLF).append(currentOptionCount).append(" - ").append(currentOptionMessage);
+			boolean isSelected=defaultValuesList.contains(menuMessage.getOptionValues().get(currentOptionCount-1));
+			fullMessage.append(CRLF).append(isSelected?"[":"").append(currentOptionCount).append(" - ").append(currentOptionMessage).append(isSelected?"]":"");
 		}
 		fullMessage.append(CRLF).append("q").append(" - ").append("Quit");
 		fullMessage.append(CRLF).append("You may select many options by choosing their number in comma separated values e.g: 1,2,3").append(CRLF);

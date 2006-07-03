@@ -1,10 +1,6 @@
 package pt.linkare.ant.propreaders;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import pt.linkare.ant.InvalidPropertySpecException;
-import pt.linkare.ant.MenuMessage;
 
 public class HostnameListPropertyReader extends HostnamePropertyReader{
 
@@ -24,7 +20,14 @@ public class HostnameListPropertyReader extends HostnamePropertyReader{
 			if(parseBoolean(getProperty().getMetaData("validate"), false))
 			{
 				for(String value:values)
+				{
 					validated=validated & isValidHostname(value);
+					if(!validated) 
+					{
+						System.out.println("Hostname '"+value+"' is not a valid hostname!");
+						continue;
+					}
+				}
 			}
 		}
 		return baseValue;

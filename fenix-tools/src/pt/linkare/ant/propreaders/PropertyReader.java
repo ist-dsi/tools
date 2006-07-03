@@ -8,5 +8,5 @@ import pt.linkare.ant.InvalidPropertySpecException;
 public interface PropertyReader {
 
 	public void setProperty(InputProperty prop);
-	public Collection<InputProperty> readPropertyValue() throws InvalidPropertySpecException;
+	public Collection<InputProperty> readPropertyValue(boolean fromDefault) throws InvalidPropertySpecException;
 }

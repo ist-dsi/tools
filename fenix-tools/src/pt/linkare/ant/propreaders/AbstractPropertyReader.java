@@ -13,7 +13,7 @@ import pt.linkare.ant.MenuMessage;
 import pt.linkare.ant.StdIn;
 
 
-public abstract class AbstractPropertyReader implements PropertyReader{
+public abstract  class AbstractPropertyReader implements PropertyReader{
 
 	private InputProperty prop=null;
 	
@@ -39,6 +39,10 @@ public abstract class AbstractPropertyReader implements PropertyReader{
 
 
 	public java.lang.String buildDefaultMessage() {
+		return buildDefaultMessage(true);
+	}
+	
+	public java.lang.String buildDefaultMessage(boolean includeDefaultValue) {
 		StringBuffer message=new StringBuffer();
 		if(getProperty().getPropertyMessage()==null)
 		{
@@ -49,7 +53,7 @@ public abstract class AbstractPropertyReader implements PropertyReader{
 		else
 			message.append(getProperty().getPropertyMessage());
 		
-		if(getProperty().getPropertyDefaultValue()!=null)
+		if(getProperty().getPropertyDefaultValue()!=null && includeDefaultValue)
 			message.append(" ["+getProperty().getPropertyDefaultValue()+"]");
 		
 		message.append(StdIn.CRLF);
@@ -80,10 +84,22 @@ public abstract class AbstractPropertyReader implements PropertyReader{
 		
 		if(getProperty().getPropertyDefaultValue()!=null)
 		{
-			//check if the default value is in one of the optionsValues
-			if(!optionValues.contains(getProperty().getPropertyDefaultValue()))
-				throw new InvalidPropertySpecException("The property default value specified is not in the allowed list...");
+			String[] values=splitValues(getProperty().getPropertyDefaultValue());
 			
+			for(String value:values)
+			{
+				value=value.trim().intern();
+				//check if the default value is in one of the optionsValues
+				if(!optionValues.contains(value))
+				{
+					System.out.println("options values list is:");
+					for(String option : optionValues)
+						System.out.println("option '"+option+"'");
+					
+					throw new InvalidPropertySpecException("The property default value '"+value+"' specified is not in the allowed list...");
+					
+				}
+			}
 		}
 		
 		StringBuffer message=new StringBuffer();
@@ -142,11 +158,11 @@ public abstract class AbstractPropertyReader implements PropertyReader{
 		String propMessageBase=getProperty().getMetaData("generated.message");
 		String propDefaultValueBase=getProperty().getMetaData("generated.defaultValue");
 		if(propNameBase==null || propTypeBase==null || values==null || values.length==0)
-			return null;
+			return generatedProperties;
 		
 		String generatedSpecBase=generateInputPropertySpec();
 		InputProperty propertyBase=generateInputPropertyBase(propNameBase, propDefaultValueBase, generatedSpecBase);
-	
+		
 		for(String currentValue:values)
 		{
 			InputProperty generatedCurrentProperty=new InputProperty(propertyBase);
@@ -158,7 +174,7 @@ public abstract class AbstractPropertyReader implements PropertyReader{
 		return generatedProperties;
 	}
 
-	public String[] splitValues(String values)
+	public static String[] splitValues(String values)
 	{
 		if(values==null)
 			return null;
@@ -172,12 +188,12 @@ public abstract class AbstractPropertyReader implements PropertyReader{
 	
 	private String generateKey(String name,String value)
 	{
-		return name.replaceAll("${value}", value);
+		return name.replace("${value}", value);
 	}
 	
 	private String generateMessage(String message,String value)
 	{
-		return message.replaceAll("${value}", value);
+		return message.replace("${value}", value);
 	}
 	
 	private final static String CRLF=System.getProperty("line.separator");
@@ -189,7 +205,7 @@ public abstract class AbstractPropertyReader implements PropertyReader{
 		for(Map.Entry<String, String> metadataCurrent:metadata.entrySet())
 		{
 			if(metadataCurrent.getKey().startsWith("generated.") && !(metadataCurrent.getKey().equals("generated.key") || metadataCurrent.getKey().equals("generated.defaultValue"))) 
-					writerOut.write("@"+metadataCurrent.getKey().substring("generated.".length()+1)+" = "+metadataCurrent.getValue()+CRLF);
+					writerOut.write("@"+metadataCurrent.getKey().substring("generated.".length())+" = "+metadataCurrent.getValue()+CRLF);
 		}
 		
 		return writerOut.getBuffer().toString();
@@ -206,10 +222,13 @@ public abstract class AbstractPropertyReader implements PropertyReader{
 		if(fromDefault)
 			getProperty().setPropertyValue(InstallerPropertiesReader.getInstance().getDefaultValue(getProperty()));
 		else
-			getProperty().setPropertyDefaultValue(readProperty());
-	
+			getProperty().setPropertyValue(readProperty());
+
 		return buildGeneratedProperties();
+		
 	}
+
+
 	
 	public abstract String readProperty() throws InvalidPropertySpecException;
 	

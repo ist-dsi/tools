@@ -22,7 +22,7 @@ public class LangStringPropertyReader extends AbstractPropertyReader{
 	public String getLangString() throws InvalidPropertySpecException
 	{
 		MenuMessage menuOptionsLang=new MenuMessage();
-		menuOptionsLang.setMessage(buildDefaultMessage());
+		menuOptionsLang.setMessage(buildDefaultMessage(false));
 		List<String>[] optionsAndValuesLang=null;
 		if(getProperty().getMetaData("langs")!=null)
 		{

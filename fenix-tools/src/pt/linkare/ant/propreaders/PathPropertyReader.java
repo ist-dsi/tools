@@ -46,7 +46,6 @@ public class PathPropertyReader extends AbstractPropertyReader{
 		else
 			pathRetVal=getInput().readString(message.toString(), getProperty().isPropertyRequired()?1:0);
 		
-		System.out.println("path must exist? "+pathMustExist +" and required? "+getProperty().isPropertyRequired());
 		if(pathMustExist && getProperty().isPropertyRequired())
 		{
 			File f=new File(pathRetVal);

@@ -102,7 +102,7 @@ public class PropertyReaderManager {
 		return name.substring(0,1).toUpperCase()+name.substring(1);
 	}
 	
-	public Collection<InputProperty> readProperty(InputProperty prop) throws InvalidPropertySpecException,NoPropertyReaderException
+	public Collection<InputProperty> readProperty(InputProperty prop,boolean fromDefault) throws InvalidPropertySpecException,NoPropertyReaderException
 	{
 		if(prop!=null)
 		{
@@ -110,7 +110,7 @@ public class PropertyReaderManager {
 				if(propReader==null)
 					throw new NoPropertyReaderException("No property reader available for property of type "+prop.getPropertyType());
 				propReader.setProperty(prop);
-				return propReader.readPropertyValue();
+				return propReader.readPropertyValue(fromDefault);
 			
 		}
 		else

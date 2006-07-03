@@ -127,15 +127,24 @@ public class InstallerPropertiesReader {
 		
 		for(InputProperty prop:properties)
 		{
-			generatedProperties.addAll(prop.readNow(propReader.defaultInLastPropertiesFile));	
+			Collection<InputProperty> retVal=prop.readNow(propReader.defaultInLastPropertiesFile);
+			if(retVal!=null)
+			{
+				generatedProperties.addAll(retVal);	
+			}
 		}
 		
+		try
+		{
+			for(InputProperty prop:generatedProperties)
 		
-		for(InputProperty prop:generatedProperties)
 		{
 			prop.readNow(propReader.defaultInLastPropertiesFile);
 		}
-		
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		properties.addAll(generatedProperties);
 		return PropertiesSerializer.outputPropertiesFile(propReader.getPropFileOutput(), properties,propReader.defaultInLastPropertiesFile);
 	}
 	
@@ -257,7 +266,7 @@ public class InstallerPropertiesReader {
 						else
 							metadatas.put(previousKey, contentPreviousKey.toString());
 					}
-					previousKey=line.substring(line.indexOf('@')+1,line.indexOf('=')-1).trim();
+					previousKey=line.substring(line.indexOf('@')+1,line.indexOf('=')).trim();
 					contentPreviousKey=new StringBuffer(line.substring(line.indexOf('=')+1).trim());
 				}
 				else
