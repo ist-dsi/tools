@@ -5,6 +5,7 @@
 # # it must start with an @ sign for each property and after specifying the first metadata
 # # all subsequent lines will be considered part of the metadata
 # # (so up to this line this will be considered the value for metadata1)
+# #
 # # Next will present the base metadata for all property readers:
 # # @message=The message to present to the user on data collection
 # # @type=The type of the property (further about types below)
@@ -14,6 +15,18 @@
 # # @dependency=other.property.name=value (this property depends on other.property.name having the defined value)
 # # 
 # 
+# Some properties might generate other properties based on the values specified...
+# For those types of properties, the additional metadata required is:
+# # @generated.message=The message to present to the user on data collection where ${value} is replaced by the base property value/values
+# # @generated.key=The property key to be generated where ${value} is replaced by the base property value/values
+# # @generated.type=The type of the property (further about types below)
+# # @generated.required=[yes/no]/[true/false]/[1/0]/[y/n] if the user must enter this property (default=y)
+# # @generated.persist=[yes/no]/[true/false]/[1/0]/[y/n] if this property should be saved to the generated file (default=y)
+# # @generated.defaultValue=The default value to be used if no previous run was made...
+#
+# in addition, you shoud specify any dependent property metadata as by its own type
+# prepended by the keyword "generated."
+#
 # Each property must have a type. To read each type, the class 
 # pt.linkare.ant.propreaders.PropertyReaderManager tries to localize a class
 # that implements the interface pt.linkare.ant.propreaders.PropertyReader by instrospection 
@@ -77,6 +90,9 @@
 #
 # type=nullableDefault - also uses the default value specified... but it does not complain of nulls
 #   additional metadata: none
+#
+# type=hostnameList - A list of hostnames
+#   additional metadata: @validate=Must be a valid hostname resolvable by DNS
 #
 # The rest of this file is an example to start with						 
 #
@@ -215,6 +231,34 @@ db.pass=fenix
 # @message = Database location
 # @type = string
 db.alias=//localhost:3306/${db.name}?useUnicode=true&amp;characterEncoding=latin1
+
+
+#------------------------------------------------------------------------------
+# Allowed Roles Configuration - Security area
+#------------------------------------------------------------------------------
+#
+#  filter.hostnames: comma seperated list of hostnames. The specified hostname
+#                    can is expected to be anything following the http:// 
+#                    string.
+#  filter.hostname.<hostname>: comma seperated list of RoleTypes that are to
+#                              be provided by the server <hostname>.
+#
+# @message = The hostnames under which this application will be made available for portal filters availability
+# @type = hostnameList
+# @validate = true
+# @required=true
+# @persist=true
+# @validate=true
+# @generated.message=Please choose the available portals for hostname ${value}
+# @generated.type=multipleOptions
+# @generated.required=true
+# @generated.persist=true
+# @generated.key=filter.hostname.${value}
+# @generated.options={"Person","Student","Teacher","Timetable Manager","Master Degree Candidate","Master Degree Administrative Office","Treasury","Coordinator","Employee","Assiduousness Management","Management","Degree Administrative Office","Credits Management","Department Credits Management","Erasmus","Degree Administrative Office (Super User)","Scientific Council","Administrator","Operator","Seminaries Coordination","Website Management","Grant Owner","Grant Owner Manager","Department Member","Department Administrative Office","Planning and Studies Administrative Office (GEP)","Directive Council","Delegate","First time Student","Projects Management","Institutional Projects Management","Bologne Process Management","Content Mng. System Manager","Space Manager", "Researcher", "Pedagogical Council", "Alumni"}
+# @generated.optionsValues={"PERSON","STUDENT","TEACHER","TIME_TABLE_MANAGER","MASTER_DEGREE_CANDIDATE","MASTER_DEGREE_ADMINISTRATIVE_OFFICE","TREASURY","COORDINATOR","EMPLOYEE","MANAGEMENT_ASSIDUOUSNESS","MANAGER","DEGREE_ADMINISTRATIVE_OFFICE","CREDITS_MANAGER","DEPARTMENT_CREDITS_MANAGER","ERASMUS,DEGREE_ADMINISTRATIVE_OFFICE_SUPER_USER","SCIENTIFIC_COUNCIL","ADMINISTRATOR","OPERATOR","SEMINARIES_COORDINATOR","WEBSITE_MANAGER","GRANT_OWNER","GRANT_OWNER_MANAGER","DEPARTMENT_MEMBER","DEPARTMENT_ADMINISTRATIVE_OFFICE","GEP","DIRECTIVE_COUNCIL","DELEGATE","FIRST_TIME_STUDENT","PROJECTS_MANAGER","INSTITUCIONAL_PROJECTS_MANAGER","BOLONHA_MANAGER","CMS_MANAGER,SPACE_MANAGER", "RESEARCHER", "PEDAGOGICAL_COUNCIL", "ALUMNI"}
+# @generated.defaultValue={"PERSON","STUDENT","TEACHER","TIME_TABLE_MANAGER","MASTER_DEGREE_CANDIDATE","MASTER_DEGREE_ADMINISTRATIVE_OFFICE","TREASURY","COORDINATOR","EMPLOYEE","MANAGEMENT_ASSIDUOUSNESS","MANAGER","DEGREE_ADMINISTRATIVE_OFFICE","CREDITS_MANAGER","DEPARTMENT_CREDITS_MANAGER","ERASMUS,DEGREE_ADMINISTRATIVE_OFFICE_SUPER_USER","SCIENTIFIC_COUNCIL","ADMINISTRATOR","OPERATOR","SEMINARIES_COORDINATOR","WEBSITE_MANAGER","GRANT_OWNER","GRANT_OWNER_MANAGER","DEPARTMENT_MEMBER","DEPARTMENT_ADMINISTRATIVE_OFFICE","GEP","DIRECTIVE_COUNCIL","DELEGATE","FIRST_TIME_STUDENT","PROJECTS_MANAGER","INSTITUCIONAL_PROJECTS_MANAGER","BOLONHA_MANAGER","CMS_MANAGER,SPACE_MANAGER", "RESEARCHER", "PEDAGOGICAL_COUNCIL", "ALUMNI"}
+filter.hostnames=localhost,localhost.localdomain
+
 
 #------------------------------------------------------------------------------
 # End of build.properties.spec file

@@ -1,9 +1,13 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import pt.linkare.ant.InputProperty;
+import pt.linkare.ant.InstallerPropertiesReader;
 import pt.linkare.ant.InvalidPropertySpecException;
 import pt.linkare.ant.MenuMessage;
 import pt.linkare.ant.StdIn;
@@ -128,6 +132,86 @@ public abstract class AbstractPropertyReader implements PropertyReader{
 		return value==null?defaultValue:(value.equalsIgnoreCase("y") || value.equalsIgnoreCase("1") || value.equalsIgnoreCase("true") || value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("on"));
 	}
 	
+	
+	public Collection<InputProperty> buildGeneratedProperties() throws InvalidPropertySpecException
+	{
+		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
+		String[] values=splitValues(getProperty().getPropertyValue());
+		String propNameBase=getProperty().getMetaData("generated.key");
+		String propTypeBase=getProperty().getMetaData("generated.type");
+		String propMessageBase=getProperty().getMetaData("generated.message");
+		String propDefaultValueBase=getProperty().getMetaData("generated.defaultValue");
+		if(propNameBase==null || propTypeBase==null || values==null || values.length==0)
+			return null;
+		
+		String generatedSpecBase=generateInputPropertySpec();
+		InputProperty propertyBase=generateInputPropertyBase(propNameBase, propDefaultValueBase, generatedSpecBase);
+	
+		for(String currentValue:values)
+		{
+			InputProperty generatedCurrentProperty=new InputProperty(propertyBase);
+			generatedCurrentProperty.setPropertyName(generateKey(propNameBase, currentValue));
+			generatedCurrentProperty.setPropertyMessage(generateMessage(propMessageBase, currentValue));
+			generatedProperties.add(generatedCurrentProperty);
+		}
+		
+		return generatedProperties;
+	}
+
+	public String[] splitValues(String values)
+	{
+		if(values==null)
+			return null;
+		
+		if(values.indexOf(',')>0)
+			return values.split(",");
+		else
+			return new String[]{values};
+	
+	}
+	
+	private String generateKey(String name,String value)
+	{
+		return name.replaceAll("${value}", value);
+	}
+	
+	private String generateMessage(String message,String value)
+	{
+		return message.replaceAll("${value}", value);
+	}
+	
+	private final static String CRLF=System.getProperty("line.separator");
+	private String generateInputPropertySpec()
+	{
+		StringWriter writerOut=new StringWriter();
+		
+		Map<String, String> metadata=getProperty().getMetaData();
+		for(Map.Entry<String, String> metadataCurrent:metadata.entrySet())
+		{
+			if(metadataCurrent.getKey().startsWith("generated.") && !(metadataCurrent.getKey().equals("generated.key") || metadataCurrent.getKey().equals("generated.defaultValue"))) 
+					writerOut.write("@"+metadataCurrent.getKey().substring("generated.".length()+1)+" = "+metadataCurrent.getValue()+CRLF);
+		}
+		
+		return writerOut.getBuffer().toString();
+	}
+	
+	private InputProperty generateInputPropertyBase(String propName,String defaultValue,String propSpec)
+	{
+		return InstallerPropertiesReader.getInstance().parseInputPropertyMetaInfo(propName, propSpec, defaultValue);
+	}
+	
+	
+	public Collection<InputProperty> readPropertyValue(boolean fromDefault) throws InvalidPropertySpecException{
+	
+		if(fromDefault)
+			getProperty().setPropertyValue(InstallerPropertiesReader.getInstance().getDefaultValue(getProperty()));
+		else
+			getProperty().setPropertyDefaultValue(readProperty());
+	
+		return buildGeneratedProperties();
+	}
+	
+	public abstract String readProperty() throws InvalidPropertySpecException;
 	
 }
 

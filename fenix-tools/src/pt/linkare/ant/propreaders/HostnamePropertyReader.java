@@ -16,14 +16,10 @@ public class HostnamePropertyReader extends AbstractPropertyReader{
 		while(hostname==null)
 		{
 			hostname=readPropertySimple();
-			InetAddress[] addresses=null;
-			try {
-				addresses = InetAddress.getAllByName(hostname);
-			}
-			catch (UnknownHostException e) {
-				hostname=null;			
-			}
-			if(parseBoolean(getProperty().getMetaData("validate"),false) && (addresses==null || addresses.length==0))
+			if(!parseBoolean(getProperty().getMetaData("validate"),false))
+				return hostname;
+
+			if(parseBoolean(getProperty().getMetaData("validate"),false) && !isValidHostname(hostname))
 			{
 				System.out.println("Host  "+hostname+" is not a valid address!");
 				hostname=null;			
@@ -32,7 +28,7 @@ public class HostnamePropertyReader extends AbstractPropertyReader{
 		return hostname;
 	}
 	
-	private String readPropertySimple()
+	protected String readPropertySimple()
 	{
 		String message=buildDefaultMessage();
 		
@@ -43,6 +39,23 @@ public class HostnamePropertyReader extends AbstractPropertyReader{
 			return getInput().readString(message, getProperty().isPropertyRequired()?1:0);
 		}
 			
+	}
+	
+	
+	protected boolean isValidHostname(String hostname)
+	{
+		InetAddress[] addresses=null;
+		try {
+			addresses = InetAddress.getAllByName(hostname);
+		}
+		catch (UnknownHostException e) {
+			return false;			
+		}
+		
+		if(addresses!=null && addresses.length>0)
+			return true;
+		else
+			return false;
 	}
 	
 }

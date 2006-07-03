@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -44,12 +45,15 @@ public class InstallerPropertiesReader {
 	//were the properties read from the ciphered file?
 	private boolean defaultInLastPropertiesFile=false;
 	
+	
+	private static InstallerPropertiesReader instance=null;
+	
 	/**
 	 * Helper constructer
 	 * @param propFileInput The input file to read the properties spec
 	 * @param propFileOutput The generated output properties file
 	 */
-	public InstallerPropertiesReader(File propFileInput, File propFileOutput) {
+	private InstallerPropertiesReader(File propFileInput, File propFileOutput) {
 		super();
 		this.setPropFileInput(propFileInput);
 		this.setPropFileOutput(propFileOutput);
@@ -59,10 +63,25 @@ public class InstallerPropertiesReader {
 	 * Default constructor - for completeness
 	 *
 	 */
-	public InstallerPropertiesReader() {
+	private InstallerPropertiesReader() {
 		super();
 	}
-
+	
+	public synchronized static InstallerPropertiesReader getInstance() {
+		if(instance==null)
+			instance=new InstallerPropertiesReader();
+		
+		return instance;
+			
+	}
+	
+	public synchronized static InstallerPropertiesReader getInstance(File inputFile,File outputFile) {
+		if(instance==null)
+			instance=new InstallerPropertiesReader(inputFile,outputFile);
+		
+		return instance;
+			
+	}
 	/**
 	 * JavaBeans property accessor
 	 * @return Returns the File of input properties spec
@@ -100,17 +119,23 @@ public class InstallerPropertiesReader {
 	public static Properties readProperties(File fInput,File fOutput) throws IOException, InvalidPropertySpecException, NoPropertyReaderException
 	{
 		
-		InstallerPropertiesReader propReader=new InstallerPropertiesReader(fInput,fOutput);
+		InstallerPropertiesReader propReader=InstallerPropertiesReader.getInstance(fInput,fOutput);
 		
 		List<InputProperty> properties=propReader.parse();
 		
+		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
+		
 		for(InputProperty prop:properties)
 		{
-			if(propReader.defaultInLastPropertiesFile && propReader.lastPropertiesValues.containsKey(prop.getPropertyName()))
-				prop.setPropertyValue(propReader.lastPropertiesValues.getProperty(prop.getPropertyName()));	
-			else
-				prop.readNow();
+			generatedProperties.addAll(prop.readNow(propReader.defaultInLastPropertiesFile));	
 		}
+		
+		
+		for(InputProperty prop:generatedProperties)
+		{
+			prop.readNow(propReader.defaultInLastPropertiesFile);
+		}
+		
 		return PropertiesSerializer.outputPropertiesFile(propReader.getPropFileOutput(), properties,propReader.defaultInLastPropertiesFile);
 	}
 	
@@ -183,7 +208,7 @@ public class InstallerPropertiesReader {
 		return null;
 	}
 	
-	private InputProperty parseInputPropertyMetaInfo(java.lang.String propName, java.lang.String metadata, java.lang.String defaultPropValue) {
+	public InputProperty parseInputPropertyMetaInfo(java.lang.String propName, java.lang.String metadata, java.lang.String defaultPropValue) {
 		InputProperty retVal=new InputProperty();
 		
 		retVal.setPropertyName(propName);
@@ -379,6 +404,16 @@ public class InstallerPropertiesReader {
 	public static File buildLastPropertiesFile(File outputPropertiesFile)
 	{
 		return new File(outputPropertiesFile.getParentFile(),"."+outputPropertiesFile.getName()+".crypt");
+	}
+
+	public String getDefaultValue(InputProperty property) {
+		String propertyName=property.getPropertyName();
+		if(lastPropertiesValues!=null && lastPropertiesValues.containsKey(propertyName))
+			return lastPropertiesValues.getProperty(propertyName);
+		else if(outputPropertiesValues!=null && outputPropertiesValues.containsKey(propertyName))
+			return outputPropertiesValues.getProperty(propertyName);
+		else
+			return property.getPropertyDefaultValue();
 	}
 	
 

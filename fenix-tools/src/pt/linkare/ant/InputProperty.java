@@ -1,6 +1,7 @@
 package pt.linkare.ant;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,21 @@ public class InputProperty {
 	private boolean read=false;
 	
 	
+	public InputProperty(InputProperty other) {
+		this.setPropertyMessage(other.getPropertyMessage());
+		this.setPropertyDefaultValue(other.getPropertyDefaultValue());
+		this.setPropertyName(other.getPropertyName());
+		this.setPropertyType(other.getPropertyType());
+		this.setPropertyPersist(other.isPropertyPersist());
+		this.setPropertyRequired(other.isPropertyRequired());
+		this.setPropertyValue(other.getPropertyValue());
+		this.setRead(other.isRead());
+		this.setDependencies(other.getDependencies());
+		this.propertyMetaData=other.propertyMetaData;
+	}
 	
 	public InputProperty() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -141,6 +153,11 @@ public class InputProperty {
 	{
 		return this.propertyMetaData.get(key);
 	}
+	
+	public Map<String,String> getMetaData()
+	{
+		return this.propertyMetaData;
+	}
 
 	public void clearMetaData()
 	{
@@ -189,26 +206,29 @@ public class InputProperty {
 		this.read = read;
 	}
 	
-	public void readNow() throws InvalidPropertySpecException,NoPropertyReaderException
+	public Collection<InputProperty> readNow(boolean fromDefault) throws InvalidPropertySpecException,NoPropertyReaderException
 	{
-		if(isRead()) return;
+		if(isRead()) return null;
 		
 		//do not read the prop again in any case
 		this.setRead(true);
+		
+		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
 		
 		for(PropertyDependency dep:getDependencies())
 		{
 			if(!dep.getParentProperty().isRead())
 			{
-				dep.getParentProperty().readNow();
+				generatedProperties.addAll(dep.getParentProperty().readNow(fromDefault));
 			}
 		}
 		
 		if(validateDependencies())
-			setPropertyValue(PropertyReaderManager.getInstance().readProperty(this));
+			generatedProperties.addAll(PropertyReaderManager.getInstance().readProperty(this));
 		else
 			setPropertyValue(null);
-		
+
+		return generatedProperties;
 	}
 
 	/* (non-Javadoc)

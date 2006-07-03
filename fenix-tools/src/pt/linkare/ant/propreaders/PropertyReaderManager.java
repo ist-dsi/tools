@@ -1,5 +1,6 @@
 package pt.linkare.ant.propreaders;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import pt.linkare.ant.InputProperty;
@@ -101,7 +102,7 @@ public class PropertyReaderManager {
 		return name.substring(0,1).toUpperCase()+name.substring(1);
 	}
 	
-	public String readProperty(InputProperty prop) throws InvalidPropertySpecException,NoPropertyReaderException
+	public Collection<InputProperty> readProperty(InputProperty prop) throws InvalidPropertySpecException,NoPropertyReaderException
 	{
 		if(prop!=null)
 		{
@@ -109,11 +110,12 @@ public class PropertyReaderManager {
 				if(propReader==null)
 					throw new NoPropertyReaderException("No property reader available for property of type "+prop.getPropertyType());
 				propReader.setProperty(prop);
-				return propReader.readProperty();
+				return propReader.readPropertyValue();
 			
 		}
 		else
 			throw new RuntimeException("Trying to read null property");
 	}
+	
 	
 }
