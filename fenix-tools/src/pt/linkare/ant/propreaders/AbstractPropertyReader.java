@@ -153,26 +153,38 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 	{
 		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
 		String[] values=splitValues(getProperty().getPropertyValue());
-		String propNameBase=getProperty().getMetaData("generated.key");
-		String propTypeBase=getProperty().getMetaData("generated.type");
-		String propMessageBase=getProperty().getMetaData("generated.message");
-		String propDefaultValueBase=getProperty().getMetaData("generated.defaultValue");
-		if(propNameBase==null || propTypeBase==null || values==null || values.length==0)
-			return generatedProperties;
-		
-		String generatedSpecBase=generateInputPropertySpec();
-		InputProperty propertyBase=generateInputPropertyBase(propNameBase, propDefaultValueBase, generatedSpecBase);
-		
-		for(String currentValue:values)
+		int countGenerated=1;
+		String prefixGenerated="generated."+countGenerated;
+		while(getProperty().getMetaData(prefixGenerated+".key")!=null)
 		{
-			InputProperty generatedCurrentProperty=new InputProperty(propertyBase);
-			generatedCurrentProperty.setPropertyName(generateKey(propNameBase, currentValue));
-			generatedCurrentProperty.setPropertyMessage(generateMessage(propMessageBase, currentValue));
-			generatedCurrentProperty.setPropertyDefaultValue(InstallerPropertiesReader.getInstance().getDefaultValue(generatedCurrentProperty));
-			generatedProperties.add(generatedCurrentProperty);
+			String propNameBase=getProperty().getMetaData(prefixGenerated+".key");
+			String propTypeBase=getProperty().getMetaData(prefixGenerated+".type");
+			String propMessageBase=getProperty().getMetaData(prefixGenerated+".message");
+			String propDefaultValueBase=getProperty().getMetaData(prefixGenerated+".defaultValue");
+			if(propNameBase==null || propTypeBase==null || values==null || values.length==0)
+				return generatedProperties;
+			
+			String generatedSpecBase=generateInputPropertySpec(prefixGenerated);
+			InputProperty propertyBase=generateInputPropertyBase(propNameBase, propDefaultValueBase, generatedSpecBase);
+			
+			for(String currentValue:values)
+			{
+				InputProperty generatedCurrentProperty=new InputProperty(propertyBase);
+				generatedCurrentProperty.setPropertyName(generateKey(propNameBase, currentValue));
+				generatedCurrentProperty.setPropertyMessage(generateMessage(propMessageBase, currentValue));
+				generatedCurrentProperty.setPropertyDefaultValue(InstallerPropertiesReader.getInstance().getDefaultValue(generatedCurrentProperty));
+				generatedProperties.add(generatedCurrentProperty);
+			}
+			
+			
+			
+			
+			++countGenerated;
+			prefixGenerated="generated."+countGenerated;
 		}
 		
 		return generatedProperties;
+		
 	}
 
 	public static String[] splitValues(String values)
@@ -198,15 +210,15 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 	}
 	
 	private final static String CRLF=System.getProperty("line.separator");
-	private String generateInputPropertySpec()
+	private String generateInputPropertySpec(String prefixGenerated)
 	{
 		StringWriter writerOut=new StringWriter();
 		
 		Map<String, String> metadata=getProperty().getMetaData();
 		for(Map.Entry<String, String> metadataCurrent:metadata.entrySet())
 		{
-			if(metadataCurrent.getKey().startsWith("generated.") && !(metadataCurrent.getKey().equals("generated.key") || metadataCurrent.getKey().equals("generated.defaultValue"))) 
-					writerOut.write("@"+metadataCurrent.getKey().substring("generated.".length())+" = "+metadataCurrent.getValue()+CRLF);
+			if(metadataCurrent.getKey().startsWith(prefixGenerated+".") && !(metadataCurrent.getKey().equals(prefixGenerated+".key") || metadataCurrent.getKey().equals(prefixGenerated+".defaultValue"))) 
+					writerOut.write("@"+metadataCurrent.getKey().substring(prefixGenerated.length()+1)+" = "+metadataCurrent.getValue()+CRLF);
 		}
 		
 		return writerOut.getBuffer().toString();
@@ -216,7 +228,6 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 	{
 		return InstallerPropertiesReader.getInstance().parseInputPropertyMetaInfo(getProperty().getPropertyMap(),propName, propSpec, defaultValue);
 	}
-	
 	
 	public Collection<InputProperty> readPropertyValue(boolean fromDefault) throws InvalidPropertySpecException{
 	
@@ -228,8 +239,6 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 		return buildGeneratedProperties();
 		
 	}
-
-
 	
 	public abstract String readProperty() throws InvalidPropertySpecException;
 	
