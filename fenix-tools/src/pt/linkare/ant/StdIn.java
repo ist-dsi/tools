@@ -435,7 +435,7 @@ public class StdIn {
 				for(int i=0;i<valuesSelected.length;i++)
 				{
 					if(i>0)
-						retVal.append(", ");
+						retVal.append(",");
 					retVal.append(menuMessage.getOptionValues().get(valuesSelected[i]-1));
 				}
 				

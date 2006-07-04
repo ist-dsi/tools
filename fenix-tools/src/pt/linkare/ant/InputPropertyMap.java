@@ -1,14 +1,9 @@
 package pt.linkare.ant;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
-public class InputPropertyMap extends HashMap<String, InputProperty> {
-
-	public InputPropertyMap(int initialCapacity, float loadFactor) {
-		super(initialCapacity, loadFactor);
-	}
+public class InputPropertyMap extends ArrayList<InputProperty> {
 
 	public InputPropertyMap(int initialCapacity) {
 		super(initialCapacity);
@@ -18,18 +13,19 @@ public class InputPropertyMap extends HashMap<String, InputProperty> {
 		super();
 	}
 
-	public InputPropertyMap(Map<String,InputProperty> m) {
-		super(m);
-	}
-
-	public InputProperty put(InputProperty value) {
-		return super.put(value.getPropertyName(), value);
-		
+	public void put(InputProperty value) {
+		super.add(value);
 	}
 
 	public InputProperty get(String propertyName)
 	{
-		return super.get(propertyName);
+		for(InputProperty p:this)
+		{
+			if(p.getPropertyName().equals(propertyName))
+				return p;
+		}
+		
+		return null;
 	}
 
 	public void putAll(Collection<InputProperty> propertiesList) {

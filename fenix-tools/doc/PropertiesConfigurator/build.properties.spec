@@ -62,6 +62,13 @@
 # 
 # type=langString  - A list of languages to choose from (menu-like) - defaults to a list of all available locales
 #  	additional metadata: langs={"lang_1","lang_2","lang_3"} (Languages should be language ISO Codes : pt, en, es, it, fr
+#
+# type=langLocation  - A list of countries to choose from (menu-like) - defaults to a list of all available countries
+#  	additional metadata: languageProperty=the name of a previous langString property with the language selected ... This way only the countries with that language will be made available
+#
+# type=langVariant  - A list of variants to choose from (menu-like) - defaults to a list of all available variants
+#  	additional metadata: languageProperty=the name of a previous langString property with the language selected ... This way only the variants with that language will be made available
+#                        locationProperty=the name of a previous langLocation property with the country selected ... This way only the variants with that country will be made available
 # 
 # type=menu - A menu to choose from an option
 #   additional metadata: options={"option 1","option 2","option 3"} (required)
@@ -170,6 +177,21 @@ institution.project=/home/gedl/workspace/fenix-head
 # @message = Default language for application
 # @type = langString
 language=pt
+
+# @message = Default location for application
+# @type = langLocation
+# @languageProperty = language
+# @dependency = language=*
+location=PT
+
+# @message = Default variant for application
+# @type = langVariant
+# @required = no
+# @languageProperty = language
+# @locationProperty = location
+# @dependency = location=*
+# @dependency = language=*
+variant=
 
 #------------------------------------------------------------------------------
 # Web Container Configuration

@@ -27,6 +27,7 @@ public class InputProperty {
 	
 	
 	public InputProperty(InputProperty other) {
+		this.propertyMap=other.propertyMap;
 		this.setPropertyMessage(other.getPropertyMessage());
 		this.setPropertyDefaultValue(other.getPropertyDefaultValue());
 		this.setPropertyName(other.getPropertyName());
@@ -37,8 +38,6 @@ public class InputProperty {
 		this.setRead(other.isRead());
 		this.setDependencies(other.getDependencies());
 		this.propertyMetaData=other.propertyMetaData;
-		this.propertyMap=other.propertyMap;
-		this.propertyMap.put(this);
 	}
 	
 	public InputProperty(InputPropertyMap propertyMap) {
@@ -111,9 +110,7 @@ public class InputProperty {
 	 * @param propertyName The propertyName to set.
 	 */
 	public void setPropertyName(String propertyName) {
-		this.propertyMap.remove(this.propertyName);
 		this.propertyName = propertyName;
-		this.propertyMap.put(this);
 	}
 
 	/**

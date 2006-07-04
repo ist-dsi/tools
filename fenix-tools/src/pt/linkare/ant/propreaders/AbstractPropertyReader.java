@@ -56,7 +56,7 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 		if(getProperty().getPropertyDefaultValue()!=null && includeDefaultValue)
 			message.append(" ["+getProperty().getPropertyDefaultValue()+"]");
 		
-		message.append(StdIn.CRLF);
+		//message.append(StdIn.CRLF);
 		return message.toString();
 	}
 	
@@ -110,7 +110,7 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 		else
 			message.append(getProperty().getPropertyMessage());
 				
-		message.append(StdIn.CRLF);
+		//message.append(StdIn.CRLF);
 		
 		return new MenuMessage(message.toString(),options,optionValues);
 	}
@@ -168,6 +168,7 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 			InputProperty generatedCurrentProperty=new InputProperty(propertyBase);
 			generatedCurrentProperty.setPropertyName(generateKey(propNameBase, currentValue));
 			generatedCurrentProperty.setPropertyMessage(generateMessage(propMessageBase, currentValue));
+			generatedCurrentProperty.setPropertyDefaultValue(InstallerPropertiesReader.getInstance().getDefaultValue(generatedCurrentProperty));
 			generatedProperties.add(generatedCurrentProperty);
 		}
 		

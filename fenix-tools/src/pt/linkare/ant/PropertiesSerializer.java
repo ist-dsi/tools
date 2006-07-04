@@ -136,7 +136,7 @@ public class PropertiesSerializer {
 		Properties retVal=new Properties();
 		BufferedWriter out=getOut();
 		BufferedWriter outCipher=getCipherOut();
-		for(InputProperty prop:getProperties().values())
+		for(InputProperty prop:getProperties())
 		{
 			String key=prop.getPropertyName();
 			String value=prop.getPropertyValue();

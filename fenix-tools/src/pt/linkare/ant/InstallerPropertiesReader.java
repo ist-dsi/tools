@@ -125,7 +125,7 @@ public class InstallerPropertiesReader {
 		
 		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
 		
-		for(InputProperty prop:properties.values())
+		for(InputProperty prop:properties)
 		{
 			Collection<InputProperty> retVal=prop.readNow(propReader.defaultInLastPropertiesFile);
 			if(retVal!=null)
@@ -180,14 +180,14 @@ public class InstallerPropertiesReader {
 				else
 					propName=line;
 				
-				parseInputPropertyMetaInfo(propertiesToRead,propName, propMetaInfo.toString(), propDefaultValue);
+				propertiesToRead.put(parseInputPropertyMetaInfo(propertiesToRead,propName, propMetaInfo.toString(), propDefaultValue));
 				propMetaInfo=new StringBuffer();
 				propName=null;
 				propDefaultValue=null;
 			}
 		}
 		
-		for(InputProperty prop:propertiesToRead.values())
+		for(InputProperty prop:propertiesToRead)
 		{
 			List<PropertyDependency> dependencies=prop.getDependencies();
 			List<PropertyDependency> dependencyRemove=new ArrayList<PropertyDependency>();

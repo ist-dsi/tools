@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import pt.linkare.ant.InputProperty;
 import pt.linkare.ant.InvalidPropertySpecException;
 import pt.linkare.ant.MenuMessage;
 
@@ -26,8 +27,19 @@ public class LangVariantPropertyReader extends AbstractPropertyReader{
 		MenuMessage menuOptionsVariant=new MenuMessage();
 		menuOptionsVariant.setMessage(buildDefaultMessage(false));
 		List<String>[] optionsAndValuesVariant=null;
-		String language=getProperty().getPropertyMap().get(getProperty().getMetaData("languageProperty")).getPropertyValue();
-		String location=getProperty().getPropertyMap().get(getProperty().getMetaData("locationProperty")).getPropertyValue();
+		
+		InputProperty languageProp=getProperty().getPropertyMap().get(getProperty().getMetaData("languageProperty"));
+		InputProperty locationProp=getProperty().getPropertyMap().get(getProperty().getMetaData("locationProperty"));
+		
+		String language=null;
+		String location=null;
+		
+		if(languageProp!=null)	
+			language=languageProp.getPropertyValue();
+		
+		if(locationProp!=null)	
+			location=locationProp.getPropertyValue();
+		
 		optionsAndValuesVariant=buildVariantOptions(language,location);
 		
 		menuOptionsVariant.setOptions(optionsAndValuesVariant[0]);
@@ -50,11 +62,24 @@ public class LangVariantPropertyReader extends AbstractPropertyReader{
 			if((language==null || (locale.getLanguage().equals(language) && !optionsValuesRetVal[1].contains(locale.getVariant()))) 
 					&& (location==null || (locale.getCountry().equals(location) && !optionsValuesRetVal[1].contains(locale.getVariant()))))
 			{
-				optionsValuesRetVal[0].add(locale.getDisplayVariant());
-				optionsValuesRetVal[1].add(locale.getVariant());
+				String variant=locale.getDisplayVariant();
+				if(variant==null || variant.length()==0)
+					continue;
+				String displayVariant=locale.getDisplayCountry();
+				if(displayVariant==null || displayVariant.length()==0)
+					displayVariant="default";
+				
+				optionsValuesRetVal[0].add(displayVariant);
+				optionsValuesRetVal[1].add(variant);
 			}
 		}
 		
+		if(!getProperty().isPropertyRequired())
+		{
+			optionsValuesRetVal[0].add("None");
+			optionsValuesRetVal[1].add("");
+		}
+
 		return optionsValuesRetVal;
 		
 	}

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import pt.linkare.ant.InputProperty;
 import pt.linkare.ant.InvalidPropertySpecException;
 import pt.linkare.ant.MenuMessage;
 
@@ -28,7 +29,11 @@ public class LangLocationPropertyReader extends AbstractPropertyReader{
 		List<String>[] optionsAndValuesLocation=null;
 		if(getProperty().getMetaData("languageProperty")!=null)
 		{
-			optionsAndValuesLocation=buildLocationOptions(getProperty().getPropertyMap().get(getProperty().getMetaData("languageProperty")).getPropertyValue());
+			InputProperty propRelated=getProperty().getPropertyMap().get(getProperty().getMetaData("languageProperty"));
+			if(propRelated!=null)
+				optionsAndValuesLocation=buildLocationOptions(getProperty().getPropertyMap().get(getProperty().getMetaData("languageProperty")).getPropertyValue());
+			else
+				optionsAndValuesLocation=buildLocationOptions(null);
 		}
 		else
 			optionsAndValuesLocation=buildLocationOptions(null);
@@ -52,10 +57,23 @@ public class LangLocationPropertyReader extends AbstractPropertyReader{
 		{
 			if(language==null || (locale.getLanguage().equals(language) && !optionsValuesRetVal[1].contains(locale.getCountry())))
 			{
-				optionsValuesRetVal[0].add(locale.getDisplayCountry());
-				optionsValuesRetVal[1].add(locale.getCountry());
+				String country=locale.getCountry();
+				if(country==null || country.length()==0)
+					continue;
+				String displayCountry=locale.getDisplayCountry();
+				if(displayCountry==null || displayCountry.length()==0)
+					displayCountry="default";
+				optionsValuesRetVal[0].add(displayCountry);
+				optionsValuesRetVal[1].add(country);
 			}
 		}
+		
+		if(!getProperty().isPropertyRequired())
+		{
+			optionsValuesRetVal[0].add("None");
+			optionsValuesRetVal[1].add("");
+		}
+			
 		
 		return optionsValuesRetVal;
 		
