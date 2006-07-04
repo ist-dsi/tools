@@ -10,6 +10,7 @@ import pt.linkare.ant.propreaders.PropertyReaderManager;
 
 public class InputProperty {
 
+	private InputPropertyMap propertyMap=null;
 	private String propertyName=null;
 	private String propertyMessage=null;
 	private String propertyDefaultValue=null;
@@ -36,10 +37,13 @@ public class InputProperty {
 		this.setRead(other.isRead());
 		this.setDependencies(other.getDependencies());
 		this.propertyMetaData=other.propertyMetaData;
+		this.propertyMap=other.propertyMap;
+		this.propertyMap.put(this);
 	}
 	
-	public InputProperty() {
+	public InputProperty(InputPropertyMap propertyMap) {
 		super();
+		this.propertyMap=propertyMap;
 	}
 
 	/**
@@ -107,7 +111,9 @@ public class InputProperty {
 	 * @param propertyName The propertyName to set.
 	 */
 	public void setPropertyName(String propertyName) {
+		this.propertyMap.remove(this.propertyName);
 		this.propertyName = propertyName;
+		this.propertyMap.put(this);
 	}
 
 	/**
@@ -254,5 +260,13 @@ public class InputProperty {
 		
 		return metadataStr.toString();
 	}
+
+	/**
+	 * @return Returns the propertyMap.
+	 */
+	public InputPropertyMap getPropertyMap() {
+		return propertyMap;
+	}
+
 
 }

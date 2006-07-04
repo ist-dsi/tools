@@ -121,11 +121,11 @@ public class InstallerPropertiesReader {
 		
 		InstallerPropertiesReader propReader=InstallerPropertiesReader.getInstance(fInput,fOutput);
 		
-		List<InputProperty> properties=propReader.parse();
+		InputPropertyMap properties=propReader.parse();
 		
 		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
 		
-		for(InputProperty prop:properties)
+		for(InputProperty prop:properties.values())
 		{
 			Collection<InputProperty> retVal=prop.readNow(propReader.defaultInLastPropertiesFile);
 			if(retVal!=null)
@@ -144,13 +144,13 @@ public class InstallerPropertiesReader {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		properties.addAll(generatedProperties);
+		properties.putAll(generatedProperties);
 		return PropertiesSerializer.outputPropertiesFile(propReader.getPropFileOutput(), properties,propReader.defaultInLastPropertiesFile);
 	}
 	
 
-	public List<InputProperty> parse() throws IOException {
-		ArrayList<InputProperty> propertiesToRead = new ArrayList<InputProperty>();
+	public InputPropertyMap parse() throws IOException {
+		InputPropertyMap propertiesToRead = new InputPropertyMap();
 		
 		BufferedReader br=new BufferedReader(new FileReader(getPropFileInput()));
 		StringBuffer propMetaInfo=new StringBuffer();
@@ -180,21 +180,20 @@ public class InstallerPropertiesReader {
 				else
 					propName=line;
 				
-				InputProperty prop=parseInputPropertyMetaInfo(propName, propMetaInfo.toString(), propDefaultValue);
+				parseInputPropertyMetaInfo(propertiesToRead,propName, propMetaInfo.toString(), propDefaultValue);
 				propMetaInfo=new StringBuffer();
 				propName=null;
 				propDefaultValue=null;
-				propertiesToRead.add(prop);
 			}
 		}
 		
-		for(InputProperty prop:propertiesToRead)
+		for(InputProperty prop:propertiesToRead.values())
 		{
 			List<PropertyDependency> dependencies=prop.getDependencies();
 			List<PropertyDependency> dependencyRemove=new ArrayList<PropertyDependency>();
 			for(PropertyDependency propDep:dependencies)
 			{
-				InputProperty parentProperty=getPropertyWithName(propDep.getParentPropertyName(), propertiesToRead);
+				InputProperty parentProperty=propertiesToRead.get(propDep.getParentPropertyName());
 				
 				if(parentProperty==null)
 					dependencyRemove.add(propDep);
@@ -207,18 +206,10 @@ public class InstallerPropertiesReader {
 		return propertiesToRead;
 	}
 
-	private InputProperty getPropertyWithName(String propName,List<InputProperty> propertiesList)
-	{
-		for(InputProperty prop:propertiesList)
-		{
-			if(prop.getPropertyName().equals(propName))
-				return prop;
-		}
-		return null;
-	}
 	
-	public InputProperty parseInputPropertyMetaInfo(java.lang.String propName, java.lang.String metadata, java.lang.String defaultPropValue) {
-		InputProperty retVal=new InputProperty();
+	
+	public InputProperty parseInputPropertyMetaInfo(InputPropertyMap map,java.lang.String propName, java.lang.String metadata, java.lang.String defaultPropValue) {
+		InputProperty retVal=new InputProperty(map);
 		
 		retVal.setPropertyName(propName);
 		

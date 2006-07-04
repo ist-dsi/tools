@@ -213,7 +213,7 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 	
 	private InputProperty generateInputPropertyBase(String propName,String defaultValue,String propSpec)
 	{
-		return InstallerPropertiesReader.getInstance().parseInputPropertyMetaInfo(propName, propSpec, defaultValue);
+		return InstallerPropertiesReader.getInstance().parseInputPropertyMetaInfo(getProperty().getPropertyMap(),propName, propSpec, defaultValue);
 	}
 	
 	

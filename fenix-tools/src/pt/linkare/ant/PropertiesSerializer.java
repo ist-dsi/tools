@@ -13,7 +13,6 @@ import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.List;
 import java.util.Properties;
 
 import javax.crypto.Cipher;
@@ -25,7 +24,7 @@ import javax.crypto.spec.PBEParameterSpec;
 
 public class PropertiesSerializer {
 
-	private List<InputProperty> properties=null;
+	private InputPropertyMap properties=null;
 	private File outputPropertyFile=null;
 	private boolean defaultCipherSourced=false;
 	
@@ -137,7 +136,7 @@ public class PropertiesSerializer {
 		Properties retVal=new Properties();
 		BufferedWriter out=getOut();
 		BufferedWriter outCipher=getCipherOut();
-		for(InputProperty prop:getProperties())
+		for(InputProperty prop:getProperties().values())
 		{
 			String key=prop.getPropertyName();
 			String value=prop.getPropertyValue();
@@ -172,7 +171,7 @@ public class PropertiesSerializer {
 		return retVal;
 	}
 	
-	public Properties generatePropertiesFile(File out,List<InputProperty> props,boolean defaultCipherSourced) throws IOException
+	public Properties generatePropertiesFile(File out,InputPropertyMap props,boolean defaultCipherSourced) throws IOException
 	{
 		this.setProperties(props);
 		this.setOutputPropertyFile(out);
@@ -180,7 +179,7 @@ public class PropertiesSerializer {
 		return this.generatePropertiesFile();
 	}
 	
-	public static Properties outputPropertiesFile(File out,List<InputProperty> props,boolean defaultCipherSourced) throws IOException
+	public static Properties outputPropertiesFile(File out,InputPropertyMap props,boolean defaultCipherSourced) throws IOException
 	{
 		PropertiesSerializer serialThis=new PropertiesSerializer();
 		return serialThis.generatePropertiesFile(out, props,defaultCipherSourced);
@@ -189,14 +188,14 @@ public class PropertiesSerializer {
 	/**
 	 * @return Returns the properties.
 	 */
-	public List<InputProperty> getProperties() {
+	public InputPropertyMap getProperties() {
 		return properties;
 	}
 
 	/**
 	 * @param properties The properties to set.
 	 */
-	public void setProperties(List<InputProperty> properties) {
+	public void setProperties(InputPropertyMap properties) {
 		this.properties = properties;
 	}
 	
