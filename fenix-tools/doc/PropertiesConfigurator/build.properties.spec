@@ -33,6 +33,7 @@
 # from the following class names: 
 # 1. From a system property called "property.reader.<type>" 
 # 2. From the package  pt.linkare.ant.propreaders.<Type>PropertyReader
+# 3. From the package specified in the additionalPackageForPropertyReaders  <package_defined>.<Type>PropertyReader
 # 
 # If you want to extend the type system you may implement PropertyReader interface or extends AbstractPropertyReader
 #
