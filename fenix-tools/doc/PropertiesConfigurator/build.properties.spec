@@ -285,8 +285,8 @@ db.alias=//localhost:3306/${db.name}?useUnicode=true&amp;characterEncoding=latin
 # @generated.2.key=application.index.html.link.${value}
 # @generated.2.required=true
 # @generated.2.persist=true
+# @generated.2.defaultValue=siteMap.do
 filter.hostnames=localhost,localhost.localdomain
-
 
 
 #------------------------------------------------------------------------------
