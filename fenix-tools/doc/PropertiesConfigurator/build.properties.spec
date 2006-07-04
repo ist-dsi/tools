@@ -16,24 +16,24 @@
 # # 
 # 
 # Some properties might generate other properties based on the values specified...
-# For those types of properties, the additional metadata required is:
-# # @generated.message=The message to present to the user on data collection where ${value} is replaced by the base property value/values
-# # @generated.key=The property key to be generated where ${value} is replaced by the base property value/values
-# # @generated.type=The type of the property (further about types below)
-# # @generated.required=[yes/no]/[true/false]/[1/0]/[y/n] if the user must enter this property (default=y)
-# # @generated.persist=[yes/no]/[true/false]/[1/0]/[y/n] if this property should be saved to the generated file (default=y)
-# # @generated.defaultValue=The default value to be used if no previous run was made...
+# For those types of properties, the additional metadata required is (count should start at 1 and have no gaps):
+# # @generated.<count>.message=The message to present to the user on data collection where ${value} is replaced by the base property value/values
+# # @generated.<count>.key=The property key to be generated where ${value} is replaced by the base property value/values
+# # @generated.<count>.type=The type of the property (further about types below)
+# # @generated.<count>.required=[yes/no]/[true/false]/[1/0]/[y/n] if the user must enter this property (default=y)
+# # @generated.<count>.persist=[yes/no]/[true/false]/[1/0]/[y/n] if this property should be saved to the generated file (default=y)
+# # @generated.<count>.defaultValue=The default value to be used if no previous run was made...
 #
 # in addition, you shoud specify any dependent property metadata as by its own type
-# prepended by the keyword "generated."
+# prepended by the keyword "generated.<count>"
 #
 # Each property must have a type. To read each type, the class 
 # pt.linkare.ant.propreaders.PropertyReaderManager tries to localize a class
 # that implements the interface pt.linkare.ant.propreaders.PropertyReader by instrospection 
 # from the following class names: 
 # 1. From a system property called "property.reader.<type>" 
-# 2. From the package  pt.linkare.ant.propreaders.<Type>PropertyReader
-# 3. From the package specified in the additionalPackageForPropertyReaders  <package_defined>.<Type>PropertyReader
+# 2. From the package  pt.linkare.ant.propreaders.<Type>PropertyReader (note the capitalization of Type)
+# 3. From the package specified in the additionalPackageForPropertyReaders  <package_defined>.<Type>PropertyReader (note the capitalization of Type)
 # 
 # If you want to extend the type system you may implement PropertyReader interface or extends AbstractPropertyReader
 #
@@ -272,14 +272,19 @@ db.alias=//localhost:3306/${db.name}?useUnicode=true&amp;characterEncoding=latin
 # @required=true
 # @persist=true
 # @validate=true
-# @generated.message=Please choose the available portals for hostname ${value}
-# @generated.type=multipleOptions
-# @generated.required=true
-# @generated.persist=true
-# @generated.key=filter.hostname.${value}
-# @generated.options={"Person","Student","Teacher","Timetable Manager","Master Degree Candidate","Master Degree Administrative Office","Treasury","Coordinator","Employee","Assiduousness Management","Management","Degree Administrative Office","Credits Management","Department Credits Management","Erasmus","Degree Administrative Office (Super User)","Scientific Council","Administrator","Operator","Seminaries Coordination","Website Management","Grant Owner","Grant Owner Manager","Department Member","Department Administrative Office","Planning and Studies Administrative Office (GEP)","Directive Council","Delegate","First time Student","Projects Management","Institutional Projects Management","Bologne Process Management","Content Mng. System Manager","Space Manager","Researcher","Pedagogical Council","Alumni"}
-# @generated.optionsValues={"PERSON","STUDENT","TEACHER","TIME_TABLE_MANAGER","MASTER_DEGREE_CANDIDATE","MASTER_DEGREE_ADMINISTRATIVE_OFFICE","TREASURY","COORDINATOR","EMPLOYEE","MANAGEMENT_ASSIDUOUSNESS","MANAGER","DEGREE_ADMINISTRATIVE_OFFICE","CREDITS_MANAGER","DEPARTMENT_CREDITS_MANAGER","ERASMUS","DEGREE_ADMINISTRATIVE_OFFICE_SUPER_USER","SCIENTIFIC_COUNCIL","ADMINISTRATOR","OPERATOR","SEMINARIES_COORDINATOR","WEBSITE_MANAGER","GRANT_OWNER","GRANT_OWNER_MANAGER","DEPARTMENT_MEMBER","DEPARTMENT_ADMINISTRATIVE_OFFICE","GEP","DIRECTIVE_COUNCIL","DELEGATE","FIRST_TIME_STUDENT","PROJECTS_MANAGER","INSTITUCIONAL_PROJECTS_MANAGER","BOLONHA_MANAGER","CMS_MANAGER","SPACE_MANAGER","RESEARCHER","PEDAGOGICAL_COUNCIL","ALUMNI"}
-# @generated.defaultValue=PERSON,STUDENT,TEACHER,TIME_TABLE_MANAGER,MASTER_DEGREE_CANDIDATE,MASTER_DEGREE_ADMINISTRATIVE_OFFICE,TREASURY,COORDINATOR,EMPLOYEE,MANAGEMENT_ASSIDUOUSNESS,MANAGER,DEGREE_ADMINISTRATIVE_OFFICE,CREDITS_MANAGER,DEPARTMENT_CREDITS_MANAGER,ERASMUS,DEGREE_ADMINISTRATIVE_OFFICE_SUPER_USER,SCIENTIFIC_COUNCIL,ADMINISTRATOR,OPERATOR,SEMINARIES_COORDINATOR,WEBSITE_MANAGER,GRANT_OWNER,GRANT_OWNER_MANAGER,DEPARTMENT_MEMBER,DEPARTMENT_ADMINISTRATIVE_OFFICE,GEP,DIRECTIVE_COUNCIL,DELEGATE,FIRST_TIME_STUDENT,PROJECTS_MANAGER,INSTITUCIONAL_PROJECTS_MANAGER,BOLONHA_MANAGER,CMS_MANAGER,SPACE_MANAGER,RESEARCHER,PEDAGOGICAL_COUNCIL,ALUMNI
+# @generated.1.message=Please choose the available portals for hostname ${value}
+# @generated.1.type=multipleOptions
+# @generated.1.key=filter.hostname.${value}
+# @generated.1.required=true
+# @generated.1.persist=true
+# @generated.1.options={"Person","Student","Teacher","Timetable Manager","Master Degree Candidate","Master Degree Administrative Office","Treasury","Coordinator","Employee","Assiduousness Management","Management","Degree Administrative Office","Credits Management","Department Credits Management","Erasmus","Degree Administrative Office (Super User)","Scientific Council","Administrator","Operator","Seminaries Coordination","Website Management","Grant Owner","Grant Owner Manager","Department Member","Department Administrative Office","Planning and Studies Administrative Office (GEP)","Directive Council","Delegate","First time Student","Projects Management","Institutional Projects Management","Bologne Process Management","Content Mng. System Manager","Space Manager","Researcher","Pedagogical Council","Alumni"}
+# @generated.1.optionsValues={"PERSON","STUDENT","TEACHER","TIME_TABLE_MANAGER","MASTER_DEGREE_CANDIDATE","MASTER_DEGREE_ADMINISTRATIVE_OFFICE","TREASURY","COORDINATOR","EMPLOYEE","MANAGEMENT_ASSIDUOUSNESS","MANAGER","DEGREE_ADMINISTRATIVE_OFFICE","CREDITS_MANAGER","DEPARTMENT_CREDITS_MANAGER","ERASMUS","DEGREE_ADMINISTRATIVE_OFFICE_SUPER_USER","SCIENTIFIC_COUNCIL","ADMINISTRATOR","OPERATOR","SEMINARIES_COORDINATOR","WEBSITE_MANAGER","GRANT_OWNER","GRANT_OWNER_MANAGER","DEPARTMENT_MEMBER","DEPARTMENT_ADMINISTRATIVE_OFFICE","GEP","DIRECTIVE_COUNCIL","DELEGATE","FIRST_TIME_STUDENT","PROJECTS_MANAGER","INSTITUCIONAL_PROJECTS_MANAGER","BOLONHA_MANAGER","CMS_MANAGER","SPACE_MANAGER","RESEARCHER","PEDAGOGICAL_COUNCIL","ALUMNI"}
+# @generated.1.defaultValue=PERSON,STUDENT,TEACHER,TIME_TABLE_MANAGER,MASTER_DEGREE_CANDIDATE,MASTER_DEGREE_ADMINISTRATIVE_OFFICE,TREASURY,COORDINATOR,EMPLOYEE,MANAGEMENT_ASSIDUOUSNESS,MANAGER,DEGREE_ADMINISTRATIVE_OFFICE,CREDITS_MANAGER,DEPARTMENT_CREDITS_MANAGER,ERASMUS,DEGREE_ADMINISTRATIVE_OFFICE_SUPER_USER,SCIENTIFIC_COUNCIL,ADMINISTRATOR,OPERATOR,SEMINARIES_COORDINATOR,WEBSITE_MANAGER,GRANT_OWNER,GRANT_OWNER_MANAGER,DEPARTMENT_MEMBER,DEPARTMENT_ADMINISTRATIVE_OFFICE,GEP,DIRECTIVE_COUNCIL,DELEGATE,FIRST_TIME_STUDENT,PROJECTS_MANAGER,INSTITUCIONAL_PROJECTS_MANAGER,BOLONHA_MANAGER,CMS_MANAGER,SPACE_MANAGER,RESEARCHER,PEDAGOGICAL_COUNCIL,ALUMNI
+# @generated.2.message=Application index page link on host ${value}
+# @generated.2.type=string
+# @generated.2.key=application.index.html.link.${value}
+# @generated.2.required=true
+# @generated.2.persist=true
 filter.hostnames=localhost,localhost.localdomain
 
 
