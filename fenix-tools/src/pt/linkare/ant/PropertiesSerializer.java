@@ -84,7 +84,7 @@ public class PropertiesSerializer {
 						(byte)0xaa, (byte)0xbb, (byte)0xcc, (byte)0xdd,
 						(byte)0x22, (byte)0x44, (byte)0xab, (byte)0x12 };
 				final int iterations = 10;
-				final String cipherName = "PBEWithMD5AndDES";
+				final String cipherName = "PBEWithMD5AndDESede";
 				
 				PBEParameterSpec paramSpec=new PBEParameterSpec(salt,iterations);
 				KeySpec specKey= new PBEKeySpec(passCrypt.toCharArray());
@@ -97,7 +97,7 @@ public class PropertiesSerializer {
 				CipherOutputStream cos=new CipherOutputStream(new FileOutputStream(outCipherFile),cipher);
 				
 				BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(cos));
-				bw.write("#"+passCrypt);
+				bw.write("##"+passCrypt+"##");
 				bw.newLine();
 				return bw;
 			}
@@ -130,6 +130,7 @@ public class PropertiesSerializer {
 	}
 	
 	
+	private static final String CRLF=System.getProperty("line.separator");
 	
 	public Properties generatePropertiesFile() throws IOException
 	{
@@ -142,23 +143,26 @@ public class PropertiesSerializer {
 			String value=prop.getPropertyValue();
 			if(key==null && value==null) continue;
 				
-			if(prop.isPropertyPersist() && value!=null)
+			if(prop.isPropertyPersist() && (value!=null || prop.isPropertyPersistNull()))
 			{//only if it is a persistent property
 				if(prop.getPropertyMessage()!=null)
 				{
-					out.write("# "+prop.getPropertyMessage());
+					String message=prop.getPropertyMessage().replaceAll(CRLF,CRLF+"#  ");
+					out.write("#   "+message);
 					out.newLine();
 				}
-				out.write(key+"="+value);
+				out.write(key+"="+(value==null?"":value));
+				out.newLine();
 				out.newLine();
 			}
+			
 			if(outCipher!=null)
 			{//no matter if it is serializable or not
 				outCipher.write(key+"="+(value==null?"":value));
 				outCipher.newLine();
 			}
 			
-			if(value!=null)
+			if(key!=null && (value!=null || (value==null && prop.isPropertyPersistNull())))
 				retVal.put(key, value);
 		}
 		out.flush();

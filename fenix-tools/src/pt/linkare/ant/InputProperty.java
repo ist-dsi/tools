@@ -8,14 +8,21 @@ import java.util.Map;
 
 import pt.linkare.ant.propreaders.PropertyReaderManager;
 
+/**
+ * Represents an input property for ant 
+ * 
+ * @author jpereira - Linkare TI
+ *
+ */
 public class InputProperty {
 
 	private InputPropertyMap propertyMap=null;
 	private String propertyName=null;
 	private String propertyMessage=null;
 	private String propertyDefaultValue=null;
-	private boolean propertyRequired=false;
+	private boolean propertyRequired=true;
 	private boolean propertyPersist=true;
+	private boolean propertyPersistNull=true;
 	private String propertyType=null;
 	private HashMap<String, String> propertyMetaData=new HashMap<String, String>();
 	
@@ -263,6 +270,20 @@ public class InputProperty {
 	 */
 	public InputPropertyMap getPropertyMap() {
 		return propertyMap;
+	}
+
+	/**
+	 * @return Returns the propertyPersistNull.
+	 */
+	public boolean isPropertyPersistNull() {
+		return propertyPersistNull;
+	}
+
+	/**
+	 * @param propertyPersistNull The propertyPersistNull to set.
+	 */
+	public void setPropertyPersistNull(boolean propertyPersistNull) {
+		this.propertyPersistNull = propertyPersistNull;
 	}
 
 

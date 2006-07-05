@@ -283,6 +283,7 @@ public class InstallerPropertiesReader {
 		retVal.setPropertyType(metadatas.remove("type"));
 		retVal.setPropertyRequired(parseBoolean(metadatas.remove("required"),true));
 		retVal.setPropertyPersist(parseBoolean(metadatas.remove("persist"),true));
+		retVal.setPropertyPersistNull(parseBoolean(metadatas.remove("persistNull"),true));
 		
 		for(Entry<java.lang.String,java.lang.String> entry:metadatas.entrySet())
 			retVal.setMetaData(entry.getKey(), entry.getValue());
@@ -342,7 +343,7 @@ public class InstallerPropertiesReader {
 								(byte)0xaa, (byte)0xbb, (byte)0xcc, (byte)0xdd,
 								(byte)0x22, (byte)0x44, (byte)0xab, (byte)0x12 };
 						final int iterations = 10;
-						final String cipherName = "PBEWithMD5AndDES";
+						final String cipherName = "PBEWithMD5AndDESede";
 						
 						PBEParameterSpec paramSpec=new PBEParameterSpec(salt,iterations);
 						KeySpec specKey= new PBEKeySpec(passCrypt.toCharArray());
@@ -353,7 +354,7 @@ public class InstallerPropertiesReader {
 						
 						CipherInputStream cis=new CipherInputStream(new FileInputStream(f),cipher);
 						BufferedReader br=new BufferedReader(new InputStreamReader(cis));
-						if(!("#"+passCrypt).equals(br.readLine()))
+						if(!("##"+passCrypt+"##").equals(br.readLine()))
 							throw new InvalidKeyException("password does not match...");
 						
 						ByteArrayOutputStream bos=new ByteArrayOutputStream();

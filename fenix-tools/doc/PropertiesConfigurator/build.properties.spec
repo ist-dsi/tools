@@ -11,6 +11,7 @@
 # # @type=The type of the property (further about types below)
 # # @required=[yes/no]/[true/false]/[1/0]/[y/n] if the user must enter this property (default=y)
 # # @persist=[yes/no]/[true/false]/[1/0]/[y/n] if this property should be saved to the generated file (default=y)
+# # @persistNull=[yes/no]/[true/false]/[1/0]/[y/n] if this property should be saved to the generated file even if with a null value (default=y)
 # # @dependency=other.property.name=* (this property depends on other.property.name being defined... no matter the value)
 # # @dependency=other.property.name=value (this property depends on other.property.name having the defined value)
 # # 
@@ -77,6 +78,7 @@
 # type=multipleOptions - A menu to choose from several options (comma separated string of values)
 #   additional metadata: options={"option 1","option 2","option 3"} (required)
 #                        optionsValues={"option value 1","option value 2","option value 3"} (default=index of the chosen option - 0 based)
+#   (this property might use '*' for the default value to enable selecting all the available choices)
 # 
 # type=password 
 #   additional metadata: minLength=the minimum password length (default=1)
@@ -112,20 +114,6 @@
 # General Configuration
 #------------------------------------------------------------------------------
 #
-# @message = The host the application will run on
-# @type = hostname
-# @required = yes
-# @persist = yes
-# @validate = yes
-http.host=localhost
-
-# The required and persist assume value y, so we may omit it
-# @message = The http port the application will run on
-# @type = integer
-# @min = 1
-# @max = 65535
-http.port=8080
-
 # @message = The name of the application
 # @type = string
 app.name=fenix
@@ -139,28 +127,6 @@ app.context=fenix
 # @options = {"Nothing"}
 # @optionsValues = {"nothing"}
 manager.filter.pattern=nothing
-
-
-# @message = Local application index page link
-# @type = string
-index.html.link.localhost=siteMap.do
-
-# @message = Local application domain index page link
-# @type = string
-index.html.link.localhost.localdomain=siteMap.do
-
-# @message = Salad21 application index page link
-# @type = string
-index.html.link.salad21=loginPage.jsp
-
-# @message = Salad21 ist.utl.pt application index page link
-# @type = string
-index.html.link.salad21.ist.utl.pt=loginPage.jsp
-
-# @message = Login page url
-# @type = url
-# @validate = yes
-login.page=https://localhost:8080/ciapl/privado
 
 # @message = Institution main url
 # @type = url
@@ -180,15 +146,12 @@ language=pt
 
 # @message = Default location for application
 # @type = langLocation
-# @languageProperty = language
 # @dependency = language=*
 location=PT
 
 # @message = Default variant for application
 # @type = langVariant
 # @required = no
-# @languageProperty = language
-# @locationProperty = location
 # @dependency = location=*
 # @dependency = language=*
 variant=
@@ -286,6 +249,12 @@ db.alias=//localhost:3306/${db.name}?useUnicode=true&amp;characterEncoding=latin
 # @generated.2.required=true
 # @generated.2.persist=true
 # @generated.2.defaultValue=siteMap.do
+# @generated.3.message=Application login page on host ${value}
+# @generated.3.type=url
+# @generated.3.key=application.login.page.${value}
+# @generated.3.required=true
+# @generated.3.persist=true
+# @generated.3.defaultValue=https://${value}:8080/${app.name}/privado
 filter.hostnames=localhost,localhost.localdomain
 
 
