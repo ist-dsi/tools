@@ -260,6 +260,8 @@ public class InstallerPropertiesReader {
 					previousKey=line.substring(line.indexOf('@')+1,line.indexOf('=')).trim();
 					contentPreviousKey=new StringBuffer(line.substring(line.indexOf('=')+1).trim());
 				}
+				else if(line.startsWith("#"))
+					continue;
 				else
 				{
 					contentPreviousKey.append(CRLF).append(line.trim());
@@ -343,7 +345,7 @@ public class InstallerPropertiesReader {
 								(byte)0xaa, (byte)0xbb, (byte)0xcc, (byte)0xdd,
 								(byte)0x22, (byte)0x44, (byte)0xab, (byte)0x12 };
 						final int iterations = 10;
-						final String cipherName = "PBEWithMD5AndDESede";
+						final String cipherName = "PBEWithMD5AndDES";
 						
 						PBEParameterSpec paramSpec=new PBEParameterSpec(salt,iterations);
 						KeySpec specKey= new PBEKeySpec(passCrypt.toCharArray());

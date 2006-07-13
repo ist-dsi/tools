@@ -77,10 +77,13 @@ public class PropertyReaderManager {
 	{
 		Class c=getClassForPropertyTypeFromSystemProperty(type);
 		if(c==null)
+		{
 			c=getClassForPropertyTypeFromClassPath(type);
+		}
 		if(c==null)
+		{
 			c=getClassForPropertyTypeFromAdditionalPackage(type);
-		
+		}
 		return c;
 	}
 	

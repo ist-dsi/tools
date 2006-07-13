@@ -89,8 +89,8 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 			for(String value:values)
 			{
 				value=value.trim().intern();
-				//check if the default value is in one of the optionsValues
-				if(!optionValues.contains(value))
+				//check if the default value is in one of the optionsValues if the property is required...
+				if(!optionValues.contains(value) && getProperty().isPropertyRequired()) 
 				{
 					System.out.println("options values list is:");
 					for(String option : optionValues)

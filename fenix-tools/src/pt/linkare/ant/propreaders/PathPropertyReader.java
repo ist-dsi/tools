@@ -49,7 +49,6 @@ public class PathPropertyReader extends AbstractPropertyReader{
 		if(pathMustExist && getProperty().isPropertyRequired())
 		{
 			File f=new File(pathRetVal);
-			System.out.println("path ret val? "+pathRetVal + " exists? "+f.exists());
 			while(!f.exists())
 			{
 				System.out.println("Path "+pathRetVal+" does not exist...");

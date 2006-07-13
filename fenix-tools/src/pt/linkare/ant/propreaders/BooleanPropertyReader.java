@@ -46,9 +46,9 @@ public class BooleanPropertyReader extends AbstractPropertyReader{
 		message.append(StdIn.CRLF);
 
 		if(getProperty().getPropertyDefaultValue()!=null)
-			return getInput().readBooleanOptionOrDefault(message.toString(), yesOptionValue, noOptionValue, defaultSelected)?yesOptionValue:noOptionValue;
+			return getInput().readBooleanOptionOrDefault(message.toString(), yesOption, noOption, defaultSelected)?yesOptionValue:noOptionValue;
 		else
-			return getInput().readBooleanOption(message.toString(), yesOptionValue, noOptionValue)?yesOptionValue:noOptionValue;
+			return getInput().readBooleanOption(message.toString(), yesOption, noOption)?yesOptionValue:noOptionValue;
 		
 	}
 	
