@@ -1,14 +1,25 @@
 package pt.utl.ist.fenix.tools.html;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Stack;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
+import pt.utl.ist.fenix.tools.util.StringAppender;
+
 public class JspHtmlValidator {
+
+	private static final Logger logger = Logger.getLogger(JspHtmlValidator.class.getName());
 
     private static int numFiles = 0;
     private static int numDirs = 0;
@@ -21,13 +32,21 @@ public class JspHtmlValidator {
     private static int soundFiles = 0;
     private static int otherFiles = 0;
     private static int writtenFiles = 0;
+    private static int fixedTags = 0;
+    private static int skippedTags = 0;
+    private static int alreadyCorrectTags = 0;
+
+    private static File cf = null;
+
+    private static Map<String, String> altKeys = new HashMap<String, String>();
 
     public static void main(String[] args) {
-        final String pathToVerify = "/home/marvin/workspace/fenix_head/jsp";
+    	final String projectDir = "/home/marvin/workspace/fenix_head";
         try {
             long start = System.currentTimeMillis();
-            validate(new File(pathToVerify));
+            validate(new File(projectDir + "/jsp"));
             long end = System.currentTimeMillis();
+            generateAltKeyProperties(projectDir + "/config/resources", "HtmlAltResources");
             System.out.println("Process took:  " + (end - start) + " ms.");
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -42,12 +61,44 @@ public class JspHtmlValidator {
             System.out.println("   text: " + textFiles);
             System.out.println("   sound: " + soundFiles);
             System.out.println("   other: " + otherFiles);
+            System.out.println("Initially " + alreadyCorrectTags + " correct tags.");
             System.out.println("Wrote " + writtenFiles + " files.");
+            System.out.println("Created " + altKeys.size() + " distinct keys");            
+            System.out.println("Fixed " + fixedTags + " tags.");
+            System.out.println("Skipped " + skippedTags + " tags.");            
             System.exit(0);
         }
     }
 
-    private static void validate(final File file) throws IOException {
+    private static void generateAltKeyProperties(final String destinationDirPath, final String bundleName) throws IOException {
+    	generateAltKeyProperties(destinationDirPath, bundleName, "pt");
+    	generateAltKeyProperties(destinationDirPath, bundleName, "en");
+	}
+
+	private static void generateAltKeyProperties(final String destinationDirPath, final String bundleName, final String language) throws IOException {
+		final String filename = StringAppender.append(destinationDirPath, "/", bundleName, "_", language, ".properties");
+		final File file = new File(filename);
+		final Properties properties = new Properties();
+		if (file.exists()) {
+			final FileInputStream fileInputStream = new FileInputStream(file);
+			properties.load(fileInputStream);
+			fileInputStream.close();
+		} else {
+			file.createNewFile();
+		}
+		for (final Entry<String, String> altKeyEntry : altKeys.entrySet()) {
+			final String key = altKeyEntry.getKey();
+			if (!properties.containsKey(key)) {
+				final String value = altKeyEntry.getValue();
+				properties.put(key, value);
+			}
+		}
+		final FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+		properties.store(fileOutputStream, null);
+		fileOutputStream.close();
+	}
+
+	private static void validate(final File file) throws IOException {
         if (file != null && file.exists()) {
             if (file.isDirectory()) {
                 numDirs++;
@@ -57,6 +108,7 @@ public class JspHtmlValidator {
             } else if (file.isFile()) {
                 numFiles++;
                 try {
+                	cf = file;
                 	validateFile(file);
                 } catch (StringIndexOutOfBoundsException ex) {
                 	System.out.println("Error processing file: " + file.getAbsolutePath() + "\n\n");
@@ -105,13 +157,10 @@ public class JspHtmlValidator {
         if (!processedFileContents.equals(originalFileContents)) {
             writtenFiles++;
 //            writeFile(file, processedFileContents);
-//            System.out.println("file: " + file.getAbsolutePath() + " " + originalFileContents.length() + " --> " + processedFileContents.length());
         }
-        //System.out.println("file: " + file.getAbsolutePath());
     }
 
     private final static String[] TAGS = new String[] {
-    	"html:text",
     	"html:button",
     	"html:cancel",
     	"html:checkbox",
@@ -126,20 +175,20 @@ public class JspHtmlValidator {
     	"html:select",
     	"html:submit",
     	"html:text",
-    	"html:textarea"
+    	"html:textarea",
+    	"input"
     };
 
     private static int findToken(final String contents, final int offset) {
     	final int[] tagPositions = new int[TAGS.length];
     	for (int i = 0; i < TAGS.length; i++) {
-    		tagPositions[i] = findIndexOf(contents, offset, TAGS[i]);
+    		tagPositions[i] = findIndexOf(contents, offset, "<" + TAGS[i]);
     	}
         return min(tagPositions);
     }
 
     private static String determineTag(final String contents, final int offset) {
     	for (final String tag : TAGS) {
-//    		System.out.println("tag: " + tag);
     		if (isTag(contents, offset, tag)) {
     			return tag;
     		}
@@ -150,14 +199,14 @@ public class JspHtmlValidator {
     private static void validateJSPFile(final StringBuilder buffer, final String contents, final int offset) {
         final int tokenIndex = findToken(contents, offset);
         if (tokenIndex >= 0) {
-        	buffer.append(contents.substring(offset, tokenIndex));
+        	buffer.append(contents.substring(offset, tokenIndex + 1));
             final int nextOffSet;
-            final String tag = determineTag(contents, tokenIndex);
+            final String tag = determineTag(contents, tokenIndex + 1);
             if (tag == null) {
-                nextOffSet = tokenIndex + 1;
-                buffer.append(contents.substring(tokenIndex, nextOffSet));            	
+                nextOffSet = tokenIndex + 2;
+                buffer.append(contents.substring(tokenIndex + 1, nextOffSet));            	
             } else {
-            	nextOffSet = processTag(buffer, contents, tokenIndex, tag);
+            	nextOffSet = processTag(buffer, contents, tokenIndex + 1, tag);
             }
             validateJSPFile(buffer, contents, nextOffSet);
         } else {
@@ -175,19 +224,49 @@ public class JspHtmlValidator {
     }
 
     private static int processTag(final StringBuilder buffer, final String contents, final int offset, final String tag) {
-        final int tagTerminationIndex = findTagTermination(contents, offset, tag);
+        final int tagTerminationIndex = findTagTermination(contents, offset + tag.length(), '>');
         final int nextIndex;
         if (tagTerminationIndex > offset) {
         	nextIndex = tagTerminationIndex;
             if (containsAlternative(contents, offset, tagTerminationIndex)) {
+            	alreadyCorrectTags++;
                 buffer.append(contents.substring(offset, tagTerminationIndex));
             } else {
-                final String propertyName = findPropertyName(contents, offset, tagTerminationIndex);
+            	final String whereToLookForLabel = tag.equals("input") ? "name=" : "property=";
+                final String propertyName = findPropertyName(contents, offset, whereToLookForLabel, tagTerminationIndex);
+                final String tagPropertyNamePrefix = getTagPropertyNamePrefix(tag);
+                final String normalizedPropertyValue = getPropertyName(propertyName, tag);
+                	
                 buffer.append(tag);
-                buffer.append(" bundle=\"ALT_RESOURCES\" altKey=\"alt.");
-                buffer.append(propertyName);
+                if (isCalculatedValue(normalizedPropertyValue)) {
+                	buffer.append(" alt=\"");
+                	buffer.append(normalizedPropertyValue);
+                } else {
+                	if (tag.equals("input")) {
+                		buffer.append(" alt=\"");
+                	} else {
+                		buffer.append(" bundle=\"HTMLALT_RESOURCES\" altKey=\"");
+                	}
+                	final String efectivePropertyName = StringAppender.append(tagPropertyNamePrefix, ".", normalizedPropertyValue);
+                	altKeys.put(efectivePropertyName, normalizedPropertyValue);
+                	buffer.append(efectivePropertyName);
+                }
+                	
                 buffer.append('"');
                 buffer.append(contents.substring(offset + tag.length(), tagTerminationIndex));
+                fixedTags++;
+//                	if (isCalculatedValue(normalizedPropertyValue)) {
+//                	if (cf.getAbsolutePath().equals("/home/marvin/workspace/fenix_head/jsp/student/onlineTests/showStudentTest_bd.jsp")) {
+//                		System.out.println("\n" + cf.getAbsolutePath());
+//                		System.out.println("o: [" + contents.substring(offset, nextIndex) + "]");
+//                		if (isCalculatedValue(normalizedPropertyValue)) {
+//                			System.out.println("r: [" + tag + " alt=\"" + normalizedPropertyValue + '"' + contents.substring(offset + tag.length(), tagTerminationIndex) + "]");                			
+//                		} else if (tag.equals("input")) {
+//                    		System.out.println("r: [" + tag + " alt=\"" + tagPropertyNamePrefix + "." + normalizedPropertyValue + '"' + contents.substring(offset + tag.length(), tagTerminationIndex) + "]");
+//                    	} else {
+//                    		System.out.println("r: [" + tag + " bundle=\"HTMLALT_RESOURCES\" altKey=\"" + tagPropertyNamePrefix + "." + normalizedPropertyValue + '"' + contents.substring(offset + tag.length(), tagTerminationIndex) + "]");
+//                    	}
+//                	}
             }
         } else {
         	nextIndex = offset + 1;
@@ -196,12 +275,29 @@ public class JspHtmlValidator {
         return nextIndex;
     }
 
-    private static String findPropertyName(final String contents, final int offset, final int tagTerminationIndex) {
-        final int propertyPos = contents.indexOf("property=", offset);
-        final int startIndex = propertyPos + 10;
-        int endIndex;
-        for (endIndex = startIndex; contents.charAt(endIndex) != '"' && contents.charAt(endIndex) != '\''; endIndex++);
-        return contents.substring(startIndex, endIndex);
+    private static boolean isCalculatedValue(final String normalizedPropertyValue) {
+    	return normalizedPropertyValue.indexOf("<%=") >= 0;
+	}
+
+	private static String getPropertyName(final String propertyName, final String tag) {
+    	return propertyName == null ? getTagPropertyNamePrefix(tag) : propertyName;
+	}
+
+    private static String getTagPropertyNamePrefix(final String tag) {
+		final int colinPos = tag.indexOf(':');
+		return colinPos > 0 ? tag.substring(colinPos + 1) : tag;
+    }
+
+	private static String findPropertyName(final String contents, final int offset, final String whereToLookForLabel, final int tagTerminationIndex) {
+        final int propertyPos = contents.indexOf(whereToLookForLabel, offset);
+        if (propertyPos >= 0 && propertyPos < tagTerminationIndex) {
+        	final int startIndex = propertyPos + whereToLookForLabel.length() + 1;
+        	final int propertyTerminationIndex = findTagTermination(contents, startIndex, contents.charAt(propertyPos + whereToLookForLabel.length()));
+        	if (propertyPos < propertyTerminationIndex && propertyTerminationIndex < tagTerminationIndex) {
+        		return contents.substring(startIndex, propertyTerminationIndex - 1);
+        	}
+        }
+    	return null;
     }
 
     private static boolean containsAlternative(final String contents, final int offset, final int tagTerminationIndex) {
@@ -211,18 +307,18 @@ public class JspHtmlValidator {
         return pos >= 0 && pos < tagTerminationIndex;
     }
 
-    private static int findTagTermination(final String contents, final int offset, final String tag) {
-        Stack<Character> charStack = new Stack<Character>(); 
-        for (int i = offset + tag.length(); i < contents.length(); i++) {
+    private static int findTagTermination(final String contents, final int offset, final char terminationChar) {
+        Stack<Character> charStack = new Stack<Character>();
+        for (int i = offset; i < contents.length(); i++) {
             char c = contents.charAt(i);
             if (isControleCharacter(c)) {
-                if (charStack.isEmpty() && c == '>') {
-                    return i + 1;
+                if (charStack.isEmpty() && c == terminationChar) {
+                	return i + 1;
                 } else {
                     if (charStack.isEmpty()) {
                         charStack.push(Character.valueOf(c));
                     } else {
-                        char firstElement = charStack.firstElement().charValue();
+                        char firstElement = charStack.peek().charValue();
                         if (matchingControlCharacters(firstElement, c)) {
                             charStack.pop();
                         } else {
@@ -269,8 +365,12 @@ public class JspHtmlValidator {
     public static String readFile(final File file) throws IOException {
         final FileReader fileReader = new FileReader(file);
         char[] buffer = new char[4096];
+        for (int i = 0; i < buffer.length; buffer[i++] = 0);
         final StringBuilder fileContents = new StringBuilder();
-        for (int n = 0; (n = fileReader.read(buffer)) != -1; fileContents.append(buffer, 0, n));
+        for (int n = 0; (n = fileReader.read(buffer)) != -1; ) {
+        	fileContents.append(buffer, 0, n);
+        	for (int i = 0; i < buffer.length; buffer[i++] = 0);
+        }
         fileReader.close();
         return fileContents.toString();
     }
