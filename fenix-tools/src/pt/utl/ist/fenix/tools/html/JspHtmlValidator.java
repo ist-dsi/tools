@@ -151,7 +151,7 @@ public class JspHtmlValidator {
         final String processedFileContents = stringBuilder.toString();
         if (!processedFileContents.equals(originalFileContents)) {
             writtenFiles++;
-//            writeFile(file, processedFileContents);
+            writeFile(file, processedFileContents);
         }
     }
 
