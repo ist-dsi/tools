@@ -11,15 +11,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
 import pt.utl.ist.fenix.tools.util.StringAppender;
 
 public class JspHtmlValidator {
-
-	private static final Logger logger = Logger.getLogger(JspHtmlValidator.class.getName());
 
     private static int numFiles = 0;
     private static int numDirs = 0;
@@ -35,8 +32,6 @@ public class JspHtmlValidator {
     private static int fixedTags = 0;
     private static int skippedTags = 0;
     private static int alreadyCorrectTags = 0;
-
-    private static File cf = null;
 
     private static Map<String, String> altKeys = new HashMap<String, String>();
 
@@ -108,7 +103,6 @@ public class JspHtmlValidator {
             } else if (file.isFile()) {
                 numFiles++;
                 try {
-                	cf = file;
                 	validateFile(file);
                 } catch (StringIndexOutOfBoundsException ex) {
                 	System.out.println("Error processing file: " + file.getAbsolutePath() + "\n\n");
@@ -161,7 +155,7 @@ public class JspHtmlValidator {
         }
     }
 
-    private static int validateJSPHeader(final StringBuilder buffer, final String contents) {
+	private static int validateJSPHeader(final StringBuilder buffer, final String contents) {
     	final int indexOfStrutsHtmlTld = contents.indexOf("struts-html.tld");
     	final int indexOfHtmlTrueAttribute1 = contents.indexOf("xhtml=\"true\"");
     	final int indexOfHtmlTrueAttribute2 = contents.indexOf("xhtml=\'true\'");
@@ -276,18 +270,6 @@ public class JspHtmlValidator {
                 buffer.append('"');
                 buffer.append(contents.substring(offset + tag.length(), tagTerminationIndex));
                 fixedTags++;
-//                	if (isCalculatedValue(normalizedPropertyValue)) {
-//                	if (cf.getAbsolutePath().equals("/home/marvin/workspace/fenix_head/jsp/student/onlineTests/showStudentTest_bd.jsp")) {
-//                		System.out.println("\n" + cf.getAbsolutePath());
-//                		System.out.println("o: [" + contents.substring(offset, nextIndex) + "]");
-//                		if (isCalculatedValue(normalizedPropertyValue)) {
-//                			System.out.println("r: [" + tag + " alt=\"" + normalizedPropertyValue + '"' + contents.substring(offset + tag.length(), tagTerminationIndex) + "]");                			
-//                		} else if (tag.equals("input")) {
-//                    		System.out.println("r: [" + tag + " alt=\"" + tagPropertyNamePrefix + "." + normalizedPropertyValue + '"' + contents.substring(offset + tag.length(), tagTerminationIndex) + "]");
-//                    	} else {
-//                    		System.out.println("r: [" + tag + " bundle=\"HTMLALT_RESOURCES\" altKey=\"" + tagPropertyNamePrefix + "." + normalizedPropertyValue + '"' + contents.substring(offset + tag.length(), tagTerminationIndex) + "]");
-//                    	}
-//                	}
             }
         } else {
         	nextIndex = offset + 1;
