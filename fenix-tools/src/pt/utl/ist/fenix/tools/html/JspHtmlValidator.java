@@ -152,7 +152,8 @@ public class JspHtmlValidator {
     private static void validateJSPFile(final File file) throws IOException {
         final String originalFileContents = readFile(file);
         final StringBuilder stringBuilder = new StringBuilder();
-        validateJSPFile(stringBuilder, originalFileContents, 0);
+        final int offset = validateJSPHeader(stringBuilder, originalFileContents);
+        validateJSPFile(stringBuilder, originalFileContents, offset);
         final String processedFileContents = stringBuilder.toString();
         if (!processedFileContents.equals(originalFileContents)) {
             writtenFiles++;
@@ -160,7 +161,27 @@ public class JspHtmlValidator {
         }
     }
 
-    private final static String[] TAGS = new String[] {
+    private static int validateJSPHeader(final StringBuilder buffer, final String contents) {
+    	final int indexOfStrutsHtmlTld = contents.indexOf("struts-html.tld");
+    	final int indexOfHtmlTrueAttribute1 = contents.indexOf("xhtml=\"true\"");
+    	final int indexOfHtmlTrueAttribute2 = contents.indexOf("xhtml=\'true\'");
+    	final int indexOfXHtmlTag = contents.indexOf("html:xhtml"); 
+    	if (indexOfStrutsHtmlTld > 0 && indexOfHtmlTrueAttribute1 == -1 && indexOfHtmlTrueAttribute2 == -1 && indexOfXHtmlTag == -1) {
+    		final int indexOfNewLine = contents.indexOf('\n', indexOfStrutsHtmlTld);
+    		final int indexOfReturn = contents.indexOf('\r', indexOfStrutsHtmlTld);
+    		final int indexOfEndOfLine = indexOfNewLine != -1 && indexOfReturn != -1
+    				? Math.min(indexOfNewLine, indexOfReturn)
+    				: indexOfNewLine != -1 ? indexOfNewLine : indexOfReturn;
+    		if (indexOfEndOfLine > indexOfStrutsHtmlTld) {
+    			buffer.append(contents.substring(0, indexOfEndOfLine + 1));
+    			buffer.append("<html:xhtml/>");
+    			return indexOfEndOfLine;
+    		}
+    	}
+    	return 0;
+	}
+
+	private final static String[] TAGS = new String[] {
     	"html:button",
     	"html:cancel",
     	"html:checkbox",
