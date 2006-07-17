@@ -251,23 +251,26 @@ public class JspHtmlValidator {
                 final String propertyName = findPropertyName(contents, offset, whereToLookForLabel, tagTerminationIndex);
                 final String tagPropertyNamePrefix = getTagPropertyNamePrefix(tag);
                 final String normalizedPropertyValue = getPropertyName(propertyName, tag);
-                	
+                final char quoteSymbol = findQuoteSymbol(contents, offset);
+
                 buffer.append(tag);
                 if (isCalculatedValue(normalizedPropertyValue)) {
-                	buffer.append(" alt=\"");
+                	buffer.append(" alt=");
+                	buffer.append(quoteSymbol);
                 	buffer.append(normalizedPropertyValue);
                 } else {
                 	if (tag.equals("input")) {
-                		buffer.append(" alt=\"");
+                		buffer.append(" alt=");
                 	} else {
-                		buffer.append(" bundle=\"HTMLALT_RESOURCES\" altKey=\"");
+                		buffer.append(" bundle=\"HTMLALT_RESOURCES\" altKey=");
                 	}
+                	buffer.append(quoteSymbol);
                 	final String efectivePropertyName = StringAppender.append(tagPropertyNamePrefix, ".", normalizedPropertyValue);
                 	altKeys.put(efectivePropertyName, normalizedPropertyValue);
                 	buffer.append(efectivePropertyName);
                 }
-                	
-                buffer.append('"');
+
+                buffer.append(quoteSymbol);
                 buffer.append(contents.substring(offset + tag.length(), tagTerminationIndex));
                 fixedTags++;
             }
@@ -278,7 +281,17 @@ public class JspHtmlValidator {
         return nextIndex;
     }
 
-    private static boolean isCalculatedValue(final String normalizedPropertyValue) {
+    private static char findQuoteSymbol(final String contents, final int offset) {
+    	for (int i = offset; i < contents.length(); i++) {
+    		final char c = contents.charAt(i);
+    		if (c == '"' || c == '\'') {
+    			return c;
+    		}
+    	}
+    	throw new Error("No quotes found!");
+	}
+
+	private static boolean isCalculatedValue(final String normalizedPropertyValue) {
     	return normalizedPropertyValue.indexOf("<%=") >= 0;
 	}
 
