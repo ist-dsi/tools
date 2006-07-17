@@ -147,27 +147,56 @@ public class JspHtmlValidator {
         final StringBuilder stringBuilder = new StringBuilder();
         final int offset = validateStrutsHeader(stringBuilder, originalFileContents);
         validateJSPFile(stringBuilder, originalFileContents, offset);
-        final String processedFileContents = repaceTDWithTH(stringBuilder.toString());
-        if (!processedFileContents.equals(originalFileContents)) {
-            writtenFiles++;
-            final String contentsToWrite = injectJSFLoadBundles(processedFileContents);
-            writeFile(file, contentsToWrite);
-        }
+       	final String processedFileContents = repaceTDWithTH(stringBuilder.toString(), file.getAbsolutePath());
+       	if (!processedFileContents.equals(originalFileContents)) {
+       		writtenFiles++;
+       		final String contentsToWrite = injectJSFLoadBundles(processedFileContents);
+       		writeFile(file, contentsToWrite);
+       	}
     }
 
-	private static String repaceTDWithTH(final String contents) {
-//		final StringBuilder buffer = new StringBuilder();
-//		int offset = contents.indexOf("<td");
-//		for (; 0 <= offset && offset < contents.length(); offset = contents.indexOf("<td", offset)) {
-//			final int cssClassIndex = contents.indexOf("listClasses-header", offset);
-//			final int tdCloseIndex = findTagTermination(contents, offset, '>');
-//			final int tdEndIndex = contents.indexOf("</td", offset);
-//			if (offset <= cssClassIndex && cssClassIndex <= tdCloseIndex && tdCloseIndex <= tdEndIndex) {
-//				buffer.append(contents.substring(offset, ));
+	private static String repaceTDWithTH(final String contents, final String filename) {
+		int offset = contents.indexOf("<td");
+		if (offset == -1) {
+			return contents;
+		}
+		final StringBuilder buffer = new StringBuilder();
+		//buffer.append(contents.substring(0, offset));
+		int previousOffset;
+		for (previousOffset = 0; 0 <= offset && offset < contents.length(); offset = contents.indexOf("<td", offset + 1)) {
+			if (offset <= previousOffset) {
+				System.out.println("File: " + filename + " has unbalanced <td></td> tags.");
+				return contents;
+			}
+
+			buffer.append(contents.substring(previousOffset, offset));
+
+			final int cssClassIndex = contents.indexOf("listClasses-header", offset + 1);
+			final int tdCloseIndex = findTagTermination(contents, offset + 1, '>');
+			final int tdEndIndex = contents.indexOf("</td", offset + 1);
+
+//			if (cssClassIndex != -1) {
+//				System.out.println("#########");
+//				System.out.println("previousOffset" + previousOffset);
+//				System.out.println("offset: " + offset);
+//				System.out.println("cssClassIndex: " + cssClassIndex);
+//				System.out.println("tdCloseIndex: " + tdCloseIndex);
+//				System.out.println("tdEndIndex: " + tdEndIndex);
+//				System.out.println("" + contents.subSequence(offset, offset + 100));
 //			}
-//		}
-//		return buffer.toString();
-		return contents;
+//
+			if (offset < cssClassIndex && cssClassIndex < tdCloseIndex && tdCloseIndex < tdEndIndex) {
+//				System.out.println("2");
+				buffer.append("<th");
+				buffer.append(contents.substring(offset + 3, tdEndIndex));
+				buffer.append("</th");
+				previousOffset = tdEndIndex + 4;
+			} else {
+				previousOffset = offset;
+			}
+		}
+		buffer.append(contents.substring(previousOffset));
+		return buffer.toString();
 	}
 
 	private static int validateStrutsHeader(final StringBuilder buffer, final String contents) {
