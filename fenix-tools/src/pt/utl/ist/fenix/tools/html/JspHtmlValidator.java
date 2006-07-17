@@ -43,8 +43,8 @@ public class JspHtmlValidator {
             long end = System.currentTimeMillis();
             generateAltKeyProperties(projectDir + "/config/resources", "HtmlAltResources");
             System.out.println("Process took:  " + (end - start) + " ms.");
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } catch (Throwable t) {
+        	t.printStackTrace();
         } finally {
             System.out.println("\nProcessed " + numDirs + " dirs.");
             System.out.println("Processed " + numFiles + " files.");
@@ -105,7 +105,6 @@ public class JspHtmlValidator {
                 try {
                 	validateFile(file);
                 } catch (StringIndexOutOfBoundsException ex) {
-                	System.out.println("Error processing file: " + file.getAbsolutePath() + "\n\n");
                 	throw ex;
                 }
             } else {
@@ -146,16 +145,32 @@ public class JspHtmlValidator {
     private static void validateJSPFile(final File file) throws IOException {
         final String originalFileContents = readFile(file);
         final StringBuilder stringBuilder = new StringBuilder();
-        final int offset = validateJSPHeader(stringBuilder, originalFileContents);
+        final int offset = validateStrutsHeader(stringBuilder, originalFileContents);
         validateJSPFile(stringBuilder, originalFileContents, offset);
-        final String processedFileContents = stringBuilder.toString();
+        final String processedFileContents = repaceTDWithTH(stringBuilder.toString());
         if (!processedFileContents.equals(originalFileContents)) {
             writtenFiles++;
-            writeFile(file, processedFileContents);
+            final String contentsToWrite = injectJSFLoadBundles(processedFileContents);
+            writeFile(file, contentsToWrite);
         }
     }
 
-	private static int validateJSPHeader(final StringBuilder buffer, final String contents) {
+	private static String repaceTDWithTH(final String contents) {
+//		final StringBuilder buffer = new StringBuilder();
+//		int offset = contents.indexOf("<td");
+//		for (; 0 <= offset && offset < contents.length(); offset = contents.indexOf("<td", offset)) {
+//			final int cssClassIndex = contents.indexOf("listClasses-header", offset);
+//			final int tdCloseIndex = findTagTermination(contents, offset, '>');
+//			final int tdEndIndex = contents.indexOf("</td", offset);
+//			if (offset <= cssClassIndex && cssClassIndex <= tdCloseIndex && tdCloseIndex <= tdEndIndex) {
+//				buffer.append(contents.substring(offset, ));
+//			}
+//		}
+//		return buffer.toString();
+		return contents;
+	}
+
+	private static int validateStrutsHeader(final StringBuilder buffer, final String contents) {
     	final int indexOfStrutsHtmlTld = contents.indexOf("struts-html.tld");
     	final int indexOfHtmlTrueAttribute1 = contents.indexOf("xhtml=\"true\"");
     	final int indexOfHtmlTrueAttribute2 = contents.indexOf("xhtml=\'true\'");
@@ -175,6 +190,36 @@ public class JspHtmlValidator {
     	return 0;
 	}
 
+	private static String injectJSFLoadBundles(final String contents) {
+    	final int indexOfJsfsHtmlTld = contents.indexOf("html_basic.tld");
+    	if (0 <= indexOfJsfsHtmlTld) {
+    		final int indexOfFTViewTag = contents.indexOf("<ft:tilesView");
+    		if (0 <= indexOfFTViewTag) {
+    			final int nextNewLine = findNextNewLine(contents, indexOfFTViewTag);
+    			if (0 <= nextNewLine) {
+    				final StringBuilder buffer = new StringBuilder();
+    				buffer.append(contents.substring(0, nextNewLine));
+    				buffer.append("\n\t<f:loadBundle basename=\"resources/HtmlAltResources\" var=\"htmlAltBundle\"/>");
+    				buffer.append(contents.substring(nextNewLine));
+    				return buffer.toString();
+    			}
+    		}
+    	}
+    	return contents;
+	}
+
+	private static int findNextNewLine(String contents, int offset) {
+		final int newLinePos = contents.indexOf('\n', offset);
+		final int returnPos = contents.indexOf('\r', offset);
+		if (0 <= newLinePos && 0 <= returnPos) {
+			return Math.min(newLinePos, returnPos);
+		} else if (0 <= newLinePos) {
+			return newLinePos;
+		} else {
+			return returnPos;
+		}
+	}
+
 	private final static String[] TAGS = new String[] {
     	"html:button",
     	"html:cancel",
@@ -191,7 +236,20 @@ public class JspHtmlValidator {
     	"html:submit",
     	"html:text",
     	"html:textarea",
-    	"input"
+    	"input",
+		"h:commandButton",
+		//"h:commandLink",
+		"h:inputHidden",
+		"h:inputSecret",
+		"h:inputText"
+		//"h:inputTextarea",
+		//"h:selectBooleanCheckbox",
+		//"h:selectManyCheckbox",
+		//"h:selectManyListbox",
+		//"h:selectManyMenu",
+		//"h:selectOneListbox",
+		//"h:selectOneMenu",
+		//"h:selectOneRadio"
     };
 
     private static int findToken(final String contents, final int offset) {
@@ -247,11 +305,19 @@ public class JspHtmlValidator {
             	alreadyCorrectTags++;
                 buffer.append(contents.substring(offset, tagTerminationIndex));
             } else {
-            	final String whereToLookForLabel = tag.equals("input") ? "name=" : "property=";
+            	final String whereToLookForLabel;
+            	if (tag.startsWith("html:")) {
+            		whereToLookForLabel = "property=";
+            	} else if (tag.startsWith("h:")) {
+            		whereToLookForLabel = "value=";
+            	} else {
+            		whereToLookForLabel = "name=";
+            	}
                 final String propertyName = findPropertyName(contents, offset, whereToLookForLabel, tagTerminationIndex);
                 final String tagPropertyNamePrefix = getTagPropertyNamePrefix(tag);
                 final String normalizedPropertyValue = getPropertyName(propertyName, tag);
                 final char quoteSymbol = findQuoteSymbol(contents, offset);
+                final char antiQuoteSymbol = findAntiQuoteSymbol(quoteSymbol);
 
                 buffer.append(tag);
                 if (isCalculatedValue(normalizedPropertyValue)) {
@@ -259,15 +325,25 @@ public class JspHtmlValidator {
                 	buffer.append(quoteSymbol);
                 	buffer.append(normalizedPropertyValue);
                 } else {
-                	if (tag.equals("input")) {
+                	if (tag.startsWith("html:")) {
+                		buffer.append(" bundle=\"HTMLALT_RESOURCES\" altKey=");
+                	} else if (tag.startsWith("h:")) {
                 		buffer.append(" alt=");
                 	} else {
-                		buffer.append(" bundle=\"HTMLALT_RESOURCES\" altKey=");
+                		buffer.append(" alt=");
                 	}
                 	buffer.append(quoteSymbol);
                 	final String efectivePropertyName = StringAppender.append(tagPropertyNamePrefix, ".", normalizedPropertyValue);
                 	altKeys.put(efectivePropertyName, normalizedPropertyValue);
+                	if (tag.startsWith("h:")) {
+                		buffer.append("#{htmlAltBundle[");
+                		buffer.append(antiQuoteSymbol);
+                	}
                 	buffer.append(efectivePropertyName);
+                	if (tag.startsWith("h:")) {
+                		buffer.append(antiQuoteSymbol);
+                		buffer.append("]}");
+                	}
                 }
 
                 buffer.append(quoteSymbol);
@@ -279,6 +355,16 @@ public class JspHtmlValidator {
         	buffer.append(contents.substring(offset, nextIndex));
         }
         return nextIndex;
+    }
+
+    private static char findAntiQuoteSymbol(final char quote) {
+    	if (quote == '"') {
+    		return '\'';
+    	} else if (quote == '\'') {
+    		return '"';
+    	} else {
+    		throw new Error("Unknown quote: " + quote);
+    	}
     }
 
     private static char findQuoteSymbol(final String contents, final int offset) {
@@ -296,10 +382,40 @@ public class JspHtmlValidator {
 	}
 
 	private static String getPropertyName(final String propertyName, final String tag) {
-    	return propertyName == null ? getTagPropertyNamePrefix(tag) : propertyName;
+		if (propertyName == null) {
+			return getTagPropertyNamePrefix(tag);
+		} else {
+			if (0 <= propertyName.indexOf("#")) {
+				final int dotIndex = propertyName.lastIndexOf('.');
+				if (0 <= dotIndex) {
+					final int braceIndex = posativeVal(propertyName.lastIndexOf('}'));
+					final int lastQuote = posativeVal(propertyName.lastIndexOf('\''));
+					final int breakPoint = min(braceIndex, lastQuote);
+					if (dotIndex < breakPoint && breakPoint < propertyName.length()) {
+						return propertyName.substring(dotIndex + 1, breakPoint);						
+					} else {
+						throw new Error("No closing brace found!");
+					}
+				} else {
+					final int quotePos1 = propertyName.indexOf('\'');
+					final int quotePos2 = propertyName.lastIndexOf('\'');
+					if (0 <= quotePos1 && quotePos1 < quotePos2) {
+						return propertyName.substring(quotePos1 + 1, quotePos2);
+					} else {
+						return propertyName;
+					}
+				}
+			} else {
+				return propertyName;
+			}
+		}
 	}
 
-    private static String getTagPropertyNamePrefix(final String tag) {
+    private static int posativeVal(final int i) {
+    	return i < 0 ? Integer.MAX_VALUE : i;
+	}
+
+	private static String getTagPropertyNamePrefix(final String tag) {
 		final int colinPos = tag.indexOf(':');
 		return colinPos > 0 ? tag.substring(colinPos + 1) : tag;
     }
