@@ -136,7 +136,7 @@ public class RootDomainObjectGenerator {
         resultSourceCode.append("\n\t\tfinal java.util.Set resultSet = new java.util.HashSet();");
         resultSourceCode.append("\n\t\tif (domainObjects != null) {");
         resultSourceCode.append("\n\t\t\tfor (final Object object : domainObjects) {");
-        resultSourceCode.append("\n\t\t\t\tif (object.getClass() == domainClass) {");
+        resultSourceCode.append("\n\t\t\t\tif (domainClass.isInstance(object)) {");
         resultSourceCode.append("\n\t\t\t\t\tresultSet.add(object);");
         resultSourceCode.append("\n\t\t\t\t}");
         resultSourceCode.append("\n\t\t\t}");
