@@ -268,7 +268,7 @@ public class JspHtmlValidator {
     	"input",
 		"h:commandButton",
 		//"h:commandLink",
-		"h:inputHidden",
+		//"h:inputHidden",
 		"h:inputSecret",
 		"h:inputText"
 		//"h:inputTextarea",
