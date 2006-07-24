@@ -145,12 +145,9 @@ public class PropertiesSerializer {
 				
 			if(prop.isPropertyPersist() && (value!=null || prop.isPropertyPersistNull()))
 			{//only if it is a persistent property
-				if(prop.getPropertyMessage()!=null)
-				{
-					String message=prop.getPropertyMessage().replaceAll(CRLF,CRLF+"#  ");
-					out.write("#   "+message);
-					out.newLine();
-				}
+				String message=prop.getPropertyMessage().replaceAll(CRLF,CRLF+"#  ");
+				out.write("#   "+message);
+				out.newLine();
 				out.write(key+"="+(value==null?"":value));
 				out.newLine();
 				out.newLine();
@@ -163,7 +160,7 @@ public class PropertiesSerializer {
 			}
 			
 			if(key!=null && (value!=null || (value==null && prop.isPropertyPersistNull())))
-				retVal.put(key, value);
+				retVal.put(key, value==null?"":value);
 		}
 		out.flush();
 		out.close();

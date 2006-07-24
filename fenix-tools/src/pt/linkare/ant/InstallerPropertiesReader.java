@@ -76,12 +76,10 @@ public class InstallerPropertiesReader {
 	}
 	
 	public synchronized static InstallerPropertiesReader getInstance(File inputFile,File outputFile) {
-		if(instance==null)
-			instance=new InstallerPropertiesReader(inputFile,outputFile);
-		
+        instance=new InstallerPropertiesReader(inputFile,outputFile);
 		return instance;
-			
 	}
+	
 	/**
 	 * JavaBeans property accessor
 	 * @return Returns the File of input properties spec
