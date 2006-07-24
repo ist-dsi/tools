@@ -16,17 +16,15 @@ public class UrlPropertyReader extends AbstractPropertyReader{
 		while(url==null)
 		{
 			url=readPropertySimple();
-			URL urlLocation=null;
-			try {
-				urlLocation = new URL(url);
-			}
-			catch (MalformedURLException e) {
-				url=null;
-			}
-			if(parseBoolean(getProperty().getMetaData("validate"),false) && (urlLocation==null))
+			if(url!=null && parseBoolean(getProperty().getMetaData("validate"),false))
 			{
-				System.out.println(url+" is not a valid URL!");
-				url=null;			
+				try {
+					 new URL(url);
+				}
+				catch (MalformedURLException e) {
+					System.out.println(url+" is not a valid URL!");
+					url=null;			
+				}
 			}
 		}
 		return url;
