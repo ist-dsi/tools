@@ -50,6 +50,16 @@ public interface IFileManager {
      * @return An url schema for direct download of the file
      */
     public String getDirectDownloadUrlFormat();
+    
+    /**
+     * Returns the format of the download url. The format should receive only a
+     * parameter with file unique Id. Example:
+     * http://dspacehost/bitstream/{0}/{1} where {0} should be replaced by the
+     * Id and {1} by the filename
+     * 
+     * @return An url schema for direct download of the file
+     */
+    public String getDirectDownloadUrlFormat(String uniqueId, String fileName);
 
     /**
      * Retrieves the file content

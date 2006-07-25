@@ -120,4 +120,8 @@ public class DspaceFileManager extends AbstractFileManager {
 
     }
 
+    public String getDirectDownloadUrlFormat(String uniqueId, String fileName) {
+        return downloadUrlFormat + "/" + uniqueId + "/" + fileName;        
+    }
+
 }
