@@ -475,17 +475,15 @@ public class JspHtmlValidator {
             if (isControleCharacter(c)) {
                 if (charStack.isEmpty() && c == terminationChar) {
                 	return i + 1;
-                } else {
-                    if (charStack.isEmpty()) {
+                } else if (charStack.isEmpty()) {
                         charStack.push(Character.valueOf(c));
-                    } else {
-                        char firstElement = charStack.peek().charValue();
-                        if (matchingControlCharacters(firstElement, c)) {
-                            charStack.pop();
-                        } else {
-                            charStack.push(Character.valueOf(c));
-                        }
-                    }
+                } else {
+                	char firstElement = charStack.peek().charValue();
+                	if (matchingControlCharacters(firstElement, c)) {
+                		charStack.pop();
+                	} else {
+                		charStack.push(Character.valueOf(c));
+                	}
                 }
             }
         }
