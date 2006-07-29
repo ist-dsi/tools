@@ -44,7 +44,7 @@ public class WikiClient {
             loginNameValuePairs[1] = new NameValuePair("username", wikiUsername);
             loginNameValuePairs[2] = new NameValuePair("password", wikiPassword);
             loginNameValuePairs[3] = new NameValuePair("login", "Login");
-            loginNameValuePairs[4] = new NameValuePair("method", "POST");
+            loginNameValuePairs[4] = new NameValuePair("method", "post");
             method.setQueryString(loginNameValuePairs);
             executeMethod(httpClient, method);
             //Recycle should never be used as it is deprecated...
