@@ -3,10 +3,6 @@
  */
 package pt.utl.ist.fenix.tools.codeGenerator;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Formatter;
 import java.util.HashSet;
@@ -15,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import pt.utl.ist.fenix.tools.util.FileUtils;
 import dml.DmlCompiler;
 import dml.DomainClass;
 import dml.DomainModel;
@@ -58,7 +55,7 @@ public class RootDomainObjectGenerator {
                 + sourceSuffix;
         Set<String> usedNames = new HashSet<String>();
 
-        String rootObjectSourceCode = readFile(rootObjectSourceCodeFilePath);
+        String rootObjectSourceCode = FileUtils.readFile(rootObjectSourceCodeFilePath);
         int lastBrace = rootObjectSourceCode.lastIndexOf('}');
         if (lastBrace > 0) {
             StringBuilder resultSourceCode = new StringBuilder();
@@ -109,7 +106,7 @@ public class RootDomainObjectGenerator {
 
             resultSourceCode.append("\n\n}\n");
             //System.out.println(resultSourceCode.toString());
-            writeFile(rootObjectSourceCodeFilePath, resultSourceCode.toString(), false);
+            FileUtils.writeFile(rootObjectSourceCodeFilePath, resultSourceCode.toString(), false);
         }
 
     }
@@ -190,30 +187,6 @@ public class RootDomainObjectGenerator {
             System.exit(1);
         }
         System.exit(0);
-    }
-
-	public static String readFile(final String filename) throws IOException {
-        
-        final StringBuilder fileContents = new StringBuilder();
-        String str= null;
-        BufferedReader in = new BufferedReader(new FileReader(filename));
-        while ((str = in.readLine()) != null) {
-            fileContents.append(str);
-            fileContents.append("\n");
-        }
-        in.close();
-        
-        return fileContents.toString();
-        
-    }
-
-    public static void writeFile(final String filename, final String fileContents, final boolean append)
-            throws IOException {
-       
-            BufferedWriter out = new BufferedWriter(new FileWriter(filename));
-            out.write(fileContents);
-            out.close();
-        
     }
 
 }

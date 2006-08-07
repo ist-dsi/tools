@@ -3,16 +3,13 @@
  */
 package pt.utl.ist.fenix.tools.codeGenerator;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Formatter;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 
+import pt.utl.ist.fenix.tools.util.FileUtils;
 import dml.DmlCompiler;
 import dml.DomainClass;
 import dml.DomainModel;
@@ -57,13 +54,13 @@ public class DeprecatedDatesGettersAndSettersGenerator {
 
                 String domainClassSourceCodeFilePath = outputFolder + "/"
                         + domainClass.getFullName().replace('.', '/') + sourceSuffix;
-                String domainClassSourceCode = readFile(domainClassSourceCodeFilePath);
+                String domainClassSourceCode = FileUtils.readFile(domainClassSourceCodeFilePath);
 
                 int lastBrace = domainClassSourceCode.lastIndexOf('}');
                 if (lastBrace > 0) {
                     resultSourceCode.insert(0, domainClassSourceCode.substring(0, lastBrace));
                     resultSourceCode.append("\n\n}\n");
-                    writeFile(domainClassSourceCodeFilePath, resultSourceCode.toString(), false);
+                    FileUtils.writeFile(domainClassSourceCodeFilePath, resultSourceCode.toString(), false);
                 }
             }
         }
@@ -159,30 +156,6 @@ private StringBuilder buildMethods(DomainClass domainClass) {
             System.exit(1);
         }
         System.exit(0);
-    }
-
-    public static String readFile(final String filename) throws IOException {
-
-        final StringBuilder fileContents = new StringBuilder();
-        String str = null;
-        BufferedReader in = new BufferedReader(new FileReader(filename));
-        while ((str = in.readLine()) != null) {
-            fileContents.append(str);
-            fileContents.append("\n");
-        }
-        in.close();
-
-        return fileContents.toString();
-
-    }
-
-    public static void writeFile(final String filename, final String fileContents, final boolean append)
-            throws IOException {
-
-        BufferedWriter out = new BufferedWriter(new FileWriter(filename));
-        out.write(fileContents);
-        out.close();
-
     }
 
 }
