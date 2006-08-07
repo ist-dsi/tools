@@ -10,42 +10,16 @@ import java.util.Iterator;
 import org.apache.commons.lang.StringUtils;
 
 import pt.utl.ist.fenix.tools.util.FileUtils;
-import dml.DmlCompiler;
 import dml.DomainClass;
-import dml.DomainModel;
 import dml.Slot;
 
 /**
  * @author - Shezad Anavarali (shezad@ist.utl.pt)
  * 
  */
-public class DeprecatedDatesGettersAndSettersGenerator {
+public class DeprecatedDatesGettersAndSettersGenerator extends DomainObjectGenerator {
 
-    private DomainModel domainModel;
-
-    private String dmlFile;
-
-    private String outputFolder;
-
-    private String sourceSuffix = "_Base.java";
-
-    private DomainModel getModel() {
-        if (domainModel == null) {
-            if (dmlFile.length() == 0) {
-                throw new Error("No DML files specified");
-            } else {
-                try {
-                    String[] dmlFilesArray = { dmlFile };
-                    domainModel = DmlCompiler.getDomainModel(dmlFilesArray);
-                } catch (antlr.ANTLRException ae) {
-                    System.err.println("Error parsing the DML files, leaving the domain empty");
-                }
-            }
-        }
-        return domainModel;
-    }
-
-    private void appendMethodsInTheRootDomainObject() throws IOException {
+    public void appendMethodsInTheRootDomainObject() throws IOException {
 
         for (Iterator<DomainClass> iter = getModel().getClasses(); iter.hasNext();) {
             DomainClass domainClass = iter.next();
@@ -66,7 +40,7 @@ public class DeprecatedDatesGettersAndSettersGenerator {
         }
     }
 
-private StringBuilder buildMethods(DomainClass domainClass) {
+    private StringBuilder buildMethods(DomainClass domainClass) {
         StringBuilder resultSourceCode = new StringBuilder();
         Formatter methods = new Formatter(resultSourceCode);
 
@@ -139,22 +113,10 @@ private StringBuilder buildMethods(DomainClass domainClass) {
 
         return resultSourceCode;
 
-    }    public static void main(String[] args) {
+    }
 
-        if (args.length < 2) {
-            System.err.println("Invalid Number of Arguments");
-            System.exit(1);
-        }
-
-        try {
-            DeprecatedDatesGettersAndSettersGenerator generator = new DeprecatedDatesGettersAndSettersGenerator();
-            generator.outputFolder = args[0];
-            generator.dmlFile = args[1];
-            generator.appendMethodsInTheRootDomainObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+    public static void main(String[] args) {
+        process(args, new RootDomainObjectGenerator());
         System.exit(0);
     }
 

@@ -12,44 +12,18 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 import pt.utl.ist.fenix.tools.util.FileUtils;
-import dml.DmlCompiler;
 import dml.DomainClass;
-import dml.DomainModel;
 import dml.Role;
 
 /**
  * @author - Shezad Anavarali (shezad@ist.utl.pt)
  * 
  */
-public class RootDomainObjectGenerator {
+public class RootDomainObjectGenerator extends DomainObjectGenerator {
 
     private static final String CLASS_NAME = "net.sourceforge.fenixedu.domain.RootDomainObject";
 
-    private DomainModel domainModel;
-
-    private String dmlFile;
-
-    private String outputFolder;
-
-    private String sourceSuffix = "_Base.java";
-
-    private DomainModel getModel() {
-        if (domainModel == null) {
-            if (dmlFile.length() == 0) {
-                throw new Error("No DML files specified");
-            } else {
-                try {
-                    String[] dmlFilesArray = { dmlFile };
-                    domainModel = DmlCompiler.getDomainModel(dmlFilesArray);
-                } catch (antlr.ANTLRException ae) {
-                    System.err.println("Error parsing the DML files, leaving the domain empty");
-                }
-            }
-        }
-        return domainModel;
-    }
-
-    private void appendMethodsInTheRootDomainObject() throws IOException {
+    public void appendMethodsInTheRootDomainObject() throws IOException {
 
         String rootObjectSourceCodeFilePath = outputFolder + "/" + CLASS_NAME.replace('.', '/')
                 + sourceSuffix;
@@ -171,22 +145,8 @@ public class RootDomainObjectGenerator {
 	}
 
 	public static void main(String[] args) {
-
-        if (args.length < 2) {
-            System.err.println("Invalid Number of Arguments");
-            System.exit(1);
-        }
-
-        try {
-            RootDomainObjectGenerator rootDomainObjectGenerator = new RootDomainObjectGenerator();
-            rootDomainObjectGenerator.outputFolder = args[0];
-            rootDomainObjectGenerator.dmlFile = args[1];
-            rootDomainObjectGenerator.appendMethodsInTheRootDomainObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        System.exit(0);
+	    process(args, new RootDomainObjectGenerator());
+	    System.exit(0);
     }
 
 }

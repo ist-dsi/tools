@@ -73,12 +73,11 @@ public class JspHtmlValidator {
 	private static void generateAltKeyProperties(final String destinationDirPath, final String bundleName, final String language) throws IOException {
 		final String filename = StringAppender.append(destinationDirPath, "/", bundleName, "_", language, ".properties");
 		final File file = new File(filename);
-		final Properties properties = new Properties();
+		final Properties properties;
 		if (file.exists()) {
-			final FileInputStream fileInputStream = new FileInputStream(file);
-			properties.load(fileInputStream);
-			fileInputStream.close();
+            properties = PropertyBeutifier.loadProperties(file);
 		} else {
+            properties = new Properties();
 			file.createNewFile();
 		}
 		for (final Entry<String, String> altKeyEntry : altKeys.entrySet()) {

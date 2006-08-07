@@ -26,15 +26,19 @@ public class PropertyBeutifier {
 		}
 	}
 
+    public static Properties loadProperties(final File file) throws IOException {
+        final Properties properties = new Properties();
+        if (file.exists()) {
+            final FileInputStream fileInputStream = new FileInputStream(file);
+            properties.load(fileInputStream);
+            fileInputStream.close();
+        }
+        return properties;
+    }
+
 	private static Properties loadProperties(final String filename) throws IOException {
 		final File file = new File(filename);
-		final Properties properties = new Properties();
-		if (file.exists()) {
-			final FileInputStream fileInputStream = new FileInputStream(file);
-			properties.load(fileInputStream);
-			fileInputStream.close();
-		}
-		return properties;
+        return loadProperties(file);
 	}
 
 	private static void writeProperties(String filename, Properties properties) throws IOException {
