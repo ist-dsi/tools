@@ -116,7 +116,7 @@ public class DeprecatedDatesGettersAndSettersGenerator extends DomainObjectGener
     }
 
     public static void main(String[] args) {
-        process(args, new RootDomainObjectGenerator());
+        process(args, new DeprecatedDatesGettersAndSettersGenerator());
         System.exit(0);
     }
 
