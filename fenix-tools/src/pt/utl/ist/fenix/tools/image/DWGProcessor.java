@@ -1,9 +1,11 @@
 package pt.utl.ist.fenix.tools.image;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Vector;
@@ -20,17 +22,19 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class DWGProcessor {
 
-	private static final int SCALE_RATIO = 1000;
 	private static final String FONT_NAME = "Helvetica";
-
-	private static final int FONT_SIZE = (int) (SCALE_RATIO * 0.008);
-	private static final int PADDING = (int) (SCALE_RATIO * 0.025);
-	private static final int X_AXIS_OFFSET = (int) (SCALE_RATIO * 0.075);
-	private static final int Y_AXIS_OFFSET = (int) (SCALE_RATIO * 0.3);
 
 	public static void main(String[] args) {
 		try {
-			run("/home/marvin/i/Civilp02.dwg");
+			final File dir = new File(args[0]);
+			for (final File file : dir.listFiles()) {
+				if (file.isFile()) {
+					final String filename = file.getAbsolutePath();
+					if (filename.endsWith(".dwg")) {
+						run(filename, Integer.parseInt(args[1]));
+					}
+				}
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
@@ -38,7 +42,12 @@ public class DWGProcessor {
 		}
 	}
 
-	private static void run(final String filename) throws IOException, DriverException {
+	private static void run(final String filename, final int scaleRatio) throws IOException, DriverException {
+		final int fontSize = (int) (scaleRatio * 0.008);
+		final int padding = (int) (scaleRatio * 0.025);
+		final int xAxisOffset = (int) (scaleRatio * 0.075);
+		final int yAxisOffset = (int) (scaleRatio * 0.3);
+
 		DwgFile dwgFile = new DwgFile(filename);
 		dwgFile.read();
 
@@ -80,9 +89,14 @@ public class DWGProcessor {
 		System.out.println("Max y: " + maxY);
 		max = Math.max(maxX, maxY);
 
-		final BufferedImage bufferedImage = new BufferedImage(convCoord(maxX, max) + PADDING, convCoord(maxY, max) + PADDING, BufferedImage.TYPE_INT_RGB);
+		final BufferedImage bufferedImage = new BufferedImage(
+				convCoord(maxX, max, scaleRatio) + padding,
+				convCoord(maxY, max, scaleRatio) + padding, BufferedImage.TYPE_INT_RGB);
 		final Graphics2D graphics2D = bufferedImage.createGraphics();
-		graphics2D.setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
+		graphics2D.setFont(new Font(FONT_NAME, Font.PLAIN, fontSize));
+		graphics2D.setBackground(Color.WHITE);
+		graphics2D.setColor(Color.BLACK);
+		graphics2D.clearRect(0, 0, convCoord(maxX, max, scaleRatio) + padding, convCoord(maxY, max, scaleRatio) + padding);
 
 		maxX = max;
 		maxY = max;
@@ -90,10 +104,10 @@ public class DWGProcessor {
 		for (final Object object : vector) {
 			if (object instanceof DwgLine) {
 				final DwgLine dwgLine = (DwgLine) object;
-				final int x1 = convXCoord(dwgLine.getP1()[0], maxX, minX);
-				final int y1 = convYCoord(dwgLine.getP1()[1], maxY, minY);
-				final int x2 = convXCoord(dwgLine.getP2()[0], maxX, minX);
-				final int y2 = convYCoord(dwgLine.getP2()[1], maxY, minY);
+				final int x1 = convXCoord(dwgLine.getP1()[0], maxX, minX, xAxisOffset, scaleRatio);
+				final int y1 = convYCoord(dwgLine.getP1()[1], maxY, minY, yAxisOffset, scaleRatio, padding);
+				final int x2 = convXCoord(dwgLine.getP2()[0], maxX, minX, xAxisOffset, scaleRatio);
+				final int y2 = convYCoord(dwgLine.getP2()[1], maxY, minY, yAxisOffset, scaleRatio, padding);
 				graphics2D.drawLine(x1, y1, x2, y2);
 //			} else if (object instanceof DwgArc) {
 //				final DwgArc dwgArc = (DwgArc) object;
@@ -147,13 +161,16 @@ public class DWGProcessor {
 			} else if (object instanceof DwgText) {
 				final DwgText dwgText = (DwgText) object;
 				final Point2D point2D = dwgText.getInsertionPoint();
-				graphics2D.drawString(dwgText.getText(), convXCoord(point2D.getX(), maxX, minX), convYCoord(point2D.getY(), maxY, minY));
+				graphics2D.drawString(
+						dwgText.getText(), convXCoord(point2D.getX(), maxX, minX, xAxisOffset, scaleRatio),
+						convYCoord(point2D.getY(), maxY, minY, yAxisOffset, scaleRatio, padding));
 			}
 		}
 
 		graphics2D.dispose();
 
-		final FileOutputStream fileOutputStream = new FileOutputStream("/tmp/xpto.jpeg");
+		final String outputFilename = constructOutputFilename(filename);
+		final FileOutputStream fileOutputStream = new FileOutputStream(outputFilename);
 		final JPEGImageEncoder imageEncoder = new JPEGImageEncoderImpl(fileOutputStream);
 		imageEncoder.encode(bufferedImage);
 		fileOutputStream.close();
@@ -163,17 +180,26 @@ public class DWGProcessor {
 //		return -1 * (int) Math.round((radians * 180) / Math.PI);
 //	}
 
-	private static int convXCoord(final double coordinate, final double max, final double min) {
-		return convCoord(coordinate, max) - X_AXIS_OFFSET;
+	private static int convXCoord(final double coordinate, final double max, final double min, final int xAxisOffset, final int scaleRatio) {
+		return convCoord(coordinate, max, scaleRatio) - xAxisOffset;
 	}
 
-	private static int convYCoord(final double coordinate, final double max, final double min) {
-		final int convCoord = convCoord(coordinate, max);
-		return SCALE_RATIO + PADDING - convCoord - Y_AXIS_OFFSET;
+	private static int convYCoord(final double coordinate, final double max, final double min,
+			final int yAxisOffset, final int scaleRatio, final int padding) {
+		final int convCoord = convCoord(coordinate, max, scaleRatio);
+		return scaleRatio + padding - convCoord - yAxisOffset;
 	}
 
-	private static int convCoord(final double coordinate, final double max) {
-		return (int) Math.round((coordinate * SCALE_RATIO) / max);
+	private static int convCoord(final double coordinate, final double max, final int scaleRatio) {
+		return (int) Math.round((coordinate * scaleRatio) / max);
+	}
+
+	private static String constructOutputFilename(final String filename) {
+		final File file = new File(filename);
+		final String simplename = file.getName();
+		final int indexOfLastDot = simplename.lastIndexOf('.');
+		final int endOfName = indexOfLastDot > 0 ? indexOfLastDot : simplename.length();
+		return "/tmp/" + simplename.substring(0, endOfName) + ".jpg";
 	}
 
 }
