@@ -109,55 +109,30 @@ public class DWGProcessor {
 				final int x2 = convXCoord(dwgLine.getP2()[0], maxX, minX, xAxisOffset, scaleRatio);
 				final int y2 = convYCoord(dwgLine.getP2()[1], maxY, minY, yAxisOffset, scaleRatio, padding);
 				graphics2D.drawLine(x1, y1, x2, y2);
-//			} else if (object instanceof DwgArc) {
-//				final DwgArc dwgArc = (DwgArc) object;
-//				final double xc = dwgArc.getCenter()[0];
-//				final double yc = dwgArc.getCenter()[1];
-//				final double radius = dwgArc.getRadius();
-//				final double xi = radius * Math.cos(dwgArc.getInitAngle()) + xc;
-//				final double yi = radius * Math.sin(dwgArc.getInitAngle()) + yc;
-//				final double xf = radius * Math.cos(dwgArc.getEndAngle()) + xc;
-//				final double yf = radius * Math.sin(dwgArc.getEndAngle()) + yc;
-//
-//				System.out.println("xi: " + xi);
-//				System.out.println("yi: " + yi);
-//				System.out.println("xf: " + xf);
-//				System.out.println("yf: " + yf);
-//
-//				final int x1 = convXCoord(xi, maxX);
-//				final int y1 = convYCoord(yi, maxY);
-//				final int x2 = convXCoord(xf, maxX);
-//				final int y2 = convYCoord(yf, maxY);
-//
-//				System.out.println("x1: " + x1);
-//				System.out.println("y1: " + y1);
-//				System.out.println("x2: " + x2);
-//				System.out.println("y2: " + y2);
-//
-//				graphics2D.drawLine(x1, y1, x2, y2);
-//
-//				final int x;
-//				final int y;
-//				final int w = Math.abs(Math.abs(x2) - Math.abs(x1));
-//				final int h = Math.abs(Math.abs(y2) - Math.abs(y1));
-//				final int startAngle;
-//				final int arcAngle;
-//				if (y1 < y2) {
-//					y = y1;
-//					x = x1;
-//					startAngle = calcDegreeAngle(dwgArc.getInitAngle());
-//					arcAngle = calcDegreeAngle(dwgArc.getEndAngle());
-//				} else {
-//					y = y2;
-//					x = x2;
-//					startAngle = calcDegreeAngle(dwgArc.getEndAngle());
-//					arcAngle = calcDegreeAngle(dwgArc.getInitAngle());
-//				}
-//
-//				System.out.println("calcDegreeAngle(dwgArc.getInitAngle()): " + calcDegreeAngle(dwgArc.getInitAngle()));
-//				System.out.println("calcDegreeAngle(dwgArc.getEndAngle()): " + calcDegreeAngle(dwgArc.getEndAngle()));
-//
-//				graphics2D.drawArc(x, y, w, h, startAngle, arcAngle);
+			} else if (object instanceof DwgArc) {
+				final DwgArc dwgArc = (DwgArc) object;
+                final double radius = dwgArc.getRadius();
+                final double xc = dwgArc.getCenter()[0];
+				final double yc = dwgArc.getCenter()[1];
+                final double ti = dwgArc.getInitAngle();
+                final double tf = dwgArc.getEndAngle();
+                final int startAngle;
+                final int endAngle;
+                if (tf > ti) {
+                    startAngle = calcDegreeAngle(ti);
+                    endAngle = calcDegreeAngle(Math.abs(Math.abs(tf) - Math.abs(ti)));
+                } else {
+                    startAngle = calcDegreeAngle(tf);
+                    endAngle = -1 * calcDegreeAngle(Math.abs(Math.abs(ti) - Math.abs(tf + 2*Math.PI)));
+                }
+
+              final int xmax = convXCoord(xc - radius, maxX, minX, xAxisOffset, scaleRatio);
+              final int ymax = convYCoord(yc + radius, maxY, minY, yAxisOffset, scaleRatio, padding);
+
+              final int xmin = convXCoord(xc + radius, maxX, minX, xAxisOffset, scaleRatio);
+              final int ymin = convYCoord(yc - radius, maxY, minY, yAxisOffset, scaleRatio, padding);
+
+              graphics2D.drawArc(xmax, ymax, Math.abs(xmax - xmin), Math.abs(ymax - ymin), startAngle, endAngle);
 			} else if (object instanceof DwgText) {
 				final DwgText dwgText = (DwgText) object;
 				final Point2D point2D = dwgText.getInsertionPoint();
@@ -176,9 +151,9 @@ public class DWGProcessor {
 		fileOutputStream.close();
 	}
 
-//	private static int calcDegreeAngle(final double radians) {
-//		return -1 * (int) Math.round((radians * 180) / Math.PI);
-//	}
+	private static int calcDegreeAngle(final double radians) {
+		return (int) Math.round((radians * 180) / Math.PI);
+	}
 
 	private static int convXCoord(final double coordinate, final double max, final double min, final int xAxisOffset, final int scaleRatio) {
 		return convCoord(coordinate, max, scaleRatio) - xAxisOffset;
