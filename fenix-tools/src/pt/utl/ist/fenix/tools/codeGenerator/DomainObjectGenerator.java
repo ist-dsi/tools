@@ -22,7 +22,7 @@ public abstract class DomainObjectGenerator {
             } else {
                 try {
                     String[] dmlFilesArray = { dmlFile };
-                    domainModel = DmlCompiler.getDomainModel(dmlFilesArray);
+                    domainModel = DmlCompiler.getFenixDomainModel(dmlFilesArray);
                 } catch (antlr.ANTLRException ae) {
                     System.err.println("Error parsing the DML files, leaving the domain empty");
                 }
