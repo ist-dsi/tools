@@ -1,11 +1,14 @@
 package pt.utl.ist.fenix.tools.smtp;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
@@ -14,7 +17,10 @@ import javax.mail.Transport;
 import javax.mail.Message.RecipientType;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 
 import pt.utl.ist.fenix.tools.util.PropertiesManager;
 import pt.utl.ist.fenix.tools.util.StringAppender;
@@ -28,6 +34,9 @@ public class EmailSender {
 	try {
 	    Properties properties = PropertiesManager.loadProperties("/SMTPConfiguration.properties");
 	    session = Session.getDefaultInstance(properties, null);
+            for (final Entry<Object, Object> entry : session.getProperties().entrySet()) {
+                System.out.println("key: " + entry.getKey() + "   value: " + entry.getValue());
+            }
 	    MAX_MAIL_RECIPIENTS = Integer.parseInt(properties.getProperty("mailSender.max.recipients"));
 	} catch (IOException e) {
 	    throw new RuntimeException(e);
@@ -78,8 +87,13 @@ public class EmailSender {
 	    try {
 		final MimeMessage mimeMessageTo = new MimeMessage(session);
 		mimeMessageTo.setFrom(new InternetAddress(from));
-		mimeMessageTo.setSubject(subject);
-		mimeMessageTo.setText(body);
+                mimeMessageTo.setSubject(subject);
+
+                final MimeMultipart mimeMultipart = new MimeMultipart();
+                final BodyPart bodyPart = new MimeBodyPart();
+                bodyPart.setText(body);
+                mimeMultipart.addBodyPart(bodyPart);
+                mimeMessageTo.setContent(mimeMultipart);
 
 		if (hasToAddresses) {
 		    addRecipients(mimeMessageTo, Message.RecipientType.TO, toAddresses, unsentAddresses);
@@ -90,7 +104,6 @@ public class EmailSender {
 		}
 
 		Transport.send(mimeMessageTo);
-
 	    } catch (SendFailedException e) {
 		registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, null);
 	    } catch (MessagingException e) {
@@ -104,13 +117,18 @@ public class EmailSender {
 		List<String> subList = null;
 		try {
 		    subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i + MAX_MAIL_RECIPIENTS));
-		    final MimeMessage mimeMessageBcc = new MimeMessage(session);
-		    mimeMessageBcc.setFrom(new InternetAddress(from));
-		    mimeMessageBcc.setSubject(subject);
-		    mimeMessageBcc.setText(body);
+                    final Message message = new MimeMessage(session);
+		    message.setFrom(new InternetAddress(from));
+                    message.setSubject(subject);
 
-		    addRecipients(mimeMessageBcc, Message.RecipientType.BCC, subList, unsentAddresses);
-		    Transport.send(mimeMessageBcc);
+                    final MimeMultipart mimeMultipart = new MimeMultipart();
+                    final BodyPart bodyPart = new MimeBodyPart();
+                    bodyPart.setText(body);
+                    mimeMultipart.addBodyPart(bodyPart);
+                    message.setContent(mimeMultipart);
+
+		    addRecipients(message, Message.RecipientType.BCC, subList, unsentAddresses);
+		    Transport.send(message);
 		} catch (SendFailedException e) {
 		    registerInvalidAddresses(unsentAddresses, e, null, null, subList);
 		} catch (MessagingException e) {
@@ -150,7 +168,7 @@ public class EmailSender {
 		: StringAppender.append("\"", fromName, "\" <", fromAddress, ">");
     }
 
-    protected static void addRecipients(final MimeMessage mensagem, final RecipientType recipientType,
+    protected static void addRecipients(final Message mensagem, final RecipientType recipientType,
 	    final Collection<String> emailAddresses, Collection<String> unsentMails)
 	    throws MessagingException {
 	if (emailAddresses != null) {
