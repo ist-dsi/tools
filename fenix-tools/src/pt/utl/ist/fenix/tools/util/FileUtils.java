@@ -30,26 +30,32 @@ public class FileUtils {
 
     public static String readFile(final String filename) throws IOException {
         final FileReader fileReader = new FileReader(filename);
-        char[] buffer = new char[4096];
-        final StringBuilder fileContents = new StringBuilder();
-        for (int n = 0; (n = fileReader.read(buffer)) != -1; fileContents.append(buffer, 0, n));
-        fileReader.close();
-        return fileContents.toString();
+        try {
+            char[] buffer = new char[4096];
+            final StringBuilder fileContents = new StringBuilder();
+            for (int n = 0; (n = fileReader.read(buffer)) != -1; fileContents.append(buffer, 0, n));
+            return fileContents.toString();
+        } finally {
+            fileReader.close();
+        }
     }
 
     public static byte[] readFileInBytes(final String filename) throws IOException {
         final File file = new File(filename);
         final FileInputStream fileInputStream = new FileInputStream(file);
-        // TODO : fix to only accpet up to max int value.
-        final int fileSize = (int) file.length();
-        final byte[] buffer = new byte[fileSize];
+        try {
+            // TODO : fix to only accpet up to max int value.
+            final int fileSize = (int) file.length();
+            final byte[] buffer = new byte[fileSize];
 
-        if (fileSize > 0) {
-            for (int n = 0; (n = fileInputStream.read(buffer, n, fileSize - n)) != -1;);
+            if (fileSize > 0) {
+                for (int n = 0; (n = fileInputStream.read(buffer, n, fileSize - n)) != -1;);
+            }
+            return buffer;
+        } finally {
+            fileInputStream.close();
         }
-
-        fileInputStream.close();
-        return buffer;
+        
     }
 
     public static void writeFile(final String filename, final String fileContents, final boolean append)
@@ -61,9 +67,11 @@ public class FileUtils {
             }
 
             final FileWriter fileWriter = new FileWriter(file, append);
-
-            fileWriter.write(fileContents);
-            fileWriter.close();
+            try {
+                fileWriter.write(fileContents);
+            } finally {
+                fileWriter.close();
+            }
         }
     }
 
@@ -71,8 +79,11 @@ public class FileUtils {
             throws IOException {
         synchronized (fileWriterSynch) {
             final FileOutputStream fileOutputStream = new FileOutputStream(filename, append);
-            fileOutputStream.write(fileContents);
-            fileOutputStream.close();
+            try {
+                fileOutputStream.write(fileContents);
+            } finally {
+                fileOutputStream.close();
+            }
         }
     }
 
@@ -89,10 +100,15 @@ public class FileUtils {
     }
 
     public static void copy(InputStream inputStream, OutputStream outputStream) throws IOException {
-        final byte[] buffer = new byte[BUFFER_SIZE];
-        for (int numberOfBytesRead;
-                (numberOfBytesRead = inputStream.read(buffer, 0, BUFFER_SIZE)) != -1;
-                outputStream.write(buffer, 0, numberOfBytesRead));
+        try {
+            final byte[] buffer = new byte[BUFFER_SIZE];
+            for (int numberOfBytesRead;
+                    (numberOfBytesRead = inputStream.read(buffer, 0, BUFFER_SIZE)) != -1;
+                    outputStream.write(buffer, 0, numberOfBytesRead));
+        } finally {
+            inputStream.close();
+            outputStream.close();
+        }
    }
 
     public static String getTemporaryFileBaseName() {
@@ -113,6 +129,7 @@ public class FileUtils {
             if (targetFileOutputStream != null) {
                 targetFileOutputStream.close();
             }
+            inputStream.close();
         }
 
         return temporaryFile;
