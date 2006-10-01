@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Map.Entry;
 
+import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -70,6 +71,12 @@ public class EmailSender {
     public static Collection<String> send(final String fromName, final String fromAddress,
 	    final Collection<String> toAddresses, final Collection<String> ccAddresses,
 	    final Collection<String> bccAddresses, final String subject, final String body) {
+	return send(fromName, fromAddress, new String[]{}, toAddresses, ccAddresses, bccAddresses, subject, body);
+    }
+
+    public static Collection<String> send(final String fromName, final String fromAddress, final String[] replyTos,
+	    final Collection<String> toAddresses, final Collection<String> ccAddresses,
+	    final Collection<String> bccAddresses, final String subject, final String body) {
 
 	if (fromAddress == null) {
 	    throw new NullPointerException("error.from.address.cannot.be.null");
@@ -81,11 +88,23 @@ public class EmailSender {
 	final boolean hasToAddresses = (toAddresses != null && !toAddresses.isEmpty()) ? true : false;
 	final boolean hasCCAddresses = (ccAddresses != null && !ccAddresses.isEmpty()) ? true : false;
 
+	final Address[] replyToAddresses = new Address[replyTos == null ? 0 : replyTos.length];
+	if (replyTos != null) {
+	    for (int i = 0; i < replyTos.length; i++) {
+		try {
+		    replyToAddresses[i] = new InternetAddress(replyTos[i]);
+		} catch (AddressException e) {
+		    throw new Error("invalid.reply.to.address: " + replyTos[i]);
+		}
+	    }
+	}
+
 	if (hasToAddresses || hasCCAddresses) {
 	    try {
 		final MimeMessage mimeMessageTo = new MimeMessage(session);
 		mimeMessageTo.setFrom(new InternetAddress(from));
                 mimeMessageTo.setSubject(subject);
+                mimeMessageTo.setReplyTo(replyToAddresses);
 
                 final MimeMultipart mimeMultipart = new MimeMultipart();
                 final BodyPart bodyPart = new MimeBodyPart();
