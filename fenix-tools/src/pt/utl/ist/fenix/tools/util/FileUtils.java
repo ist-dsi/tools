@@ -115,11 +115,16 @@ public class FileUtils {
         return TEMPORARY_FILE_GLOBAL_UNIQUE_NAME_PREFIX;
     }
 
-    public static File copyToTemporaryFile(final InputStream inputStream) throws IOException {
+    public static File createTemporaryFile() throws IOException {
         final File temporaryFile = File.createTempFile(TEMPORARY_FILE_GLOBAL_UNIQUE_NAME_PREFIX, "");
         // In case anything fails the file will be cleaned when jvm
         // shutsdown
         temporaryFile.deleteOnExit();
+        return temporaryFile;
+    }
+
+    public static File copyToTemporaryFile(final InputStream inputStream) throws IOException {
+        final File temporaryFile = createTemporaryFile();
 
         FileOutputStream targetFileOutputStream = null;
         try {
