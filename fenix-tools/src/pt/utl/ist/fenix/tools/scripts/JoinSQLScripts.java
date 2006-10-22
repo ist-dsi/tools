@@ -67,13 +67,13 @@ public class JoinSQLScripts {
         printWriter.append("read -s password\n");
         printWriter.append("\n");
         printWriter.append("function execute() {\n");
-        printWriter.append("\techo ---------------------------------------- $1\n");
+        printWriter.append("\techo $1\n");
         printWriter.append("\tmysql -u$USER -f -p$password --default-character-set=latin1 $DB < $2\n");
         printWriter.append("\techo\n");
         printWriter.append("}\n");
         printWriter.append("\n");
         printWriter.append("function executeWithTempFile() {\n");
-        printWriter.append("\techo ---------------------------------------- $1\n");
+        printWriter.append("\techo $1\n");
         printWriter.append("\tmysql -u$USER -f -p$password --default-character-set=latin1 $DB < $2 > tmp.sql\n");
         printWriter.append("\tmysql -u$USER -f -p$password --default-character-set=latin1 $DB < tmp.sql\n");       
         printWriter.append("\trm tmp.sql\n");
