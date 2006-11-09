@@ -20,11 +20,7 @@ import sun.awt.image.codec.JPEGImageEncoderImpl;
 import com.iver.cit.jdwglib.dwg.DwgFile;
 import com.iver.cit.jdwglib.dwg.DwgObject;
 import com.iver.cit.jdwglib.dwg.objects.DwgArc;
-import com.iver.cit.jdwglib.dwg.objects.DwgBlockHeader;
-import com.iver.cit.jdwglib.dwg.objects.DwgLayer;
 import com.iver.cit.jdwglib.dwg.objects.DwgLine;
-import com.iver.cit.jdwglib.dwg.objects.DwgLwPolyline;
-import com.iver.cit.jdwglib.dwg.objects.DwgSolid;
 import com.iver.cit.jdwglib.dwg.objects.DwgText;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
@@ -114,11 +110,11 @@ public class DWGProcessor {
 
 	public double convX(final double x) {
 	    // return (maxX - minX - x) * scaleRatio;
-	    return x * scaleRatio;
+	    return x * scaleRatio / maxX;
 	}
 
 	public double convY(final double y) {
-	    return (maxY - minY - y) * scaleRatio;
+	    return (maxY - minY - y) * scaleRatio / maxX;
 	}
     }
 
@@ -134,7 +130,7 @@ public class DWGProcessor {
 
     public DWGProcessor(final int scaleRatio) {
 	this.scaleRatio = scaleRatio;
-	fontSize = (int) (scaleRatio * 0.4);
+	fontSize = (int) (scaleRatio * 0.007);
 	padding = (int) (scaleRatio * 0.025);
 	xAxisOffset = (int) (scaleRatio * 0.075);
 	yAxisOffset = (int) (scaleRatio * 0.3);
