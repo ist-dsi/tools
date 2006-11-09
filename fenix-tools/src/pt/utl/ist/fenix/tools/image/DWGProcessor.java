@@ -134,7 +134,7 @@ public class DWGProcessor {
 
     public DWGProcessor(final int scaleRatio) {
 	this.scaleRatio = scaleRatio;
-	fontSize = (int) (scaleRatio * 0.008);
+	fontSize = (int) (scaleRatio * 0.4);
 	padding = (int) (scaleRatio * 0.025);
 	xAxisOffset = (int) (scaleRatio * 0.075);
 	yAxisOffset = (int) (scaleRatio * 0.3);
