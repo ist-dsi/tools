@@ -12,9 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Properties;
 import java.util.Vector;
 
 import pt.utl.ist.fenix.tools.util.FileUtils;
+import pt.utl.ist.fenix.tools.util.PropertiesManager;
 import sun.awt.image.codec.JPEGImageEncoderImpl;
 
 import com.iver.cit.jdwglib.dwg.DwgFile;
@@ -28,33 +30,30 @@ public class DWGProcessor {
 
     private static final String FONT_NAME = "Helvetica";
 
-    public static void main(String[] args) {
-	try {
-	    final File inputDir = new File(args[0]);
-	    final String outputDirname = args[1];
-	    final int scaleRatio = Integer.parseInt(args[2]);
-	    final DWGProcessor processor = new DWGProcessor(scaleRatio);
-	    for (final File file : inputDir.listFiles()) {
-		if (file.isFile()) {
-		    final String inputFilename = file.getAbsolutePath();
-		    if (inputFilename.endsWith(".dwg")) {
-			final String outputFilename = constructOutputFilename(file, outputDirname);
-			final OutputStream outputStream = new FileOutputStream(outputFilename);
-			try {
-			    processor.generateJPEGImage(inputFilename, outputStream);
-			} catch (Error error) {
-			    error.printStackTrace();
-			} finally {
-			    outputStream.close();
-			}
-		    }
-		}
-	    }
-	} catch (Throwable ex) {
-	    ex.printStackTrace();
-	} finally {
-	    System.exit(0);
-	}
+    protected final int scaleRatio;
+
+    protected final int fontSize;
+
+    protected final int padding;
+
+    protected final int xAxisOffset;
+
+    protected final int yAxisOffset;
+
+    public DWGProcessor() throws IOException {
+	
+	Properties properties = PropertiesManager.loadProperties("/configuration.properties");
+	String scaleRatioString = properties.getProperty("scaleRatio");
+	String fontSizeString = properties.getProperty("fontSize");
+	String paddingString = properties.getProperty("padding");
+	String xAxisOffsetString = properties.getProperty("xAxisOffset");
+	String yAxisOffsetString = properties.getProperty("yAxisOffset");
+		
+	scaleRatio = (int) Double.valueOf(scaleRatioString).doubleValue();
+	fontSize = (int) (scaleRatio * Double.valueOf(fontSizeString));
+	padding = (int) (scaleRatio * Double.valueOf(paddingString));
+	xAxisOffset = (int) (scaleRatio * Double.valueOf(xAxisOffsetString));
+	yAxisOffset = (int) (scaleRatio * Double.valueOf(yAxisOffsetString));
     }
 
     protected static String constructOutputFilename(final File inputFile, final String outputDirname) {
@@ -62,88 +61,16 @@ public class DWGProcessor {
 	return outputDirname + "/" + simplename.substring(0, simplename.length() - 3) + "jpg";
     }
 
-    protected class ReferenceConverter {
-	double minX = 0;
-
-	double maxX = 0;
-
-	double minY = 0;
-
-	double maxY = 0;
-
-	public ReferenceConverter(final Vector<DwgObject> dwgObjects) {
-	    for (final DwgObject dwgObject : dwgObjects) {
-		if (dwgObject.getColor() == 0) continue;
-		if (dwgObject instanceof DwgArc) {
-		    final DwgArc dwgArc = (DwgArc) dwgObject;
-		} else if (dwgObject instanceof DwgText) {
-		    final DwgText dwgText = (DwgText) dwgObject;
-		    minX = Math.min(minX, dwgText.getInsertionPoint().getX());
-		    minY = Math.min(minY, dwgText.getInsertionPoint().getY());
-		    maxX = Math.max(maxX, dwgText.getInsertionPoint().getX());
-		    maxY = Math.max(maxY, dwgText.getInsertionPoint().getY());
-		} else if (dwgObject instanceof DwgLine) {
-		    final DwgLine dwgLine = (DwgLine) dwgObject;
-		    minX = Math.min(minX, dwgLine.getP1()[0]);
-		    minY = Math.min(minY, dwgLine.getP1()[1]);
-		    minX = Math.min(minX, dwgLine.getP2()[0]);
-		    minY = Math.min(minY, dwgLine.getP2()[1]);
-		    maxX = Math.max(maxX, dwgLine.getP1()[0]);
-		    maxY = Math.max(maxY, dwgLine.getP1()[1]);
-		    maxX = Math.max(maxX, dwgLine.getP2()[0]);
-		    maxY = Math.max(maxY, dwgLine.getP2()[1]);
-//		} else if (dwgObject instanceof DwgLwPolyline) {
-//		    final DwgLwPolyline dwgLwPolyline = (DwgLwPolyline) dwgObject;
-//		} else if (dwgObject instanceof DwgBlockHeader) {
-//		    final DwgBlockHeader dwgBlockHeader = (DwgBlockHeader) dwgObject;
-//		} else if (dwgObject instanceof DwgLayer) {
-//		    final DwgLayer dwgLayer = (DwgLayer) dwgObject;
-//		} else if (dwgObject instanceof DwgSolid) {
-//		    final DwgSolid dwgSolid = (DwgSolid) dwgObject;
-		} else {
-//		    System.out.println("otherObject: " + dwgObject.getClass().getName());
-		    // throw new IllegalArgumentException("Unknown
-                        // DwgObject: " + dwgObject.getClass().getName());
-		}
-	    }
-	}
-
-	public double convX(final double x) {
-	    // return (maxX - minX - x) * scaleRatio;
-	    return x * scaleRatio / maxX;
-	}
-
-	public double convY(final double y) {
-	    return (maxY - minY - y) * scaleRatio / maxX;
-	}
-    }
-
-    private final int scaleRatio;
-
-    private final int fontSize;
-
-    private final int padding;
-
-    private final int xAxisOffset;
-
-    private final int yAxisOffset;
-
-    public DWGProcessor(final int scaleRatio) {
-	this.scaleRatio = scaleRatio;
-	fontSize = (int) (scaleRatio * 0.007);
-	padding = (int) (scaleRatio * 0.025);
-	xAxisOffset = (int) (scaleRatio * 0.075);
-	yAxisOffset = (int) (scaleRatio * 0.3);
-    }
-
     public void generateJPEGImage(final InputStream inputStream, final OutputStream outputStream)
 	    throws IOException {
+
 	final File file = FileUtils.copyToTemporaryFile(inputStream);
 	generateJPEGImage(file.getAbsolutePath(), outputStream);
     }
 
     public void generateJPEGImage(final String filename, final OutputStream outputStream)
 	    throws IOException {
+
 	final BufferedImage bufferedImage = process(filename, outputStream);
 	final JPEGImageEncoder imageEncoder = new JPEGImageEncoderImpl(outputStream);
 	imageEncoder.encode(bufferedImage);
@@ -155,7 +82,7 @@ public class DWGProcessor {
 	final DwgFile dwgFile = readDwgFile(filename);
 
 	final Vector<DwgObject> dwgObjects = dwgFile.getDwgObjects();
-	final ReferenceConverter referenceConverter = new ReferenceConverter(dwgObjects);
+	final ReferenceConverter referenceConverter = new ReferenceConverter(dwgObjects, scaleRatio);
 
 	final BufferedImage bufferedImage = new BufferedImage((int) referenceConverter
 		.convX(referenceConverter.maxX),
@@ -175,7 +102,8 @@ public class DWGProcessor {
 	return bufferedImage;
     }
 
-    private void drawObject(final ReferenceConverter referenceConverter, final Graphics2D graphics2D, final DwgObject dwgObject) {
+    private void drawObject(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
+	    final DwgObject dwgObject) {
 	if (dwgObject.getColor() != 0) {
 	    if (dwgObject instanceof DwgLine) {
 		final DwgLine dwgLine = (DwgLine) dwgObject;
@@ -277,16 +205,94 @@ public class DWGProcessor {
 	return (int) referenceConverter.convY(coordinate);
     }
 
-    public static void generateJPEGImage(final InputStream inputStream, final OutputStream outputStream,
-	    final int scaleRatio) throws IOException {
-	final DWGProcessor processor = new DWGProcessor(scaleRatio);
-	processor.generateJPEGImage(inputStream, outputStream);
+    public static class ReferenceConverter {
+	double minX = 0;
+
+	double maxX = 0;
+
+	double minY = 0;
+
+	double maxY = 0;
+
+	int scaleRatio = 0;
+
+	public ReferenceConverter(final Vector<DwgObject> dwgObjects, int scaleRatio) {
+	    this.scaleRatio = scaleRatio;
+	    for (final DwgObject dwgObject : dwgObjects) {
+		if (dwgObject.getColor() == 0)
+		    continue;
+		if (dwgObject instanceof DwgArc) {
+		    final DwgArc dwgArc = (DwgArc) dwgObject;
+		} else if (dwgObject instanceof DwgText) {
+		    final DwgText dwgText = (DwgText) dwgObject;
+		    minX = Math.min(minX, dwgText.getInsertionPoint().getX());
+		    minY = Math.min(minY, dwgText.getInsertionPoint().getY());
+		    maxX = Math.max(maxX, dwgText.getInsertionPoint().getX());
+		    maxY = Math.max(maxY, dwgText.getInsertionPoint().getY());
+		} else if (dwgObject instanceof DwgLine) {
+		    final DwgLine dwgLine = (DwgLine) dwgObject;
+		    minX = Math.min(minX, dwgLine.getP1()[0]);
+		    minY = Math.min(minY, dwgLine.getP1()[1]);
+		    minX = Math.min(minX, dwgLine.getP2()[0]);
+		    minY = Math.min(minY, dwgLine.getP2()[1]);
+		    maxX = Math.max(maxX, dwgLine.getP1()[0]);
+		    maxY = Math.max(maxY, dwgLine.getP1()[1]);
+		    maxX = Math.max(maxX, dwgLine.getP2()[0]);
+		    maxY = Math.max(maxY, dwgLine.getP2()[1]);
+		    // } else if (dwgObject instanceof DwgLwPolyline) {
+		    // final DwgLwPolyline dwgLwPolyline = (DwgLwPolyline)
+		    // dwgObject;
+		    // } else if (dwgObject instanceof DwgBlockHeader) {
+		    // final DwgBlockHeader dwgBlockHeader =
+		    // (DwgBlockHeader) dwgObject;
+		    // } else if (dwgObject instanceof DwgLayer) {
+		    // final DwgLayer dwgLayer = (DwgLayer) dwgObject;
+		    // } else if (dwgObject instanceof DwgSolid) {
+		    // final DwgSolid dwgSolid = (DwgSolid) dwgObject;
+		} else {
+		    // System.out.println("otherObject: " +
+		    // dwgObject.getClass().getName());
+		    // throw new IllegalArgumentException("Unknown
+		    // DwgObject: " + dwgObject.getClass().getName());
+		}
+	    }
+	}
+
+	public double convX(final double x) {
+	    // return (maxX - minX - x) * scaleRatio;
+	    return x * scaleRatio / maxX;
+	}
+
+	public double convY(final double y) {
+	    return (maxY - minY - y) * scaleRatio / maxX;
+	}
     }
 
-    public static void generateJPEGImage(final String filename, final OutputStream outputStream,
-	    final int scaleRatio) throws IOException {
-	final DWGProcessor processor = new DWGProcessor(scaleRatio);
-	processor.generateJPEGImage(filename, outputStream);
+    public static void main(String[] args) {
+	try {
+	    final File inputDir = new File(args[0]);
+	    final String outputDirname = args[1];
+	    final DWGProcessor processor = new DWGProcessor();
+	    for (final File file : inputDir.listFiles()) {
+		if (file.isFile()) {
+		    final String inputFilename = file.getAbsolutePath();
+		    if (inputFilename.endsWith(".dwg")) {
+			final String outputFilename = constructOutputFilename(file, outputDirname);
+			final OutputStream outputStream = new FileOutputStream(outputFilename);
+			try {
+			    processor.generateJPEGImage(inputFilename, outputStream);
+			} catch (Error error) {
+			    error.printStackTrace();
+			} finally {
+			    outputStream.close();
+			}
+		    }
+		}
+	    }
+	} catch (Throwable ex) {
+	    ex.printStackTrace();
+	} finally {
+	    System.exit(0);
+	}
     }
-
 }
