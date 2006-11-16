@@ -41,14 +41,14 @@ public class DWGProcessor {
     protected final int yAxisOffset;
 
     public DWGProcessor() throws IOException {
-	
+
 	Properties properties = PropertiesManager.loadProperties("/configuration.properties");
 	String scaleRatioString = properties.getProperty("scaleRatio");
 	String fontSizeString = properties.getProperty("fontSize");
 	String paddingString = properties.getProperty("padding");
 	String xAxisOffsetString = properties.getProperty("xAxisOffset");
 	String yAxisOffsetString = properties.getProperty("yAxisOffset");
-		
+
 	scaleRatio = (int) Double.valueOf(scaleRatioString).doubleValue();
 	fontSize = (int) (scaleRatio * Double.valueOf(fontSizeString));
 	padding = (int) (scaleRatio * Double.valueOf(paddingString));
@@ -87,6 +87,7 @@ public class DWGProcessor {
 	final BufferedImage bufferedImage = new BufferedImage((int) referenceConverter
 		.convX(referenceConverter.maxX),
 		(int) referenceConverter.convY(referenceConverter.minY), BufferedImage.TYPE_INT_RGB);
+
 	final Graphics2D graphics2D = bufferedImage.createGraphics();
 	graphics2D.setFont(new Font(FONT_NAME, Font.PLAIN, fontSize));
 	graphics2D.setBackground(Color.WHITE);
@@ -104,6 +105,7 @@ public class DWGProcessor {
 
     private void drawObject(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
 	    final DwgObject dwgObject) {
+
 	if (dwgObject.getColor() != 0) {
 	    if (dwgObject instanceof DwgLine) {
 		final DwgLine dwgLine = (DwgLine) dwgObject;
@@ -206,39 +208,62 @@ public class DWGProcessor {
     }
 
     public static class ReferenceConverter {
-	double minX = 0;
+	double minX = Double.MAX_VALUE;
 
-	double maxX = 0;
+	double maxX = Double.MAX_VALUE * -1.0;
 
-	double minY = 0;
+	double minY = Double.MAX_VALUE;
 
-	double maxY = 0;
+	double maxY = Double.MAX_VALUE * -1.0;
 
 	int scaleRatio = 0;
 
 	public ReferenceConverter(final Vector<DwgObject> dwgObjects, int scaleRatio) {
 	    this.scaleRatio = scaleRatio;
 	    for (final DwgObject dwgObject : dwgObjects) {
-		if (dwgObject.getColor() == 0)
+		if (dwgObject.getColor() == 0) {
 		    continue;
-		if (dwgObject instanceof DwgArc) {
-		    final DwgArc dwgArc = (DwgArc) dwgObject;
+
 		} else if (dwgObject instanceof DwgText) {
 		    final DwgText dwgText = (DwgText) dwgObject;
+
 		    minX = Math.min(minX, dwgText.getInsertionPoint().getX());
 		    minY = Math.min(minY, dwgText.getInsertionPoint().getY());
+
 		    maxX = Math.max(maxX, dwgText.getInsertionPoint().getX());
 		    maxY = Math.max(maxY, dwgText.getInsertionPoint().getY());
+
+		} else if (dwgObject instanceof DwgArc) {
+		    final DwgArc dwgArc = (DwgArc) dwgObject;
+
+//		    final double radius = dwgArc.getRadius();
+//		    final double xc = dwgArc.getCenter()[0];
+//		    final double yc = dwgArc.getCenter()[1];
+//
+//		    // without checking angles
+//		    minX = Math.min(minX, xc + radius);
+//		    minY = Math.min(minY, yc + radius);
+//		    minX = Math.min(minX, xc - radius);
+//		    minY = Math.min(minY, yc - radius);
+//
+//		    maxX = Math.max(maxX, xc - radius);
+//		    maxY = Math.max(maxY, yc - radius);
+//		    maxX = Math.max(maxX, xc + radius);
+//		    maxY = Math.max(maxY, yc + radius);
+
 		} else if (dwgObject instanceof DwgLine) {
 		    final DwgLine dwgLine = (DwgLine) dwgObject;
+
 		    minX = Math.min(minX, dwgLine.getP1()[0]);
 		    minY = Math.min(minY, dwgLine.getP1()[1]);
-		    minX = Math.min(minX, dwgLine.getP2()[0]);
-		    minY = Math.min(minY, dwgLine.getP2()[1]);
 		    maxX = Math.max(maxX, dwgLine.getP1()[0]);
 		    maxY = Math.max(maxY, dwgLine.getP1()[1]);
+
+		    minX = Math.min(minX, dwgLine.getP2()[0]);
+		    minY = Math.min(minY, dwgLine.getP2()[1]);
 		    maxX = Math.max(maxX, dwgLine.getP2()[0]);
 		    maxY = Math.max(maxY, dwgLine.getP2()[1]);
+
 		    // } else if (dwgObject instanceof DwgLwPolyline) {
 		    // final DwgLwPolyline dwgLwPolyline = (DwgLwPolyline)
 		    // dwgObject;
@@ -249,9 +274,10 @@ public class DWGProcessor {
 		    // final DwgLayer dwgLayer = (DwgLayer) dwgObject;
 		    // } else if (dwgObject instanceof DwgSolid) {
 		    // final DwgSolid dwgSolid = (DwgSolid) dwgObject;
+
 		} else {
 		    // System.out.println("otherObject: " +
-		    // dwgObject.getClass().getName());
+                        // dwgObject.getClass().getName());
 		    // throw new IllegalArgumentException("Unknown
 		    // DwgObject: " + dwgObject.getClass().getName());
 		}
@@ -259,12 +285,11 @@ public class DWGProcessor {
 	}
 
 	public double convX(final double x) {
-	    // return (maxX - minX - x) * scaleRatio;
-	    return x * scaleRatio / maxX;
+	    return (x - minX) * scaleRatio / maxX;
 	}
 
 	public double convY(final double y) {
-	    return (maxY - minY - y) * scaleRatio / maxX;
+	    return (maxY - y) * scaleRatio / maxX;
 	}
     }
 
