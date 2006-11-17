@@ -122,6 +122,7 @@ public class DWGProcessor {
 
     protected void drawLine(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
 	    final DwgLine dwgLine) {
+
 	final int x1 = convXCoord(dwgLine.getP1()[0], referenceConverter);
 	final int y1 = convYCoord(dwgLine.getP1()[1], referenceConverter);
 	final int x2 = convXCoord(dwgLine.getP2()[0], referenceConverter);
@@ -132,6 +133,7 @@ public class DWGProcessor {
 
     protected void drawArc(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
 	    final DwgArc dwgArc) {
+
 	final double radius = dwgArc.getRadius();
 	final double xc = dwgArc.getCenter()[0];
 	final double yc = dwgArc.getCenter()[1];
@@ -235,21 +237,31 @@ public class DWGProcessor {
 
 		} else if (dwgObject instanceof DwgArc) {
 		    final DwgArc dwgArc = (DwgArc) dwgObject;
+		    final double ti = dwgArc.getInitAngle();
+		    final double tf = dwgArc.getEndAngle();		    
 
-//		    final double radius = dwgArc.getRadius();
-//		    final double xc = dwgArc.getCenter()[0];
-//		    final double yc = dwgArc.getCenter()[1];
-//
-//		    // without checking angles
-//		    minX = Math.min(minX, xc + radius);
-//		    minY = Math.min(minY, yc + radius);
-//		    minX = Math.min(minX, xc - radius);
-//		    minY = Math.min(minY, yc - radius);
-//
-//		    maxX = Math.max(maxX, xc - radius);
-//		    maxY = Math.max(maxY, yc - radius);
-//		    maxX = Math.max(maxX, xc + radius);
-//		    maxY = Math.max(maxY, yc + radius);
+		    if (ti != tf) {
+						
+			final double r = dwgArc.getRadius();
+			final double xc = dwgArc.getCenter()[0];
+			final double yc = dwgArc.getCenter()[1];
+			
+			final double xi = r * Math.cos(ti) + xc;
+			final double yi = r * Math.sin(ti) + yc;
+			
+			final double xf = r * Math.cos(tf) + xc;
+			final double yf = r * Math.sin(tf) + yc;
+
+			minX = Math.min(minX, xi);
+			minX = Math.min(minX, xf);					
+			minY = Math.min(minY, yi);
+			minY = Math.min(minY, yf);
+
+			maxX = Math.max(maxX, xi);
+			maxX = Math.max(maxX, xf);
+			maxY = Math.max(maxY, yi);			
+			maxY = Math.max(maxY, yf);
+		    }
 
 		} else if (dwgObject instanceof DwgLine) {
 		    final DwgLine dwgLine = (DwgLine) dwgObject;
@@ -277,7 +289,7 @@ public class DWGProcessor {
 
 		} else {
 		    // System.out.println("otherObject: " +
-                        // dwgObject.getClass().getName());
+		    // dwgObject.getClass().getName());
 		    // throw new IllegalArgumentException("Unknown
 		    // DwgObject: " + dwgObject.getClass().getName());
 		}
