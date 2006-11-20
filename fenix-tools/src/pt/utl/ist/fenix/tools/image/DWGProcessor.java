@@ -28,7 +28,7 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class DWGProcessor {
 
-    private static final String FONT_NAME = "Helvetica";
+    private static final String FONT_NAME = "Bitstream Vera Sans Mono";
 
     protected final int scaleRatio;
 
