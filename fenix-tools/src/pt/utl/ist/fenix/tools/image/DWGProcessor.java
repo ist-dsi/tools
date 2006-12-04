@@ -22,7 +22,21 @@ import sun.awt.image.codec.JPEGImageEncoderImpl;
 import com.iver.cit.jdwglib.dwg.DwgFile;
 import com.iver.cit.jdwglib.dwg.DwgObject;
 import com.iver.cit.jdwglib.dwg.objects.DwgArc;
+import com.iver.cit.jdwglib.dwg.objects.DwgAttdef;
+import com.iver.cit.jdwglib.dwg.objects.DwgAttrib;
+import com.iver.cit.jdwglib.dwg.objects.DwgBlock;
+import com.iver.cit.jdwglib.dwg.objects.DwgBlockHeader;
+import com.iver.cit.jdwglib.dwg.objects.DwgCircle;
+import com.iver.cit.jdwglib.dwg.objects.DwgEllipse;
+import com.iver.cit.jdwglib.dwg.objects.DwgEndblk;
+import com.iver.cit.jdwglib.dwg.objects.DwgInsert;
+import com.iver.cit.jdwglib.dwg.objects.DwgLayer;
 import com.iver.cit.jdwglib.dwg.objects.DwgLine;
+import com.iver.cit.jdwglib.dwg.objects.DwgLwPolyline;
+import com.iver.cit.jdwglib.dwg.objects.DwgMText;
+import com.iver.cit.jdwglib.dwg.objects.DwgPoint;
+import com.iver.cit.jdwglib.dwg.objects.DwgSeqend;
+import com.iver.cit.jdwglib.dwg.objects.DwgSolid;
 import com.iver.cit.jdwglib.dwg.objects.DwgText;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
@@ -107,28 +121,97 @@ public class DWGProcessor {
 	    final DwgObject dwgObject) {
 
 	if (dwgObject.getColor() != 0) {
+
 	    if (dwgObject instanceof DwgLine) {
 		final DwgLine dwgLine = (DwgLine) dwgObject;
 		drawLine(referenceConverter, graphics2D, dwgLine);
+
 	    } else if (dwgObject instanceof DwgArc) {
 		final DwgArc dwgArc = (DwgArc) dwgObject;
 		drawArc(referenceConverter, graphics2D, dwgArc);
+
 	    } else if (dwgObject instanceof DwgText) {
 		final DwgText dwgText = (DwgText) dwgObject;
 		drawText(referenceConverter, graphics2D, dwgText);
+
+	    } else if (dwgObject instanceof DwgLwPolyline) {
+		final DwgLwPolyline dwgLwPolyline = (DwgLwPolyline) dwgObject;
+		drawPolygonLine(referenceConverter, graphics2D, dwgLwPolyline);
+
+	    } else if (dwgObject instanceof DwgEllipse) {
+		final DwgEllipse dwgEllipse = (DwgEllipse) dwgObject;
+		drawEllipse(referenceConverter, graphics2D, dwgEllipse);
+
+	    } else if (dwgObject instanceof DwgCircle) {
+		final DwgCircle dwgCircle = (DwgCircle) dwgObject;
+		drawCircle(referenceConverter, graphics2D, dwgCircle);
 	    }
 	}
     }
 
+    protected void drawCircle(ReferenceConverter referenceConverter, Graphics2D graphics2D,
+	    DwgCircle dwgCircle) {
+
+	final double radius = dwgCircle.getRadius();
+	final double xc = dwgCircle.getCenter()[0];
+	final double yc = dwgCircle.getCenter()[1];
+	final int startAngle = 0;
+	final int endAngle = 360;
+
+	graphics2DDrawArc(referenceConverter, graphics2D, radius, xc, yc, startAngle, endAngle);
+    }
+
+    protected void drawEllipse(ReferenceConverter referenceConverter, Graphics2D graphics2D,
+	    DwgEllipse dwgEllipse) {
+
+	final double width = ReferenceConverter.getEllipseWidth(dwgEllipse);
+	final double heigth = ReferenceConverter.getEllipseHeigth(dwgEllipse);
+
+	final double xc = dwgEllipse.getCenter()[0];
+	final double yc = dwgEllipse.getCenter()[1];
+	final double ti = dwgEllipse.getInitAngle();
+	final double tf = dwgEllipse.getEndAngle();
+
+	final int startAngle;
+	final int endAngle;
+	if (tf > ti) {
+	    startAngle = calcDegreeAngle(ti);
+	    endAngle = calcDegreeAngle(Math.abs(Math.abs(tf) - Math.abs(ti)));
+	} else {
+	    startAngle = calcDegreeAngle(tf);
+	    endAngle = -1 * calcDegreeAngle(Math.abs(Math.abs(ti) - Math.abs(tf + 2 * Math.PI)));
+	}
+
+	final int xmax = convXCoord(xc - (width / 2), referenceConverter);
+	final int ymax = convYCoord(yc + (heigth / 2), referenceConverter);
+	graphics2D.drawArc(xmax, ymax, (int) width, (int) heigth, startAngle, endAngle);
+    }
+
+    protected void drawPolygonLine(ReferenceConverter referenceConverter, Graphics2D graphics2D,
+	    DwgLwPolyline dwgLwPolyline) {
+
+	Point2D[] vertices = dwgLwPolyline.getVertices();
+	if (vertices != null && vertices.length > 1) {
+	    for (int i = 0; i < vertices.length; i++) {
+		Point2D point2D = vertices[i];
+		if (i < (vertices.length - 1)) {
+		    Point2D nextPoint2D = vertices[i + 1];
+		    drawLine(referenceConverter, graphics2D, point2D, nextPoint2D);
+		}
+	    }
+	}
+    }
+
+    protected void drawLine(ReferenceConverter referenceConverter, Graphics2D graphics2D,
+	    Point2D point2DToDraw, Point2D nextPoint2D) {
+	graphics2DDrawLine(referenceConverter, graphics2D, point2DToDraw.getX(), point2DToDraw.getY(), nextPoint2D
+		.getX(), nextPoint2D.getY());
+    }
+
     protected void drawLine(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
 	    final DwgLine dwgLine) {
-
-	final int x1 = convXCoord(dwgLine.getP1()[0], referenceConverter);
-	final int y1 = convYCoord(dwgLine.getP1()[1], referenceConverter);
-	final int x2 = convXCoord(dwgLine.getP2()[0], referenceConverter);
-	final int y2 = convYCoord(dwgLine.getP2()[1], referenceConverter);
-
-	graphics2D.drawLine(x1, y1, x2, y2);
+	graphics2DDrawLine(referenceConverter, graphics2D, dwgLine.getP1()[0], dwgLine.getP1()[1],
+		dwgLine.getP2()[0], dwgLine.getP2()[1]);
     }
 
     protected void drawArc(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
@@ -150,6 +233,20 @@ public class DWGProcessor {
 	    endAngle = -1 * calcDegreeAngle(Math.abs(Math.abs(ti) - Math.abs(tf + 2 * Math.PI)));
 	}
 
+	graphics2DDrawArc(referenceConverter, graphics2D, radius, xc, yc, startAngle, endAngle);
+    }
+
+    protected void drawText(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
+	    final DwgText dwgText) {
+	final Point2D point2D = dwgText.getInsertionPoint();
+	graphics2D.drawString(dwgText.getText(), convXCoord(point2D.getX(), referenceConverter),
+		convYCoord(point2D.getY(), referenceConverter));
+    }
+
+    private void graphics2DDrawArc(ReferenceConverter referenceConverter, Graphics2D graphics2D,
+	    final double radius, final double xc, final double yc, final int startAngle,
+	    final int endAngle) {
+
 	final int xmax = convXCoord(xc - radius, referenceConverter);
 	final int ymax = convYCoord(yc + radius, referenceConverter);
 
@@ -160,11 +257,15 @@ public class DWGProcessor {
 		endAngle);
     }
 
-    protected void drawText(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
-	    final DwgText dwgText) {
-	final Point2D point2D = dwgText.getInsertionPoint();
-	graphics2D.drawString(dwgText.getText(), convXCoord(point2D.getX(), referenceConverter),
-		convYCoord(point2D.getY(), referenceConverter));
+    private void graphics2DDrawLine(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
+	    final double x1, final double y1, final double x2, final double y2) {
+
+	int x1_ = convXCoord(x1, referenceConverter);
+	int y1_ = convYCoord(y1, referenceConverter);
+	int x2_ = convXCoord(x2, referenceConverter);
+	int y2_ = convYCoord(y2, referenceConverter);
+
+	graphics2D.drawLine(x1_, y1_, x2_, y2_);
     }
 
     protected DwgFile readDwgFile(final String filename) throws IOException {
@@ -238,28 +339,28 @@ public class DWGProcessor {
 		} else if (dwgObject instanceof DwgArc) {
 		    final DwgArc dwgArc = (DwgArc) dwgObject;
 		    final double ti = dwgArc.getInitAngle();
-		    final double tf = dwgArc.getEndAngle();		    
+		    final double tf = dwgArc.getEndAngle();
 
 		    if (ti != tf) {
-						
+
 			final double r = dwgArc.getRadius();
 			final double xc = dwgArc.getCenter()[0];
 			final double yc = dwgArc.getCenter()[1];
-			
+
 			final double xi = r * Math.cos(ti) + xc;
 			final double yi = r * Math.sin(ti) + yc;
-			
+
 			final double xf = r * Math.cos(tf) + xc;
 			final double yf = r * Math.sin(tf) + yc;
 
 			minX = Math.min(minX, xi);
-			minX = Math.min(minX, xf);					
+			minX = Math.min(minX, xf);
 			minY = Math.min(minY, yi);
 			minY = Math.min(minY, yf);
 
 			maxX = Math.max(maxX, xi);
 			maxX = Math.max(maxX, xf);
-			maxY = Math.max(maxY, yi);			
+			maxY = Math.max(maxY, yi);
 			maxY = Math.max(maxY, yf);
 		    }
 
@@ -276,24 +377,124 @@ public class DWGProcessor {
 		    maxX = Math.max(maxX, dwgLine.getP2()[0]);
 		    maxY = Math.max(maxY, dwgLine.getP2()[1]);
 
-		    // } else if (dwgObject instanceof DwgLwPolyline) {
-		    // final DwgLwPolyline dwgLwPolyline = (DwgLwPolyline)
-		    // dwgObject;
-		    // } else if (dwgObject instanceof DwgBlockHeader) {
+		} else if (dwgObject instanceof DwgLwPolyline) {
+		    final DwgLwPolyline dwgLwPolyline = (DwgLwPolyline) dwgObject;
+
+		    Point2D[] vertices = dwgLwPolyline.getVertices();
+		    if (vertices != null) {
+			for (Point2D point2D : vertices) {
+			    minX = Math.min(minX, point2D.getX());
+			    minY = Math.min(minY, point2D.getY());
+			    maxX = Math.max(maxX, point2D.getX());
+			    maxY = Math.max(maxY, point2D.getY());
+			}
+		    }
+
+		} else if (dwgObject instanceof DwgEllipse) {
+		    final DwgEllipse dwgEllipse = (DwgEllipse) dwgObject;
+		    final double ti = dwgEllipse.getInitAngle();
+		    final double tf = dwgEllipse.getEndAngle();
+
+		    if (ti != tf) {
+
+			final double width = getEllipseWidth(dwgEllipse);
+			final double heigth = getEllipseHeigth(dwgEllipse);
+			
+			final double xc = dwgEllipse.getCenter()[0];
+			final double yc = dwgEllipse.getCenter()[1];
+
+			final double xi = (width / 2) * Math.cos(ti) + xc;
+			final double yi = (heigth / 2) * Math.sin(ti) + yc;
+
+			final double xf = (width / 2) * Math.cos(tf) + xc;
+			final double yf = (heigth / 2) * Math.sin(tf) + yc;
+
+			minX = Math.min(minX, xi);
+			minX = Math.min(minX, xf);
+			minY = Math.min(minY, yi);
+			minY = Math.min(minY, yf);
+
+			maxX = Math.max(maxX, xi);
+			maxX = Math.max(maxX, xf);
+			maxY = Math.max(maxY, yi);
+			maxY = Math.max(maxY, yf);
+		    }
+
+		} else if (dwgObject instanceof DwgCircle) {
+		    final DwgCircle dwgCircle = (DwgCircle) dwgObject;
+
+		    final int ti = 0;
+		    final int tf = 360;
+
+		    final double r = dwgCircle.getRadius();
+		    final double xc = dwgCircle.getCenter()[0];
+		    final double yc = dwgCircle.getCenter()[1];
+
+		    final double xi = r * Math.cos(ti) + xc;
+		    final double yi = r * Math.sin(ti) + yc;
+
+		    final double xf = r * Math.cos(tf) + xc;
+		    final double yf = r * Math.sin(tf) + yc;
+
+		    minX = Math.min(minX, xi);
+		    minX = Math.min(minX, xf);
+		    minY = Math.min(minY, yi);
+		    minY = Math.min(minY, yf);
+
+		    maxX = Math.max(maxX, xi);
+		    maxX = Math.max(maxX, xf);
+		    maxY = Math.max(maxY, yi);
+		    maxY = Math.max(maxY, yf);
+
+		} else if (dwgObject instanceof DwgPoint) {
+		    // final DwgPoint dwgPoint = (DwgPoint) dwgObject;
+
+		} else if (dwgObject instanceof DwgBlockHeader) {
 		    // final DwgBlockHeader dwgBlockHeader =
 		    // (DwgBlockHeader) dwgObject;
-		    // } else if (dwgObject instanceof DwgLayer) {
+
+		} else if (dwgObject instanceof DwgLayer) {
 		    // final DwgLayer dwgLayer = (DwgLayer) dwgObject;
-		    // } else if (dwgObject instanceof DwgSolid) {
+
+		} else if (dwgObject instanceof DwgSolid) {
 		    // final DwgSolid dwgSolid = (DwgSolid) dwgObject;
 
+		} else if (dwgObject instanceof DwgBlock) {
+		    // final DwgBlock dwgBlock = (DwgBlock) dwgObject;
+
+		} else if (dwgObject instanceof DwgEndblk) {
+		    // final DwgEndblk dwgEndblk = (DwgEndblk) dwgObject;
+
+		} else if (dwgObject instanceof DwgMText) {
+		    // final DwgMText dwgMText = (DwgMText) dwgObject;
+
+		} else if (dwgObject instanceof DwgInsert) {
+		    // final DwgInsert dwgInsert = (DwgInsert) dwgObject;
+
+		} else if (dwgObject instanceof DwgAttdef) {
+		    // final DwgAttdef dwgAttdef = (DwgAttdef) dwgObject;
+
+		} else if (dwgObject instanceof DwgAttrib) {
+		    // final DwgAttrib dwgAttrib = (DwgAttrib) dwgObject;
+
+		} else if (dwgObject instanceof DwgSeqend) {
+		    // final DwgSeqend dwgSeqend = (DwgSeqend) dwgObject;
+
 		} else {
-		    // System.out.println("otherObject: " +
-		    // dwgObject.getClass().getName());
-		    // throw new IllegalArgumentException("Unknown
-		    // DwgObject: " + dwgObject.getClass().getName());
+		    throw new IllegalArgumentException("Unknown DwgObject: "
+			    + dwgObject.getClass().getName());
 		}
 	    }
+	}
+
+	public static double getEllipseWidth(final DwgEllipse dwgEllipse) {
+	    final double[] vector = dwgEllipse.getMajorAxisVector();
+	    return vector[0] == 0 ? vector[1] * 2 * dwgEllipse.getAxisRatio() : vector[0] * 2;
+	}
+
+	public static double getEllipseHeigth(final DwgEllipse dwgEllipse) {
+	    final double[] vector = dwgEllipse.getMajorAxisVector();
+	    return vector[1] == 0 ? vector[0] * 2 * dwgEllipse.getAxisRatio() : vector[1] * 2;
 	}
 
 	public double convX(final double x) {
@@ -313,7 +514,7 @@ public class DWGProcessor {
 	    for (final File file : inputDir.listFiles()) {
 		if (file.isFile()) {
 		    final String inputFilename = file.getAbsolutePath();
-		    if (inputFilename.endsWith(".dwg")) {
+		    if (inputFilename.endsWith(".dwg") || inputFilename.endsWith(".DWG")) {
 			final String outputFilename = constructOutputFilename(file, outputDirname);
 			final OutputStream outputStream = new FileOutputStream(outputFilename);
 			try {
