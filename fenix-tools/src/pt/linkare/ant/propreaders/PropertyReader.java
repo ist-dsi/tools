@@ -9,4 +9,7 @@ public interface PropertyReader {
 
 	public void setProperty(InputProperty prop);
 	public Collection<InputProperty> readPropertyValue(boolean fromDefault) throws InvalidPropertySpecException;
+	public boolean isDebug();
+	public void setDebug(boolean debug);
+
 }

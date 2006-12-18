@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project [
+       <!ENTITY configure SYSTEM "build_configure.xml">
+]>
+<project name="SCORMServices" default="scorm-compile" basedir=".">
+	&configure;
+	
+	
+	<target name="scorm-prepare">
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build.home}" />
+
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${scorm.gen.dir}" />
+	</target>
+
+	<target name="scorm-xmlbean-code-generate-up2date">
+		<uptodate property="scorm.xmlbean.code.generated.up2date" targetfile="${scorm.gen.dir}/last.generated">
+			<srcfiles dir="${scorm.schemas.dir}"></srcfiles>
+		</uptodate>
+	</target>
+	
+	<target name="scorm-xmlbean-code-generate-up2date-print" if="scorm.xmlbean.code.generated.up2date">
+		<echo>XMLBeans Scorm generated mapping code is up 2 date - skipping generation</echo>
+	</target>
+	
+	<target name="scorm-xmlbean-code-generate"
+	        depends="scorm-xmlbean-code-generate-up2date,scorm-xmlbean-code-generate-up2date-print" unless="scorm.xmlbean.code.generated.up2date">
+		<xmlbean classgendir="${build.home}"
+		         classpathref="xmlbean.classpath"
+		         srcgendir="${scorm.gen.dir}" 
+			srconly="true" debug="true"
+			 optimize="true" noupa="true">  
+			<fileset dir="${scorm.schemas.dir}" casesensitive="yes">
+				<include name="**/ims_xml.xsd" />
+				<include name="**/imsmd_rootv1p2p1.xsd" />
+				<include name="**/imscp_rootv1p1p2.xsd" />
+				<include name="**/adlcp_rootv1p2.xsd" />
+			</fileset>
+		</xmlbean>
+		<touch file="${scorm.gen.dir}/last.generated"></touch> 
+	</target>
+
+	
+	<target name="scorm-compile"
+	        description="compile the source ">
+		<!-- Copy all the rest of the non .java files to build/WEB-INF/classes -->
+		<copy todir="${build.home}"
+		      description="Copies all directories and files in the src directory except .java files">
+			<fileset dir="${src}" excludes="**/*.java" includes="pt/linkare/scorm/**/*.*"/>
+		</copy>
+		<mkdir dir="${build.home}/schema" />
+		<copy todir="${build.home}/schema"
+		      description="Copies schemas do Build dir">
+			<fileset dir="${scorm.schemas.dir}" includes="**/*.*" />
+		</copy>
+		<copy todir="${build.home}/scobase"
+		      description="Copies SCOBASE do Build dir">
+			<fileset dir="${scorm.scobase.dir}" includes="**/*.*" />
+		</copy>
+	</target>
+	
+	<target name="scorm-clean" description="clean up">
+		<delete dir="${scorm.gen.dir}"/>
+		<delete dir="${build.home}"/>
+	</target>
+
+	<path id="run_classpath">
+			<fileset dir="${lib}">
+				<include name="**/*.jar"/>
+			</fileset>
+			<fileset dir="${deploy.home}">
+				<include name="**/*.jar"/>
+			</fileset>			
+	</path>
+	<target name="scorm-compile-run" description="Run ImsManifestWriter">
+		<java classname="pt.linkare.scorm.xmlbeans.ScormHandlerImpl$ScormHandlerTest" classpathref="run_classpath">		        
+		</java>
+	</target>
+</project>

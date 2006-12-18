@@ -9,6 +9,8 @@ import pt.linkare.ant.NoPropertyReaderException;
 
 public class PropertyReaderManager {
 
+	private boolean debug=false;
+	
 	private PropertyReaderManager() {
 		super();
 	}
@@ -16,6 +18,11 @@ public class PropertyReaderManager {
 	private static PropertyReaderManager instance=new PropertyReaderManager();
 	private String additionalPackageForPropertyReaders=null;
 	
+	public static PropertyReaderManager getInstance(boolean debug)
+	{
+		instance.setDebug(debug);
+		return instance;
+	}
 	public static PropertyReaderManager getInstance()
 	{
 		return instance;
@@ -101,6 +108,7 @@ public class PropertyReaderManager {
 			try {
 				reader = (PropertyReader)cPropReader.newInstance();
 				getInstance().registeredPropertyReaders.put(type, reader);
+				reader.setDebug(getInstance().isDebug());
 				return reader;
 			}
 			catch (InstantiationException e) {
@@ -154,6 +162,20 @@ public class PropertyReaderManager {
 	 */
 	public void setAdditionalPackageForPropertyReaders(String additionalPackageForPropertyReaders) {
 		this.additionalPackageForPropertyReaders = additionalPackageForPropertyReaders;
+	}
+
+	/**
+	 * @return Returns the debug.
+	 */
+	public boolean isDebug() {
+		return debug;
+	}
+
+	/**
+	 * @param debug The debug to set.
+	 */
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 	
 	

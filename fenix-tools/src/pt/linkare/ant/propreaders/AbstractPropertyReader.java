@@ -15,6 +15,29 @@ import pt.linkare.ant.StdIn;
 
 public abstract  class AbstractPropertyReader implements PropertyReader{
 
+	private boolean debug=false;
+	/**
+	* @return Returns true if this task is to debug information
+	 */
+	public boolean isDebug() {
+		return debug;
+	}
+
+	/**
+	 * @param debug Set to true if you want to view debugging info from this task
+	 */
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void debug(String message)
+	{
+		if(debug)
+			System.out.println(getClass().getName()+":"+message);
+
+	}
+	
+	
 	private InputProperty prop=null;
 	
 	public AbstractPropertyReader() {
@@ -151,18 +174,26 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 	
 	public Collection<InputProperty> buildGeneratedProperties() throws InvalidPropertySpecException
 	{
+		debug("Generating properties after property "+getProperty().getPropertyName());
+		
 		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
 		String[] values=splitValues(getProperty().getPropertyValue());
+		debug("Splited property value and got "+values.length+" values");
 		int countGenerated=1;
 		String prefixGenerated="generated."+countGenerated;
 		while(getProperty().getMetaData(prefixGenerated+".key")!=null)
 		{
+			debug("Found generated property definition for "+prefixGenerated+".key");
 			String propNameBase=getProperty().getMetaData(prefixGenerated+".key");
 			String propTypeBase=getProperty().getMetaData(prefixGenerated+".type");
 			String propMessageBase=getProperty().getMetaData(prefixGenerated+".message");
 			String propDefaultValueBase=getProperty().getMetaData(prefixGenerated+".defaultValue");
 			if(propNameBase==null || propTypeBase==null || values==null || values.length==0)
-				return generatedProperties;
+			{
+				debug("Problem occured with generation of properties for base property "+propNameBase + " propTypeBase==null ?" +(propTypeBase==null) +" values==null?"+(values==null));
+				prefixGenerated="generated."+(++countGenerated);
+				continue;
+			}
 			
 			String generatedSpecBase=generateInputPropertySpec(prefixGenerated);
 			InputProperty propertyBase=generateInputPropertyBase(propNameBase, propDefaultValueBase, generatedSpecBase);
@@ -171,7 +202,9 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 			{
 				InputProperty generatedCurrentProperty=new InputProperty(propertyBase);
 				generatedCurrentProperty.setPropertyName(generateKey(propNameBase, currentValue));
+				debug("generating property "+generatedCurrentProperty.getPropertyName());
 				generatedCurrentProperty.setPropertyMessage(generateMessage(propMessageBase, currentValue));
+				generatedCurrentProperty.setPropertyDefaultValue(generateDefaultValue(propDefaultValueBase,currentValue));
 				generatedCurrentProperty.setPropertyDefaultValue(InstallerPropertiesReader.getInstance().getDefaultValue(generatedCurrentProperty));
 				generatedProperties.add(generatedCurrentProperty);
 			}
@@ -187,6 +220,7 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 		
 	}
 
+	
 	public static String[] splitValues(String values)
 	{
 		if(values==null)
@@ -199,14 +233,18 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 	
 	}
 	
+	private String generateDefaultValue(String propDefaultValueBase, String value) {
+		return propDefaultValueBase.replaceAll("\\$\\{value\\}", value);
+	}
+
 	private String generateKey(String name,String value)
 	{
-		return name.replace("${value}", value);
+		return name.replaceAll("\\$\\{value\\}", value);
 	}
 	
 	private String generateMessage(String message,String value)
 	{
-		return message.replace("${value}", value);
+		return message.replaceAll("\\$\\{value\\}", value);
 	}
 	
 	private final static String CRLF=System.getProperty("line.separator");

@@ -227,7 +227,7 @@ public class InputProperty {
 		
 		for(PropertyDependency dep:getDependencies())
 		{
-			if(!dep.getParentProperty().isRead())
+			if(dep.getParentProperty()!=null && !dep.getParentProperty().isRead())
 			{
 				generatedProperties.addAll(dep.getParentProperty().readNow(fromDefault));
 			}

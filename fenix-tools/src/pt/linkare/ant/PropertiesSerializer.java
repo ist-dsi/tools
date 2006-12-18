@@ -141,6 +141,11 @@ public class PropertiesSerializer {
 		{
 			String key=prop.getPropertyName();
 			String value=prop.getPropertyValue();
+			
+			//if the value is an empty string then it is considered null
+			if(value!=null && value.trim().equals(""))
+				value=null;
+			
 			if(key==null && value==null) continue;
 				
 			if(prop.isPropertyPersist() && (value!=null || prop.isPropertyPersistNull()))
@@ -159,7 +164,7 @@ public class PropertiesSerializer {
 				outCipher.newLine();
 			}
 			
-			if(key!=null && (value!=null || (value==null && prop.isPropertyPersistNull())))
+			if(key!=null && (value!=null || prop.isPropertyPersistNull()))
 				retVal.put(key, value==null?"":value);
 		}
 		out.flush();
@@ -169,6 +174,7 @@ public class PropertiesSerializer {
 			outCipher.flush();
 			outCipher.close();
 		}
+		retVal.put(getOutputPropertyFile().getName()+".configured", "true");
 		return retVal;
 	}
 	

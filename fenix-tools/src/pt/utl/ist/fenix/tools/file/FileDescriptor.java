@@ -1,8 +1,17 @@
 package pt.utl.ist.fenix.tools.file;
 
-public class FileDescriptor {
+import java.io.Serializable;
+
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.tree.BaseElement;
+
+public class FileDescriptor implements Serializable,XMLSerializable {
 
     private String filename;
+    
+    private String originalAbsoluteFilePath;
 
     private String mimeType;
 
@@ -13,9 +22,31 @@ public class FileDescriptor {
     private int size;
 
     private String uniqueId;
+    
+    private String directDownloadUrl=null;
 
-    public FileDescriptor(String filename, String mimeType, String checksum, String checksumAlgorithm,
-            int size, String uniqueId) {
+    /**
+	 * @return Returns the directDownloadUrl.
+	 */
+	public String getDirectDownloadUrl() {
+		return directDownloadUrl;
+	}
+
+	/**
+	 * @param directDownloadUrl The directDownloadUrl to set.
+	 */
+	public void setDirectDownloadUrl(String directDownloadUrl) {
+		this.directDownloadUrl = directDownloadUrl;
+	}
+
+	//default constructor for serialization
+	public FileDescriptor()
+	{
+		
+	}
+	public FileDescriptor(String originalAbsoluteFilePath,String filename, String mimeType, String checksum, String checksumAlgorithm,
+            Integer size, String uniqueId) {
+		this.originalAbsoluteFilePath=originalAbsoluteFilePath;
         this.filename = filename;
         this.mimeType = mimeType;
         this.checksum = checksum;
@@ -85,7 +116,7 @@ public class FileDescriptor {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(Integer size) {
         this.size = size;
     }
 
@@ -104,5 +135,83 @@ public class FileDescriptor {
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
+
+	/**
+	 * @return Returns the originalAbsoluteFilePath.
+	 */
+	public String getOriginalAbsoluteFilePath() {
+		return originalAbsoluteFilePath;
+	}
+
+	/**
+	 * @param originalAbsoluteFilePath The originalAbsoluteFilePath to set.
+	 */
+	public void setOriginalAbsoluteFilePath(String originalAbsoluteFilePath) {
+		this.originalAbsoluteFilePath = originalAbsoluteFilePath;
+	}
+
+	
+	
+	public Element toXML() {
+		Element xmlElement=new BaseElement("filedescriptor");
+		if(getOriginalAbsoluteFilePath()!=null)
+			xmlElement.addElement("originalabsolutefilepath").setText(getUniqueId());
+		if(getUniqueId()!=null)
+			xmlElement.addElement("uniqueid").setText(getUniqueId());
+		if(getChecksum()!=null)
+			xmlElement.addElement("checksum").setText(getChecksum());
+		if(getChecksumAlgorithm()!=null)
+			xmlElement.addElement("checksumAlg").setText(getChecksumAlgorithm());
+		if(getDirectDownloadUrl()!=null)
+			xmlElement.addElement("directdownloadurl").setText(getDirectDownloadUrl());
+		if(getFilename()!=null)
+			xmlElement.addElement("filename").setText(getFilename());
+		if(getMimeType()!=null)
+			xmlElement.addElement("mimetype").setText(getMimeType());
+		
+		xmlElement.addElement("size").setText(Long.valueOf(getSize()).toString());
+		
+		return xmlElement;
+	}
+	public String toXMLString()
+	{
+		return toXML().asXML();
+	}
+
+	public void fromXMLString(String xml) {
+		try {
+			fromXML(DocumentHelper.parseText(xml).getRootElement());
+		}
+		catch (DocumentException e) {
+			throw new RuntimeException("Error parsing xml string : "+xml,e);
+		}
+	}
+	
+	public void fromXML(Element xmlElement)
+	{
+		if(xmlElement.element("originalabsolutefilepath")!=null)
+			this.setOriginalAbsoluteFilePath(xmlElement.element("originalabsolutefilepath").getText());
+		if(xmlElement.element("uniqueid")!=null)
+			this.setUniqueId(xmlElement.element("uniqueid").getText());
+		if(xmlElement.element("filename")!=null)
+			this.setFilename(xmlElement.element("filename").getText());
+		if(xmlElement.element("checksum")!=null)
+			this.setChecksum(xmlElement.element("checksum").getText());
+		if(xmlElement.element("checksumAlg")!=null)
+			this.setChecksumAlgorithm(xmlElement.element("checksumAlg").getText());
+		if(xmlElement.element("directdownloadurl")!=null)
+			this.setDirectDownloadUrl(xmlElement.element("directdownloadurl").getText());
+		if(xmlElement.element("mimetype")!=null)
+			this.setMimeType(xmlElement.element("mimetype").getText());
+		this.setSize(Integer.valueOf(xmlElement.element("size").getText()).intValue());
+	}
+	
+	public static FileDescriptor createFromXMLString(String xml)
+	{
+		FileDescriptor retVal=new FileDescriptor();
+		retVal.fromXMLString(xml);
+		return retVal;
+	}
+
 
 }

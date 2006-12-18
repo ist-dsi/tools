@@ -13,6 +13,7 @@ import pt.linkare.ant.propreaders.PropertyReaderManager;
 
 public class PropertiesConfiguratorTask extends Property implements TaskContainer {
 
+	private boolean debug=false;
 	private File specFile=null;
 	private File file=null;
 	private String additionalPackageForPropertyReaders=null;
@@ -25,25 +26,33 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 	@Override
 	public void execute() throws BuildException {
 		
+		debug("Project is null? "+getProject()==null?" yes":" no");
 		if(getProject()==null)
 			throw new BuildException("The project is not yet specified... This task requires the project to be set...");
 		
 		//initialize stdin in ant way
+		debug("Creating standard input wrapper on project");
 		StdIn.getInstance(getProject());
-		PropertyReaderManager.getInstance().setAdditionalPackageForPropertyReaders(getAdditionalPackageForPropertyReaders());
+		debug("Setting additional package for property readers to "+getAdditionalPackageForPropertyReaders());
+		PropertyReaderManager.getInstance(this.isDebug()).setAdditionalPackageForPropertyReaders(getAdditionalPackageForPropertyReaders());
 		try
 		{
-			Properties props=InstallerPropertiesReader.readProperties(getSpecFile(),getFile());
+			debug("Reading properties spec from file "+getSpecFile().getName()+" and current properties from "+getFile().getName());
+			Properties props=InstallerPropertiesReader.readProperties(getSpecFile(),getFile(),this.isDebug());
 			//Use addProperties of the base PropertyTask as it resolves and replaces values
+			debug("Add the properties to the project...");
 			addProperties(props);
 			
 			for(Task t:subTasks)
 			{
+				debug("Performing subtask "+t.getTaskName()+(getDescription()!=null?" with description "+getDescription():""));
 				t.perform();
 			}
 		}
-		catch(Exception e)
+		catch(Throwable e)
 		{
+			if(isDebug())
+				e.printStackTrace();
 			throw new BuildException(e);
 		}
 	}
@@ -97,6 +106,26 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 		this.additionalPackageForPropertyReaders = additionalPackageForPropertyReaders;
 	}
 
+	/**
+	 * @return Returns true if this task is to debug information
+	 */
+	public boolean isDebug() {
+		return debug;
+	}
+
+	/**
+	 * @param debug Set to true if you want to view debugging info from this task
+	 */
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void debug(String message)
+	{
+		if(debug)
+			System.out.println(getClass().getName()+":"+message);
+
+	}
 	
 
 }

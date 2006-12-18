@@ -1,0 +1,66 @@
+package pt.utl.ist.fenix.tools.file.dspace;
+
+import java.io.Serializable;
+
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.tree.BaseElement;
+
+import pt.utl.ist.fenix.tools.file.XMLSerializable;
+
+public class FileSetDeleteResponse implements Serializable,XMLSerializable {
+
+    private String error;
+
+    public FileSetDeleteResponse() {
+    }
+
+    public FileSetDeleteResponse(String error) {
+        this.error = error;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public String toXMLString() {
+        return toXML().asXML();
+    	
+    }
+
+    public Element toXML()
+    {
+    	Element rootElement = new BaseElement("filesetdeleteresponse");
+
+        if (getError() != null) {
+            rootElement.addElement("error").setText(getError());
+        }
+
+        return rootElement;
+    }
+   
+    public static FileSetDeleteResponse createFromXml(String xml) {
+    	FileSetDeleteResponse retVal=new FileSetDeleteResponse();
+    	retVal.fromXMLString(xml);
+    	return retVal;
+    }
+    
+    public void fromXMLString(String xml) {
+        try {
+        	fromXML(DocumentHelper.parseText(xml).getRootElement());
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void fromXML(Element xmlElement) {
+
+        Element errorElement = xmlElement.element("error");
+
+        if (errorElement != null) {
+            this.error = errorElement.getText();
+        } 
+    }
+
+}

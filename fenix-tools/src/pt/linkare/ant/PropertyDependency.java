@@ -73,7 +73,7 @@ public class PropertyDependency {
 			return getParentProperty().getPropertyValue()!=null;
 		else
 		{
-			if(getParentProperty().getPropertyValue()==null)
+			if(getParentProperty()==null || getParentProperty().getPropertyValue()==null)
 				return false;
 			
 			return getParentProperty().getPropertyValue().equals(getValue());

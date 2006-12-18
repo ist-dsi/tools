@@ -1,5 +1,9 @@
 package pt.utl.ist.fenix.tools.file;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+@Deprecated
 public class FileMetadata {
 
     private String title;
@@ -27,4 +31,12 @@ public class FileMetadata {
         this.title = title;
     }
 
+    public Collection<FileSetMetaData> createFileSetMetaData()
+    {
+    	ArrayList<FileSetMetaData> retVal=new ArrayList<FileSetMetaData>(2);
+    	
+    	retVal.add(FileSetMetaData.createAuthorMeta(getAuthor()));
+    	retVal.add(FileSetMetaData.createTitleMeta(getTitle()));
+    	return retVal;
+    }
 }
