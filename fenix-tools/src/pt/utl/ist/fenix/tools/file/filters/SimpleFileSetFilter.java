@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import pt.utl.ist.fenix.tools.file.FileSet;
 import pt.utl.ist.fenix.tools.file.FileSetMetaData;
+import sun.net.www.MimeEntry;
 import sun.net.www.MimeTable;
 
 public class SimpleFileSetFilter extends RecursiveFileSetFilter {
@@ -22,7 +23,8 @@ public class SimpleFileSetFilter extends RecursiveFileSetFilter {
 			File supposedFile=supposedFiles.toArray(new File[0])[0];
 			if(supposedFile.exists() && supposedFile.canRead())
 			{
-				String mimeType=MimeTable.getDefaultTable().findByFileName(supposedFile.getName()).getType();
+				MimeEntry findByFileName = MimeTable.getDefaultTable().findByFileName(supposedFile.getName());
+				String mimeType = (findByFileName==null) ? "application/octet-stream" :findByFileName.getType(); 
 				leveledFs.addMetaInfo(new FileSetMetaData("format","extent",null,""+supposedFile.length()));
 				leveledFs.addMetaInfo(new FileSetMetaData("format","mimetype",null,mimeType));
 			}
