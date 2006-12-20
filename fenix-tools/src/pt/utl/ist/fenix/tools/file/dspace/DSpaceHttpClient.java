@@ -233,8 +233,8 @@ public class DSpaceHttpClient implements IDSpaceClient {
 	}
 
 	private static DspaceResponse getDspaceResponse(String rawResponse) throws DSpaceClientException {
-		if (rawResponse.length() == 0) {
-			throw new DSpaceClientException(UNEXPECTED_ERROR_CODE);
+		if (rawResponse.length() == 0 || rawResponse.contains("<error>")) {
+			throw new DSpaceClientException(UNEXPECTED_ERROR_CODE + "\nBody:" + rawResponse);
 		}
 
 		int firstIndexOfNewLine = rawResponse.indexOf('\n');
