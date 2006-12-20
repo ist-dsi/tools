@@ -41,6 +41,8 @@ public class DSpaceHttpClient implements IDSpaceClient {
 
 	private static final String DSPACE_REMOTE_DOWNLOAD_SERVLET = "/DSpaceFileSetDownloadServlet";
 
+	private static final String DSPACE_INTERNAL_ERROR = "DSPACE_INTERNAL_ERROR";
+	
 	private String remoteInterfaceUrl;
 
 	private String remoteDownloadInterfaceUrl;
@@ -206,7 +208,7 @@ public class DSpaceHttpClient implements IDSpaceClient {
 		}
 
 		if (!response.responseCode.equals(SUCCESS_CODE)) {
-			throw new DSpaceClientException(response.responseCode);
+			throw new DSpaceClientException(response.responseCode + "\nBODY_MESSAGE:\n" + response.responseMessage);
 		}
 
 		XMLSerializable responseObject;
@@ -233,8 +235,8 @@ public class DSpaceHttpClient implements IDSpaceClient {
 	}
 
 	private static DspaceResponse getDspaceResponse(String rawResponse) throws DSpaceClientException {
-		if (rawResponse.length() == 0 || rawResponse.contains("<error>")) {
-			throw new DSpaceClientException(UNEXPECTED_ERROR_CODE + "\nBody:" + rawResponse);
+		if (rawResponse.length() == 0) {
+			throw new DSpaceClientException(UNEXPECTED_ERROR_CODE);
 		}
 
 		int firstIndexOfNewLine = rawResponse.indexOf('\n');
