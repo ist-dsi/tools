@@ -260,7 +260,7 @@ public class JspHtmlValidator {
     	"html:password",
     	"html:radio",
     	"html:reset",
-    	"html:select",
+//    	"html:select",
     	"html:submit",
     	"html:text",
     	"html:textarea",
