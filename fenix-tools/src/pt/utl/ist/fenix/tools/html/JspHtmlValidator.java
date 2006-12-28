@@ -36,7 +36,7 @@ public class JspHtmlValidator {
     private static Map<String, String> altKeys = new HashMap<String, String>();
 
     public static void main(String[] args) {
-    	final String projectDir = "/home/marvin/workspace/fenix_head";
+    	final String projectDir = args[0]; ///home/marvin/workspace/fenix_head";
         try {
             long start = System.currentTimeMillis();
             validate(new File(projectDir + "/jsp"));
