@@ -139,10 +139,10 @@ public class FilesetMetadataQuery implements XMLSerializable,Serializable {
 		
 	}
 
-	public static enum ConjunctionType implements Serializable
+	public static enum ConjunctionType
 	{
-		OR(),
-		AND();
+		OR,
+		AND;
 
 	}
 	
