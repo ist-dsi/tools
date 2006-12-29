@@ -57,9 +57,19 @@ public interface IFileManager {
 	 * 
 	 * @return A FileDescriptor instance that enables access to the saved file
 	 */
+	
+	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
+			Collection<FileSetMetaData> metadata, InputStream inputStream, FileSetType type);
+	
+	/**
+	 * Saves the file for a given type, this is used for saving SCORM packages
+	 * 
+	 * @return A FileDescriptor instance that enables access to the saved file
+	 */
 	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
 			String author, String title, File fileToSave, FileSetType type);
 
+	
 	/**
 	 * Saves the normal with a set of scorm attributes, this is used to create a
 	 * SCORM package on the fly for a given file
@@ -78,6 +88,15 @@ public interface IFileManager {
 	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
 			String author, String title, InputStream fileInputStream, ScormMetaDataHash scormParameters);
 
+	/**
+	 * Saves the normal with a set of scorm attributes, this is used to create a
+	 * SCORM package on the fly for a given file
+	 * 
+	 * @return A FileDescriptor instance that enables access to the saved file
+	 */
+	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
+			Collection<FileSetMetaData> metaData, InputStream fileInputStream, ScormMetaDataHash scormParameters);
+	
 	/**
 	 * Deletes an existing file
 	 * 

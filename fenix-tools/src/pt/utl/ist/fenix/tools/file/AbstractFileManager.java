@@ -10,15 +10,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import pt.linkare.scorm.utils.ScormMetaDataHash;
-import pt.linkare.scorm.utils.ScormMetaInfoEnum;
-import pt.linkare.scorm.xmlbeans.ImsManifestWriter_1_2;
 import pt.linkare.scorm.xmlbeans.ScormData;
 import pt.linkare.scorm.xmlbeans.ScormHandlerFactory;
 import pt.utl.ist.fenix.tools.file.filters.FileSetFilter;
@@ -217,6 +214,13 @@ public abstract class AbstractFileManager implements IFileManager {
 
 	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
 			String author, String title, InputStream fileInputStream, FileSetType type) {
+		return saveScormFile(filePath, originalFilename, privateFile, createMetaData(author, title), fileInputStream, type);
+
+	}
+	
+	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
+			Collection<FileSetMetaData> metaData, InputStream fileInputStream, FileSetType type) {
+		
 		FileSet fs = new FileSet();
 		File dirTemp;
 
@@ -227,7 +231,7 @@ public abstract class AbstractFileManager implements IFileManager {
 			FileUtils.copyInputStreamToOutputStream(fileInputStream, fos);
 
 			fs.addContentFile(originalFile);
-			fs.addMetaInfo(createMetaData(author, title));
+			fs.addMetaInfo(metaData);
 			FileSetDescriptor descriptor = saveFileSet(filePath, originalFilename, privateFile, fs, type);
 			return getScormFileDescriptor(descriptor.getContentFilesDescriptors());
 
@@ -236,7 +240,8 @@ public abstract class AbstractFileManager implements IFileManager {
 		}
 
 	}
-
+	
+		
 	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
 			String author, String title, File fileToSave, FileSetType type) {
 		FileSet fs = new FileSet();
@@ -259,13 +264,18 @@ public abstract class AbstractFileManager implements IFileManager {
 
 	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
 			String author, String title, InputStream inputStream, ScormMetaDataHash scormParameters) {
+		return saveScormFile(filePath, originalFilename, privateFile, createMetaData(author, title), inputStream, scormParameters); 		
+	}
+
+	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
+			Collection<FileSetMetaData> metaData, InputStream fileInputStream, ScormMetaDataHash scormParameters) {
 		FileSetDescriptor descriptor = null;
 
 		try {
 			File dirTemp = FileUtils.createTemporaryDir("ScormPackageTmpUpload", "tmp");
 			File originalFile = new File(dirTemp, originalFilename);
 			FileOutputStream fos = new FileOutputStream(originalFile);
-			FileUtils.copyInputStreamToOutputStream(inputStream, fos);
+			FileUtils.copyInputStreamToOutputStream(fileInputStream, fos);
 			fos.close();
 
 			Collection<File> originalFileList = Collections.singletonList(originalFile);
@@ -275,7 +285,7 @@ public abstract class AbstractFileManager implements IFileManager {
 			ScormData data = ScormHandlerFactory.getScormHandler().createScormPifFile(identifier,
 					scormParameters, originalFileList);
 			FileSet fileset = FileSet.createFileSetFromScormData(data);
-			fileset.getMetaInfo().addAll(createMetaData(author, title));
+			fileset.getMetaInfo().addAll(metaData);
 			descriptor = saveFileSet(filePath, originalFilename, privateFile, fileset,
 					FileSetType.UNPACKAGED_SCORM_1_2);
 
@@ -284,8 +294,9 @@ public abstract class AbstractFileManager implements IFileManager {
 		}
 
 		return getScormFileDescriptor(descriptor.getContentFilesDescriptors());
+		
+		
 	}
-
 	private FileDescriptor getScormFileDescriptor(Collection<FileDescriptor> contentFilesDescriptors) {
 		for (FileDescriptor descriptor : contentFilesDescriptors) {
 			if (descriptor.getFilename().contains(".zip")) {

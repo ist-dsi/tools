@@ -64,6 +64,7 @@ public class FileSearchCriteria {
 		DATE ("date"),
 		PUBLISHER("publisher"),
 		DESCRIPTION("description"),
+		TYPE("type"),
 		ANY(MetadataQuery.ANY_FIELD);
 		
 		
