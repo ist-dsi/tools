@@ -41,18 +41,14 @@ public class FileSearchCriteria {
 	}
 
 	public void addAndCriteria(SearchField criteria, String value) {
-		String[] values = value.split("\\p{Space}+");
-		for(int i=0;i<values.length;i++) {
-			if(values[i].length()==0) continue;
-			query.addNextQuery(criteria.fieldName(), values[i], ConjunctionType.AND);		
+		if(value!=null && value.length()>0) { 
+			query.addNextQuery(criteria.fieldName(), "\"" + value + "\"", ConjunctionType.AND);
 		}
 	}
 	
 	public void addOrCriteria(SearchField criteria, String value) {
-		String[] values = value.split("\\p{Space}+");
-		for(int i=0;i<values.length;i++) {
-			if(values[i].length()==0) continue;
-			query.addToPreviousQuery(ConjunctionType.OR,criteria.fieldName(), values[i]);		
+		if(value!=null && value.length()>0) {
+			query.addToPreviousQuery(ConjunctionType.OR,criteria.fieldName(), "\"" + value + "\"");
 		}
 	}
 	
