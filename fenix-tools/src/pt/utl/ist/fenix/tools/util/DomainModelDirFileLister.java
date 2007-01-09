@@ -31,8 +31,11 @@ public class DomainModelDirFileLister {
 
     public static String[] listDomainModelFiles(String domainModelDirPath) {
         
-    	System.out.println("Listing domain model files in "+domainModelDirPath);
-    	
+	File fDomainDirOrFile=new File(domainModelDirPath);
+	if(fDomainDirOrFile.isFile())
+	    return new String[]{domainModelDirPath};
+	
+	
     	File[] domainModelFiles=(new File(domainModelDirPath)).listFiles(new DomainModelFileFilter());
         Set<File> sortedDomainModelFiles=new TreeSet<File>(new DomainModelFileComparator());
         sortedDomainModelFiles.addAll(Arrays.asList(domainModelFiles));

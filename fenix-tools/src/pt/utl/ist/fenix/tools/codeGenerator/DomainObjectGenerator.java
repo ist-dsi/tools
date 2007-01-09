@@ -2,6 +2,8 @@ package pt.utl.ist.fenix.tools.codeGenerator;
 
 import java.io.IOException;
 
+import pt.utl.ist.fenix.tools.util.DomainModelDirFileLister;
+
 import dml.DmlCompiler;
 import dml.DomainModel;
 
@@ -9,7 +11,7 @@ public abstract class DomainObjectGenerator {
 
     protected DomainModel domainModel;
 
-    protected String dmlFile;
+    protected String dmlDir;
 
     protected String outputFolder;
 
@@ -17,11 +19,11 @@ public abstract class DomainObjectGenerator {
 
     protected DomainModel getModel() {
         if (domainModel == null) {
-            if (dmlFile.length() == 0) {
-                throw new Error("No DML files specified");
+            if (dmlDir.length() == 0) {
+                throw new Error("No DML files directory specified");
             } else {
                 try {
-                    String[] dmlFilesArray = { dmlFile };
+                    String[] dmlFilesArray = DomainModelDirFileLister.listDomainModelFiles(dmlDir);
                     domainModel = DmlCompiler.getFenixDomainModel(dmlFilesArray);
                 } catch (antlr.ANTLRException ae) {
                     System.err.println("Error parsing the DML files, leaving the domain empty");
@@ -38,7 +40,7 @@ public abstract class DomainObjectGenerator {
 
         try {
             domainObjectGenerator.outputFolder = args[0];
-            domainObjectGenerator.dmlFile = args[1];
+            domainObjectGenerator.dmlDir = args[1];
             domainObjectGenerator.appendMethodsInTheRootDomainObject();
         } catch (IOException e) {
             throw new Error(e);
