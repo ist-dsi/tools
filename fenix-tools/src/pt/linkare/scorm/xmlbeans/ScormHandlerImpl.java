@@ -45,6 +45,7 @@ public class ScormHandlerImpl implements ScormHandler {
             Collection<ScormMetaData> colItemMetadata=imsR.readMetaData(ManifestDocument.Factory.parse(scormDataToReturn.getMetaDataFile()).getManifest().getMetadata());
             scormDataToReturn.setPackageMetaInfo(colItemMetadata);
             scormDataToReturn.setAssets(imsR.getColScormAssets(scormPackExtracted));
+            FileUtils.deleteDirectory(scormPackExtracted);
             return scormDataToReturn;
         }
         catch(Exception e)

@@ -239,10 +239,12 @@ public class FileUtils {
 
     public static File unzipFile(File file) throws IOException {
         File tempDir = FileUtils.createTemporaryDir("fenix_unzip", "temp");
+        FileInputStream fileInputStream = new FileInputStream(
+		                file);
         
-        file.renameTo(new File(tempDir,file.getName()));
-        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(
-                file));
+        copyFileToAnotherDirWithRelativePaths(file.getParentFile(), tempDir, file);
+        
+        ZipInputStream zipInputStream = new ZipInputStream(fileInputStream);
 
         ZipEntry zipEntry = zipInputStream.getNextEntry();
         File zipContentFile = null;
@@ -484,5 +486,23 @@ public class FileUtils {
 		}
 	}
     
+    public static void recursiveDelete(File file) {
+		if (file.isFile()) {
+			file.delete();
+		} else {
+			deleteDirectory(file);
+		}
+	}
+
+	public static void deleteDirectory(File directory) {
+		File[] files = directory.listFiles();
+		for (int i = 0; i < files.length; ++i) {
+			if (files[i].isDirectory()) {
+				deleteDirectory(files[i]);
+			}
+			files[i].delete();
+		}
+		directory.delete();
+	}
 
 }

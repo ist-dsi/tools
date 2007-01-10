@@ -193,7 +193,9 @@ public abstract class AbstractFileManager implements IFileManager {
 			File outFile = new File(dirTemp, originalFilename);
 			FileOutputStream fOutStream = new FileOutputStream(outFile);
 			FileUtils.copyInputStreamToOutputStream(fileInputStream, fOutStream);
-			return saveFile(filePath, originalFilename, privateFile, fileMetadata, outFile);
+			FileDescriptor descriptor = saveFile(filePath, originalFilename, privateFile, fileMetadata, outFile);
+			FileUtils.deleteDirectory(dirTemp);
+			return descriptor;
 		} catch (IOException e) {
 			throw new RuntimeException("Error occured saving file", e);
 		}
