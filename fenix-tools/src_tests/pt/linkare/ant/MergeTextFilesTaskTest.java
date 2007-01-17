@@ -1,6 +1,9 @@
 package pt.linkare.ant;
 
+
 import java.io.File;
+
+import pt.linkare.ant.MergeTextFilesTask;
 
 import junit.framework.TestCase;
 
