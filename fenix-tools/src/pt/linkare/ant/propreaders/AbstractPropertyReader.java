@@ -14,7 +14,7 @@ import pt.linkare.ant.StdIn;
 
 
 public abstract  class AbstractPropertyReader implements PropertyReader{
-
+    	
 	private boolean debug=false;
 	/**
 	* @return Returns true if this task is to debug information
@@ -279,6 +279,10 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 	}
 	
 	public abstract String readProperty() throws InvalidPropertySpecException;
+	
+	/*
+	public abstract JComponent getEditComponent();
+	*/
 	
 }
 

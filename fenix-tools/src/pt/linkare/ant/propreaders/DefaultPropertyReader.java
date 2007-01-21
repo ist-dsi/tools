@@ -15,7 +15,7 @@ public class DefaultPropertyReader extends AbstractPropertyReader{
 	private String readPropertySimple() throws InvalidPropertySpecException
 	{
 		if(getProperty().getPropertyDefaultValue()==null)
-			throw new InvalidPropertySpecException("DefaultPropertyReader needs a defaultValue for the property");
+			throw new InvalidPropertySpecException("DefaultGUIPropertyReader needs a defaultValue for the property");
 		else
 			return getProperty().getPropertyDefaultValue();
 	}

@@ -38,8 +38,6 @@ public class PathPropertyReader extends AbstractPropertyReader{
 		
 		message.append(pathMustExist?" * Path must exist!":"");
 		
-		message.append(StdIn.CRLF);
-		
 		String pathRetVal=null;
 		if(getProperty().getPropertyDefaultValue()!=null)
 			pathRetVal=getInput().readStringOrDefault(message.toString(), getProperty().getPropertyDefaultValue());

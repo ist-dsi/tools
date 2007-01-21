@@ -5,10 +5,12 @@ package pt.linkare.ant;
 
 // java imports
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -202,7 +204,7 @@ public class MergeTextFilesTask extends Task {
     private List<TextBlock> loadFile(File file) throws BuildException {
 	try {
 	    return TextBlockParser.TextBlockParserManager.getBlockParserByFileName(file.getName())
-		    .readBlocks(new FileReader(file));
+		    .readBlocks(new InputStreamReader(new FileInputStream(file),getEncoding()));
 	} catch (IOException IOe) {
 	    // had an exception trying to open the file
 	    throw new BuildException("Could not read file:" + file, IOe);

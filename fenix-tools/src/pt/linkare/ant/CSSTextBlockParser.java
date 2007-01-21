@@ -20,22 +20,26 @@ public class CSSTextBlockParser implements TextBlockParser {
 
 	boolean multilineComment = false;
 	boolean commentBlock = false;
-
+	boolean cssBlock = false;
+	
 	StringBuffer content = new StringBuffer();
 	while ((line = br.readLine()) != null) {
 
 	    if (line.trim().length() == 0)
 		continue;
 
+	    if(line.contains("{"))
+		cssBlock=true;
+	    
 	    if (line.trim().startsWith("//")
 		    || (line.trim().startsWith("/*") && line.trim().endsWith("*/"))) {
 		previousContentFinish = line;
 		commentBlock = true;
-	    } else if (line.contains("/*")) {
+	    } else if (line.contains("/*") && !cssBlock) {
 		previousContentFinish = line.substring(0, line.indexOf("/*"));
 		startNextContent = line.substring(line.indexOf("/*"));
 		multilineComment = true;
-	    } else if (line.contains("*/")) {
+	    } else if (line.contains("*/") && !cssBlock) {
 		previousContentFinish = line.substring(0, line.indexOf("*/") + 2);
 		startNextContent = line.substring(line.indexOf("*/") + 2);
 		commentBlock = true;
@@ -43,6 +47,7 @@ public class CSSTextBlockParser implements TextBlockParser {
 	    } else if (!multilineComment && line.contains("}")) {
 		previousContentFinish = line.substring(0, line.indexOf("}") + 1);
 		startNextContent = line.substring(line.indexOf("}") + 1);
+		cssBlock=false;
 	    } else {
 		previousContentFinish = line;
 		startNextContent = null;

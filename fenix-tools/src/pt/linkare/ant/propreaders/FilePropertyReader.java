@@ -39,8 +39,6 @@ public class FilePropertyReader extends AbstractPropertyReader{
 		
 		message.append(pathMustExist?" * File must exist!":"");
 		
-		message.append(StdIn.CRLF);
-		
 		String pathRetVal=null;
 		if(getProperty().getPropertyDefaultValue()!=null)
 			pathRetVal=getInput().readStringOrDefault(message.toString(), getProperty().getPropertyDefaultValue());
