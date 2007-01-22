@@ -903,19 +903,25 @@ public class StdIn {
 
     private String readPrivateStringFromInput(String message) throws Exception {
 
-	/*
-         * if(proj!=null) { InputHandler handler=proj.getInputHandler();
-         * InputRequest request=new InputRequest(message);
-         * handler.handleInput(request); String readLine=request.getInput();
-         * readLine = (readLine == null ? readLine : readLine.trim()); return
-         * readLine; } else {
-         */
-	System.out.println(message);
-	ConsoleReader reader = new jline.ConsoleReader();
-	String readLine = reader.readLine('*');
-	readLine = (readLine == null ? readLine : readLine.trim());
-	return readLine;
-	/* } */
+	if (proj != null) {
+	    InputHandler handler = proj.getInputHandler();
+	    InputRequest request = new InputRequest(message);
+	    handler.handleInput(request);
+	    String readLine = request.getInput();
+	    readLine = (readLine == null ? readLine : readLine.trim());
+	    return readLine;
+	} else {
+	    System.out.println(message);
+	    String readLine = bis.readLine();
+	    readLine = (readLine == null ? readLine : readLine.trim());
+	    return readLine;
+
+	    /*System.out.println(message);
+	    ConsoleReader reader = new jline.ConsoleReader();
+	    String readLine = reader.readLine('*');
+	    readLine = (readLine == null ? readLine : readLine.trim());
+	    return readLine;*/
+	}
 
     }
 
