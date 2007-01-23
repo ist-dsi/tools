@@ -24,6 +24,7 @@ public class PropertyTextBlockParser implements TextBlockParser {
 	    if (line.trim().length() == 0)
 		continue;
 
+	    line=line+CRLF;
 	    if (line.trim().startsWith("#")) {
 		previousContentFinish = "";
 		startNextContent = line;
@@ -35,7 +36,7 @@ public class PropertyTextBlockParser implements TextBlockParser {
 		startNextContent = null;
 	    }
 
-	    content.append(previousContentFinish).append(CRLF);
+	    content.append(previousContentFinish);
 	    if (startNextContent != null) {
 
 		if (content.toString().trim().length() != 0) {
@@ -50,7 +51,6 @@ public class PropertyTextBlockParser implements TextBlockParser {
 		}
 
 		content = new StringBuffer(startNextContent);
-		content.append(CRLF);
 	    }
 	   
 	}
