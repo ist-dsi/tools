@@ -5,8 +5,6 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
-import jline.ConsoleReader;
-
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.input.InputHandler;
 import org.apache.tools.ant.input.InputRequest;
