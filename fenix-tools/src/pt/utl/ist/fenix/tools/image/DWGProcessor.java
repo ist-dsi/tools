@@ -35,9 +35,11 @@ import com.iver.cit.jdwglib.dwg.objects.DwgLine;
 import com.iver.cit.jdwglib.dwg.objects.DwgLwPolyline;
 import com.iver.cit.jdwglib.dwg.objects.DwgMText;
 import com.iver.cit.jdwglib.dwg.objects.DwgPoint;
+import com.iver.cit.jdwglib.dwg.objects.DwgPolyline2D;
 import com.iver.cit.jdwglib.dwg.objects.DwgSeqend;
 import com.iver.cit.jdwglib.dwg.objects.DwgSolid;
 import com.iver.cit.jdwglib.dwg.objects.DwgText;
+import com.iver.cit.jdwglib.dwg.objects.DwgVertex2D;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class DWGProcessor {
@@ -480,9 +482,17 @@ public class DWGProcessor {
 		} else if (dwgObject instanceof DwgSeqend) {
 		    // final DwgSeqend dwgSeqend = (DwgSeqend) dwgObject;
 
+		} else if (dwgObject instanceof DwgPolyline2D) {
+		    //final DwgPolyline2D dwgPolyline2D = (DwgPolyline2D) dwgObject;
+		  
+		} else if (dwgObject instanceof DwgVertex2D) {
+		    //final DwgVertex2D dwgPolyline2D = (DwgVertex2D) dwgObject;
+		      		    
 		} else {
-		    throw new IllegalArgumentException("Unknown DwgObject: "
-			    + dwgObject.getClass().getName());
+//		    throw new IllegalArgumentException("Unknown DwgObject: "
+//			    + dwgObject.getClass().getName());
+//		    
+		    System.out.println(" ********* DWG Processor -> Unknown DwgObject: " + dwgObject.getClass().getName());
 		}
 	    }
 	}
