@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -20,6 +21,7 @@ import pt.utl.ist.fenix.tools.file.FileSearchCriteria;
 import pt.utl.ist.fenix.tools.file.FileSearchResult;
 import pt.utl.ist.fenix.tools.file.FileSet;
 import pt.utl.ist.fenix.tools.file.FileSetDescriptor;
+import pt.utl.ist.fenix.tools.file.FileSetMetaData;
 import pt.utl.ist.fenix.tools.file.FileSetQueryResults;
 import pt.utl.ist.fenix.tools.file.FilesetMetadataQuery;
 import pt.utl.ist.fenix.tools.file.VirtualPath;
@@ -303,6 +305,25 @@ public class DSpaceRmiClient implements IDSpaceClient {
 
 	public FileSearchResult searchFiles(FileSearchCriteria criteria) throws DSpaceClientException {
 		return searchFiles(criteria, null);
+	}
+
+	public FileSetDescriptor addFileToItem(VirtualPath path, String name, String itemId, FileSet fileSet, boolean privateFile) throws DSpaceClientException {
+		/**
+		 * Should be implemented
+		 */
+		return null;
+	}
+
+	public void changeItemMetaData(String itemHandler, Collection<FileSetMetaData> metaData) {
+		/**
+		 * Should be implemented
+		 */	
+	}
+
+	public void removeFileFromItem(String uniqueId) throws DSpaceClientException {
+		/**
+		 * Should be implemented
+		 */
 	}
 	
 }

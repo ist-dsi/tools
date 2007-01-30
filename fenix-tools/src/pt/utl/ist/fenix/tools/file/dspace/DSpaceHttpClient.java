@@ -23,6 +23,7 @@ import pt.utl.ist.fenix.tools.file.FileSearchCriteria;
 import pt.utl.ist.fenix.tools.file.FileSearchResult;
 import pt.utl.ist.fenix.tools.file.FileSet;
 import pt.utl.ist.fenix.tools.file.FileSetDescriptor;
+import pt.utl.ist.fenix.tools.file.FileSetMetaData;
 import pt.utl.ist.fenix.tools.file.FileSetQueryResults;
 import pt.utl.ist.fenix.tools.file.FilesetMetadataQuery;
 import pt.utl.ist.fenix.tools.file.VirtualPath;
@@ -84,6 +85,26 @@ public class DSpaceHttpClient implements IDSpaceClient {
 		return ((FileSetUploadResponse) executeRemoteMethod("uploadFileSet", request, username, password,
 				FileSetUploadResponse.class, additionalParts)).getFileSetDescriptor();
 	}
+	
+	public FileSetDescriptor addFileToItem(VirtualPath path, String name, String itemHandle, FileSet fileSet, boolean privateFile) throws DSpaceClientException {
+		fileSet.setItemHandle(itemHandle);
+		FileSetUploadRequest request = new FileSetUploadRequest(path,name,privateFile,fileSet);
+		Collection<File> allFiles = request.getFileSet().getAllFiles();
+
+		Part[] additionalParts = new Part[allFiles.size()];
+
+		int i = 0;
+		for (File f : allFiles)
+			try {
+				additionalParts[i++] = new FilePart(f.getAbsolutePath(), f);
+			} catch (FileNotFoundException e) {
+				throw new DSpaceClientException(e);
+			}
+
+		return ((FileSetUploadResponse) executeRemoteMethod("addFileToItem", request, username, password,
+				FileSetUploadResponse.class, additionalParts)).getFileSetDescriptor();
+
+	}
 
 	public void deleteFileSet(FileSetDescriptor descriptor) throws DSpaceClientException {
 
@@ -107,6 +128,18 @@ public class DSpaceHttpClient implements IDSpaceClient {
 
 	}
 
+	public void changeItemMetaData(String itemHandler, Collection<FileSetMetaData> metaData) throws DSpaceClientException {
+		ChangeItemMetaDataRequest request = new ChangeItemMetaDataRequest(itemHandler,metaData);
+		ChangeItemMetaDataResponse response = (ChangeItemMetaDataResponse) executeRemoteMethod(
+				"changeItemMetaData", request, username, password, ChangeItemMetaDataResponse.class, new Part[0]);
+		if(response.getError()!=null) {
+			throw new DSpaceClientException(response.getError());
+		}
+		
+	}
+
+	
+	
 	public FileSet retrieveFileSet(FileSetDescriptor descriptor) throws DSpaceClientException {
 
 		Collection<FileDescriptor> allDescriptorsRecursive = descriptor.recursiveListAllFileDescriptors();
@@ -240,6 +273,9 @@ public class DSpaceHttpClient implements IDSpaceClient {
 		}
 
 		int firstIndexOfNewLine = rawResponse.indexOf('\n');
+		if(firstIndexOfNewLine<0) {
+			throw new DSpaceClientException(UNEXPECTED_ERROR_CODE + "\n" + rawResponse);
+		}
 		String responseCode = rawResponse.substring(0, firstIndexOfNewLine);
 		String responseMessage = rawResponse.substring(firstIndexOfNewLine + 1);
 
@@ -288,4 +324,16 @@ public class DSpaceHttpClient implements IDSpaceClient {
 		return new FileSearchResult(descriptors, query.getStart(), query.getPageSize(), results
 				.getHitsCount());
 	}
+
+	public void removeFileFromItem(String uniqueId) throws DSpaceClientException {
+		RemoveFileFromItemRequest request = new RemoveFileFromItemRequest(uniqueId);
+		RemoveFileFromItemResponse response = (RemoveFileFromItemResponse) executeRemoteMethod(
+				"removeFileFromItem", request, username, password, RemoveFileFromItemResponse.class, new Part[0]);
+		if(response.getError()!=null) {
+			throw new DSpaceClientException(response.getError());
+		}
+	}
+		
+
+
 }

@@ -25,6 +25,15 @@ public class FileDescriptor implements Serializable,XMLSerializable {
     
     private String directDownloadUrl=null;
 
+    
+    /**
+     * @return Returns the item Handler
+     * 
+     */
+    public String getItemStorageId() {
+    	return uniqueId.substring(0,uniqueId.lastIndexOf("/"));
+    }
+    
     /**
 	 * @return Returns the directDownloadUrl.
 	 */

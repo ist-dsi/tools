@@ -12,6 +12,8 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.tree.BaseElement;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 import pt.linkare.scorm.xmlbeans.ScormAsset;
 import pt.linkare.scorm.xmlbeans.ScormData;
 
@@ -25,6 +27,12 @@ import pt.linkare.scorm.xmlbeans.ScormData;
 @SuppressWarnings("serial")
 public class FileSet implements Serializable, XMLSerializable {
 
+	/**
+	 * Item ID, used when you want to append a file to an existing item.
+	 */
+	
+	private String itemHandle;
+	
 	/**
 	 * The related child FileSet's
 	 */
@@ -511,6 +519,9 @@ public class FileSet implements Serializable, XMLSerializable {
 
 	public Element toXML() {
 		Element xmlElement = new BaseElement("fileset");
+		if(getItemHandle()!=null) {
+			xmlElement.addElement("itemHandle").addText(getItemHandle());
+		}
 		if (getChildSets() != null) {
 			Element childsElement = xmlElement.addElement("childsets");
 			for (FileSet child : getChildSets())
@@ -547,6 +558,10 @@ public class FileSet implements Serializable, XMLSerializable {
 
 	@SuppressWarnings("unchecked")
 	public void fromXML(Element xmlElement) {
+		if(xmlElement.element("itemHandle")!=null) {
+			Element id = xmlElement.element("itemHandle");
+			this.setItemHandle(id.getText());
+		}
 		if (xmlElement.element("childsets") != null) {
 			Element childSetsElement = xmlElement.element("childsets");
 			List<Element> childSetsList = (List<Element>) childSetsElement.elements("fileset");
@@ -602,6 +617,14 @@ public class FileSet implements Serializable, XMLSerializable {
 			fsDescriptor.addChildSet(child.recursiveCreateBasicFileSetDescriptor());
 
 		return fsDescriptor;
+	}
+
+	public String getItemHandle() {
+		return itemHandle;
+	}
+
+	public void setItemHandle(String itemHandle) {
+		this.itemHandle = itemHandle;
 	}
 
 	

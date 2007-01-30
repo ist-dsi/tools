@@ -72,6 +72,9 @@ public class FileSetUploadRequest implements Serializable,XMLSerializable
 	{
 		Element rootElement=new BaseElement("filesetuploadrequest");
 		rootElement.add(getPath().toXML());
+		if(getFileSet().getItemHandle()!=null) {
+			rootElement.addElement("itemHandle").setText(getFileSet().getItemHandle());
+		}
 		rootElement.addElement("filename").setText(getOriginalFilename());
 		rootElement.addElement("privatefile").setText(""+isPrivateFile());
 		rootElement.add(getFileSet().toXML());
@@ -84,6 +87,9 @@ public class FileSetUploadRequest implements Serializable,XMLSerializable
 		this.path=new VirtualPath();
 		this.path.fromXML(xmlElement.element("virtualpath"));
 		this.fileSet=new FileSet();
+		if(xmlElement.elementText("itemHandle")!=null) {
+			this.fileSet.setItemHandle(xmlElement.elementText("itemHandle"));
+		}
 		this.fileSet.fromXML(xmlElement.element("fileset"));
 		this.originalFilename=xmlElement.element("filename").getText();
 		this.privateFile=Boolean.parseBoolean(xmlElement.element("privatefile").getText());

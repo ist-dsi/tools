@@ -552,4 +552,13 @@ public class FileSetDescriptor implements Serializable,XMLSerializable {
         return null;
     }
 
+	public FileDescriptor getContentFileDescriptorWithName(String name) {
+		for(FileDescriptor descriptor: getContentFilesDescriptors()) {
+			if(descriptor.getFilename().equals(name)) {
+				return descriptor;
+			}
+		}
+		return null;
+	}
+
 }

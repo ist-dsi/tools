@@ -5,9 +5,12 @@ import java.util.List;
 
 import pt.utl.ist.fenix.tools.file.FilesetMetadataQuery.ConjunctionType;
 import pt.utl.ist.fenix.tools.file.FilesetMetadataQuery.MetadataQuery;
+import pt.utl.ist.fenix.tools.util.StringNormalizer;
 
 public class FileSearchCriteria {
-		
+	
+	private static final int proximityRange = 10;
+	
 	FilesetMetadataQuery query; 
 	
 	public FileSearchCriteria() {
@@ -42,13 +45,13 @@ public class FileSearchCriteria {
 
 	public void addAndCriteria(SearchField criteria, String value) {
 		if(value!=null && value.length()>0) { 
-			query.addNextQuery(criteria.fieldName(), "\"" + value + "\"", ConjunctionType.AND);
+			query.addNextQuery(criteria.fieldName(), "\"" + StringNormalizer.normalize(value) + "\"~" + proximityRange, ConjunctionType.AND);
 		}
 	}
 	
 	public void addOrCriteria(SearchField criteria, String value) {
 		if(value!=null && value.length()>0) {
-			query.addToPreviousQuery(ConjunctionType.OR,criteria.fieldName(), "\"" + value + "\"");
+			query.addToPreviousQuery(ConjunctionType.OR,criteria.fieldName(), "\"~" + proximityRange + StringNormalizer.normalize(value) + "\"");
 		}
 	}
 	
@@ -61,6 +64,7 @@ public class FileSearchCriteria {
 		PUBLISHER("publisher"),
 		DESCRIPTION("description"),
 		TYPE("type"),
+		UNIT("unit"),
 		ANY(MetadataQuery.ANY_FIELD);
 		
 		
