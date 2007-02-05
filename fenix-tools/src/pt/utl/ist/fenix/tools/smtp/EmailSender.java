@@ -61,7 +61,11 @@ public class EmailSender {
 	    } catch (SendFailedException e) {
 		registerInvalidAddresses(unsent, e, null, null, subList);
 	    } catch (MessagingException e) {
-		e.printStackTrace();
+            if (subList != null) {
+                unsent.addAll(subList);
+            }
+            
+            e.printStackTrace();
 	    }
 	}
 
@@ -124,7 +128,15 @@ public class EmailSender {
 	    } catch (SendFailedException e) {
 		registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, null);
 	    } catch (MessagingException e) {
-		e.printStackTrace();
+            if (toAddresses != null) {
+                unsentAddresses.addAll(toAddresses);
+            }
+            
+            if (ccAddresses != null) {
+                unsentAddresses.addAll(ccAddresses);
+            }
+            
+            e.printStackTrace();
 	    }
 	}
 
@@ -149,7 +161,11 @@ public class EmailSender {
 		} catch (SendFailedException e) {
 		    registerInvalidAddresses(unsentAddresses, e, null, null, subList);
 		} catch (MessagingException e) {
-		    e.printStackTrace();
+            if (subList != null) {
+                unsentAddresses.addAll(subList);
+            }
+            
+            e.printStackTrace();
 		}
 	    }
 	}
