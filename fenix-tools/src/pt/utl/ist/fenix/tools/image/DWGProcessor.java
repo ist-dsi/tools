@@ -155,19 +155,19 @@ public class DWGProcessor {
 	}
     }
 
-    private void drawText(ReferenceConverter referenceConverter, Graphics2D graphics2D, DwgMText dwgText) {
-	if(dwgText != null && dwgText.getText() != null) {
-	    
-            String text = dwgText.getText();	
-            String[] strings = text.split(";");	
-            if(strings.length > 1) {
-                strings = strings[strings.length - 1].split("}");
-                text = strings[0];
-            }
-            
-            graphics2D.drawString(text, convXCoord(dwgText.getInsertionPoint()[0], referenceConverter),
-        	    convYCoord(dwgText.getInsertionPoint()[1], referenceConverter));
-	}
+    protected void drawText(ReferenceConverter referenceConverter, Graphics2D graphics2D, DwgMText dwgText) {	   
+        graphics2D.drawString(getText(dwgText), convXCoord(dwgText.getInsertionPoint()[0], referenceConverter),
+    	    convYCoord(dwgText.getInsertionPoint()[1], referenceConverter));
+    }
+    
+    protected static String getText(DwgMText dwgText) {
+	String text = dwgText.getText();	
+        String[] strings = text.split(";");	
+        if(strings.length > 1) {
+            strings = strings[strings.length - 1].split("}");
+            text = strings[0];
+        }
+	return text;
     }
 
     protected void drawCircle(ReferenceConverter referenceConverter, Graphics2D graphics2D,
