@@ -135,6 +135,10 @@ public class DWGProcessor {
 	    } else if (dwgObject instanceof DwgText) {
 		final DwgText dwgText = (DwgText) dwgObject;
 		drawText(referenceConverter, graphics2D, dwgText);
+		
+	    } else if (dwgObject instanceof DwgMText) {		
+		final DwgMText dwgText = (DwgMText) dwgObject;
+		drawText(referenceConverter, graphics2D, dwgText);
 
 	    } else if (dwgObject instanceof DwgLwPolyline) {
 		final DwgLwPolyline dwgLwPolyline = (DwgLwPolyline) dwgObject;
@@ -148,6 +152,21 @@ public class DWGProcessor {
 		final DwgCircle dwgCircle = (DwgCircle) dwgObject;
 		drawCircle(referenceConverter, graphics2D, dwgCircle);
 	    }
+	}
+    }
+
+    private void drawText(ReferenceConverter referenceConverter, Graphics2D graphics2D, DwgMText dwgText) {
+	if(dwgText != null && dwgText.getText() != null) {
+	    
+            String text = dwgText.getText();	
+            String[] strings = text.split(";");	
+            if(strings.length > 1) {
+                strings = strings[strings.length - 1].split("}");
+                text = strings[0];
+            }
+            
+            graphics2D.drawString(text, convXCoord(dwgText.getInsertionPoint()[0], referenceConverter),
+        	    convYCoord(dwgText.getInsertionPoint()[1], referenceConverter));
 	}
     }
 
@@ -447,46 +466,62 @@ public class DWGProcessor {
 		    maxX = Math.max(maxX, xf);
 		    maxY = Math.max(maxY, yi);
 		    maxY = Math.max(maxY, yf);
+		    
+		} else if (dwgObject instanceof DwgMText) {
+		    final DwgMText dwgMText = (DwgMText) dwgObject;
+		    
+		    minX = Math.min(minX, dwgMText.getInsertionPoint()[0]);
+		    minY = Math.min(minY, dwgMText.getInsertionPoint()[1]);
 
+		    maxX = Math.max(maxX, dwgMText.getInsertionPoint()[0]);
+		    maxY = Math.max(maxY, dwgMText.getInsertionPoint()[1]);	
+		    
 		} else if (dwgObject instanceof DwgPoint) {
 		    // final DwgPoint dwgPoint = (DwgPoint) dwgObject;
+		    
 
 		} else if (dwgObject instanceof DwgBlockHeader) {
-		    // final DwgBlockHeader dwgBlockHeader =
-		    // (DwgBlockHeader) dwgObject;
+		    // final DwgBlockHeader dwgBlockHeader = (DwgBlockHeader) dwgObject;
+		    
 
 		} else if (dwgObject instanceof DwgLayer) {
 		    // final DwgLayer dwgLayer = (DwgLayer) dwgObject;
+		    
 
 		} else if (dwgObject instanceof DwgSolid) {
 		    // final DwgSolid dwgSolid = (DwgSolid) dwgObject;
+		    
 
 		} else if (dwgObject instanceof DwgBlock) {
 		    // final DwgBlock dwgBlock = (DwgBlock) dwgObject;
+		    
 
 		} else if (dwgObject instanceof DwgEndblk) {
-		    // final DwgEndblk dwgEndblk = (DwgEndblk) dwgObject;
-
-		} else if (dwgObject instanceof DwgMText) {
-		    // final DwgMText dwgMText = (DwgMText) dwgObject;
+		    // final DwgEndblk dwgEndblk = (DwgEndblk) dwgObject;		   			 
 
 		} else if (dwgObject instanceof DwgInsert) {
 		    // final DwgInsert dwgInsert = (DwgInsert) dwgObject;
+		    
 
 		} else if (dwgObject instanceof DwgAttdef) {
 		    // final DwgAttdef dwgAttdef = (DwgAttdef) dwgObject;
+		    
 
 		} else if (dwgObject instanceof DwgAttrib) {
 		    // final DwgAttrib dwgAttrib = (DwgAttrib) dwgObject;
+		    
 
 		} else if (dwgObject instanceof DwgSeqend) {
 		    // final DwgSeqend dwgSeqend = (DwgSeqend) dwgObject;
+		    
 
 		} else if (dwgObject instanceof DwgPolyline2D) {
 		    //final DwgPolyline2D dwgPolyline2D = (DwgPolyline2D) dwgObject;
+		    
 		  
 		} else if (dwgObject instanceof DwgVertex2D) {
 		    //final DwgVertex2D dwgPolyline2D = (DwgVertex2D) dwgObject;
+		    
 		      		    
 		} else {
 //		    throw new IllegalArgumentException("Unknown DwgObject: "
