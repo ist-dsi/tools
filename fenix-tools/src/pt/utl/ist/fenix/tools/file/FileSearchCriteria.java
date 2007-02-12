@@ -51,7 +51,19 @@ public class FileSearchCriteria {
 	
 	public void addOrCriteria(SearchField criteria, String value) {
 		if(value!=null && value.length()>0) {
-			query.addToPreviousQuery(ConjunctionType.OR,criteria.fieldName(), "\"~" + proximityRange + StringNormalizer.normalize(value) + "\"");
+			query.addToPreviousQuery(ConjunctionType.OR,criteria.fieldName(), StringNormalizer.normalize(value) + "\"~" + proximityRange);
+		}
+	}
+	
+	public void addExactMatchAndCriteria(SearchField criteria, String value) { 
+		if(value!=null && value.length()>0) { 
+			query.addNextQuery(criteria.fieldName(), "\"" + StringNormalizer.normalize(value) + "\"", ConjunctionType.AND);
+		}
+	}
+	
+	public void addExactMatchOrCriteria(SearchField criteria, String value) {
+		if(value!=null && value.length()>0) {
+			query.addToPreviousQuery(ConjunctionType.OR,criteria.fieldName(), "\"" + StringNormalizer.normalize(value) + "\"");
 		}
 	}
 	
