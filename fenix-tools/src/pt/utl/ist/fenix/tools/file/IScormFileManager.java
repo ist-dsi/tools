@@ -93,9 +93,10 @@ public interface IScormFileManager {
 	/**
 	 * Retrieves the file content
 	 * 
-	 * @return the file contents as a byte[]
+	 * @return the file InputStream for the File
 	 */
-	public byte[] retrieveFile(String uniqueId);
+	
+	public InputStream retrieveFile(String uniqueId);
 
 	public FileSearchResult searchFiles(FileSearchCriteria critera);
 

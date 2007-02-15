@@ -127,21 +127,7 @@ public abstract class AbstractFileManager implements IFileManager {
 	 * 
 	 * @see pt.utl.ist.fenix.tools.file.IFileManager#retrieveFile(java.lang.String)
 	 */
-	public byte[] retrieveFile(String uniqueId) throws FileManagerException {
-		FileDescriptor descriptor = new FileDescriptor();
-		descriptor.setUniqueId(uniqueId);
-		FileSetDescriptor fileSetDescriptor = new FileSetDescriptor(descriptor);
-		FileSet readFileSet = this.readFileSet(this.listAllDescriptorsFromRoot(fileSetDescriptor));
-		
-		try {
-			return FileUtils.readByteArray(readFileSet.getContentFile(0));
-		} catch (FileNotFoundException e) {
-			throw new FileManagerException(e);
-		} catch (IOException e) {
-			throw new FileManagerException(e);
-		}
-	}
-
+	
 	protected Collection<FileSetMetaData> createMetaData(String author, String title) {
 		Collection<FileSetMetaData> metadata = new ArrayList<FileSetMetaData>();
 		metadata.add(FileSetMetaData.createAuthorMeta(author));

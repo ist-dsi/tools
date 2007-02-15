@@ -62,7 +62,7 @@ public class DSpaceFileManager extends AbstractFileManager {
 		return MessageFormat.format(formatedDownloadUrl, uniqueId, fileName);
 	}
 
-	public InputStream retrieveFileAsStream(String uniqueId)  {
+	public InputStream retrieveFile(String uniqueId)  {
 		try {
 			return dspaceClient.retrieveStreamForFile(uniqueId);
 		} catch (DSpaceClientException e) {
