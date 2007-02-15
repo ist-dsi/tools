@@ -1,5 +1,6 @@
 package pt.utl.ist.fenix.tools.file.dspace;
 
+import java.io.InputStream;
 import java.util.Collection;
 
 import pt.utl.ist.fenix.tools.file.FileSearchCriteria;
@@ -11,7 +12,6 @@ import pt.utl.ist.fenix.tools.file.FileSetQueryResults;
 import pt.utl.ist.fenix.tools.file.FilesetMetadataQuery;
 import pt.utl.ist.fenix.tools.file.VirtualPath;
 
-
 /**
  * This is the interface that any DSpaceClient should implement...
  * The DSpaceClient general class will use this interface to
@@ -21,6 +21,8 @@ import pt.utl.ist.fenix.tools.file.VirtualPath;
  * @author jpereira - Linkare TI
  * 
  */
+
+
 public interface IDSpaceClient {
 
 	/**
@@ -78,6 +80,8 @@ public interface IDSpaceClient {
 
 	public FileSet retrieveFileSet(FileSetDescriptor descriptor) throws DSpaceClientException;
 
+	public InputStream retrieveStreamForFile(String uniqueIdentifier) throws DSpaceClientException;
+	
 	public FileSetDescriptor listAllDescriptorsFromRoot(FileSetDescriptor rootFileSetDescriptor) throws DSpaceClientException;
 
 	public FileSetDescriptor getRootDescriptor(FileSetDescriptor innerChildDescriptor) throws DSpaceClientException;

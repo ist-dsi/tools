@@ -1,5 +1,6 @@
 package pt.utl.ist.fenix.tools.file.dspace;
 
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,6 +62,14 @@ public class DSpaceFileManager extends AbstractFileManager {
 		return MessageFormat.format(formatedDownloadUrl, uniqueId, fileName);
 	}
 
+	public InputStream retrieveFileAsStream(String uniqueId)  {
+		try {
+			return dspaceClient.retrieveStreamForFile(uniqueId);
+		} catch (DSpaceClientException e) {
+			throw new FileManagerException(e.getMessage(),e);
+		}
+	}
+	
 	public FileSet readFileSet(FileSetDescriptor fileSetDescriptor) {
 		try {
 			return dspaceClient.retrieveFileSet(fileSetDescriptor);

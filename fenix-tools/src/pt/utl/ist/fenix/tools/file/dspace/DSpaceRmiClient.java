@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -324,6 +325,13 @@ public class DSpaceRmiClient implements IDSpaceClient {
 		/**
 		 * Should be implemented
 		 */
+	}
+
+	public InputStream retrieveStreamForFile(String uniqueIdentifier) throws DSpaceClientException {
+		/**
+		 * Should be implemented
+		 */
+		return null;
 	}
 	
 }

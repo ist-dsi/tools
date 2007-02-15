@@ -75,8 +75,11 @@ public interface IFileManager {
 	 * 
 	 * @return the file contents as a byte[]
 	 */
+	@Deprecated
 	public byte[] retrieveFile(String uniqueId);
 
+	public InputStream retrieveFileAsStream(String uniqueId);
+	
 	public FileSearchResult searchFiles(FileSearchCriteria critera);
 
 	public FileSearchResult searchFiles(FileSearchCriteria critera, VirtualPath optionalPathToRestrictSearch);

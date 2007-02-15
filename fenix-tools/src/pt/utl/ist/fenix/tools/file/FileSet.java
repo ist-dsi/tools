@@ -441,7 +441,7 @@ public class FileSet implements Serializable, XMLSerializable {
 
 	public boolean replaceFileWithAbsolutePath(String originalAbsoluteFilePath, File newFile) {
 		for (File f : getContentFiles()) {
-			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) {
+			if (f.getPath().equals(originalAbsoluteFilePath)) {
 				this.getContentFiles().remove(f);
 				this.getContentFiles().add(newFile);
 				return true;

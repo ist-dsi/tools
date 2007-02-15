@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,7 +44,7 @@ public class DSpaceHttpClient implements IDSpaceClient {
 	private static final String DSPACE_REMOTE_DOWNLOAD_SERVLET = "/DSpaceFileSetDownloadServlet";
 
 	private static final String DSPACE_INTERNAL_ERROR = "DSPACE_INTERNAL_ERROR";
-	
+
 	private String remoteInterfaceUrl;
 
 	private String remoteDownloadInterfaceUrl;
@@ -85,10 +86,11 @@ public class DSpaceHttpClient implements IDSpaceClient {
 		return ((FileSetUploadResponse) executeRemoteMethod("uploadFileSet", request, username, password,
 				FileSetUploadResponse.class, additionalParts)).getFileSetDescriptor();
 	}
-	
-	public FileSetDescriptor addFileToItem(VirtualPath path, String name, String itemHandle, FileSet fileSet, boolean privateFile) throws DSpaceClientException {
+
+	public FileSetDescriptor addFileToItem(VirtualPath path, String name, String itemHandle, FileSet fileSet,
+			boolean privateFile) throws DSpaceClientException {
 		fileSet.setItemHandle(itemHandle);
-		FileSetUploadRequest request = new FileSetUploadRequest(path,name,privateFile,fileSet);
+		FileSetUploadRequest request = new FileSetUploadRequest(path, name, privateFile, fileSet);
 		Collection<File> allFiles = request.getFileSet().getAllFiles();
 
 		Part[] additionalParts = new Part[allFiles.size()];
@@ -128,18 +130,41 @@ public class DSpaceHttpClient implements IDSpaceClient {
 
 	}
 
-	public void changeItemMetaData(String itemHandler, Collection<FileSetMetaData> metaData) throws DSpaceClientException {
-		ChangeItemMetaDataRequest request = new ChangeItemMetaDataRequest(itemHandler,metaData);
+	public void changeItemMetaData(String itemHandler, Collection<FileSetMetaData> metaData)
+			throws DSpaceClientException {
+		ChangeItemMetaDataRequest request = new ChangeItemMetaDataRequest(itemHandler, metaData);
 		ChangeItemMetaDataResponse response = (ChangeItemMetaDataResponse) executeRemoteMethod(
-				"changeItemMetaData", request, username, password, ChangeItemMetaDataResponse.class, new Part[0]);
-		if(response.getError()!=null) {
+				"changeItemMetaData", request, username, password, ChangeItemMetaDataResponse.class,
+				new Part[0]);
+		if (response.getError() != null) {
 			throw new DSpaceClientException(response.getError());
 		}
-		
+
 	}
 
-	
-	
+	public InputStream retrieveStreamForFile(String uniqueIdentifier) throws DSpaceClientException {
+		HttpClient client = new HttpClient();
+		String downloadUrl = remoteDownloadInterfaceUrl + "?username=" + username + "&password=" + password
+				+ "&uniqueId=" + uniqueIdentifier;
+		GetMethod gm = new GetMethod(downloadUrl);
+
+		int result;
+		try {
+			result = client.executeMethod(gm);
+			if (result == HttpStatus.SC_OK) {
+				return gm.getResponseBodyAsStream();
+			}
+			else {
+				throw new DSpaceClientException("Unable get stream for " + uniqueIdentifier);
+			}
+		} catch (HttpException e) {
+			throw new DSpaceClientException(e);
+		} catch (IOException e) {
+			throw new DSpaceClientException(e);
+		}
+
+	}
+
 	public FileSet retrieveFileSet(FileSetDescriptor descriptor) throws DSpaceClientException {
 
 		Collection<FileDescriptor> allDescriptorsRecursive = descriptor.recursiveListAllFileDescriptors();
@@ -171,12 +196,12 @@ public class DSpaceHttpClient implements IDSpaceClient {
 
 				if (result == HttpStatus.SC_OK) {
 					File f = new File(dirForTempDownload, FileUtils.makeRelativePath(absoluteParentPath, desc
-							.getOriginalAbsoluteFilePath(), "download"));
+							.getOriginalAbsoluteFilePath(), desc.getFilename()));
 					FileOutputStream fos;
 					try {
 						fos = new FileOutputStream(f);
 						FileUtils.copyInputStreamToOutputStream(gm.getResponseBodyAsStream(), fos);
-						//fsRetVal.addContentFile(f);
+						// fsRetVal.addContentFile(f);
 						fsRetVal.replaceFileWithAbsolutePath(desc.getOriginalAbsoluteFilePath(), f);
 					} catch (FileNotFoundException e) {
 						throw new DSpaceClientException(e);
@@ -241,7 +266,8 @@ public class DSpaceHttpClient implements IDSpaceClient {
 		}
 
 		if (!response.responseCode.equals(SUCCESS_CODE)) {
-			throw new DSpaceClientException(response.responseCode + "\nBODY_MESSAGE:\n" + response.responseMessage);
+			throw new DSpaceClientException(response.responseCode + "\nBODY_MESSAGE:\n"
+					+ response.responseMessage);
 		}
 
 		XMLSerializable responseObject;
@@ -273,7 +299,7 @@ public class DSpaceHttpClient implements IDSpaceClient {
 		}
 
 		int firstIndexOfNewLine = rawResponse.indexOf('\n');
-		if(firstIndexOfNewLine<0) {
+		if (firstIndexOfNewLine < 0) {
 			throw new DSpaceClientException(UNEXPECTED_ERROR_CODE + "\n" + rawResponse);
 		}
 		String responseCode = rawResponse.substring(0, firstIndexOfNewLine);
@@ -328,12 +354,11 @@ public class DSpaceHttpClient implements IDSpaceClient {
 	public void removeFileFromItem(String uniqueId) throws DSpaceClientException {
 		RemoveFileFromItemRequest request = new RemoveFileFromItemRequest(uniqueId);
 		RemoveFileFromItemResponse response = (RemoveFileFromItemResponse) executeRemoteMethod(
-				"removeFileFromItem", request, username, password, RemoveFileFromItemResponse.class, new Part[0]);
-		if(response.getError()!=null) {
+				"removeFileFromItem", request, username, password, RemoveFileFromItemResponse.class,
+				new Part[0]);
+		if (response.getError() != null) {
 			throw new DSpaceClientException(response.getError());
 		}
 	}
-		
-
 
 }
