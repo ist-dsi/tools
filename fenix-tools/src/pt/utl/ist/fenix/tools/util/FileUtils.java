@@ -43,6 +43,18 @@ public class FileUtils {
 	}
     }
 
+    public static String readFile(final InputStream inputStream) throws IOException {
+	try {
+	    byte[] buffer = new byte[4096];
+	    final StringBuilder fileContents = new StringBuilder();
+	    for (int n = 0; (n = inputStream.read(buffer)) != -1; fileContents.append(new String(buffer, 0, n)))
+		;
+	    return fileContents.toString();
+	} finally {
+	    inputStream.close();
+	}
+    }
+
     public static byte[] readFileInBytes(final String filename) throws IOException {
 	final File file = new File(filename);
 	final FileInputStream fileInputStream = new FileInputStream(file);
