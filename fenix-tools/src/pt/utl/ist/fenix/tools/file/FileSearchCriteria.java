@@ -51,7 +51,7 @@ public class FileSearchCriteria {
 	
 	public void addOrCriteria(SearchField criteria, String value) {
 		if(value!=null && value.length()>0) {
-			query.addToPreviousQuery(ConjunctionType.OR,criteria.fieldName(), StringNormalizer.normalize(value) + "\"~" + proximityRange);
+			query.addToPreviousQuery(ConjunctionType.OR,criteria.fieldName(), "\"" + StringNormalizer.normalize(value) + "\"~" + proximityRange);
 		}
 	}
 	
