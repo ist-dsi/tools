@@ -72,12 +72,6 @@ public class EmailSender {
 	return unsent;
     }
 
-    public static Collection<String> send(final String fromName, final String fromAddress,
-	    final Collection<String> toAddresses, final Collection<String> ccAddresses,
-	    final Collection<String> bccAddresses, final String subject, final String body) {
-	return send(fromName, fromAddress, new String[]{}, toAddresses, ccAddresses, bccAddresses, subject, body);
-    }
-
     public static Collection<String> send(final String fromName, final String fromAddress, final String[] replyTos,
 	    final Collection<String> toAddresses, final Collection<String> ccAddresses,
 	    final Collection<String> bccAddresses, final String subject, final String body) {
