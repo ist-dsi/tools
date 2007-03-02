@@ -25,12 +25,14 @@ import com.iver.cit.jdwglib.dwg.objects.DwgArc;
 import com.iver.cit.jdwglib.dwg.objects.DwgAttdef;
 import com.iver.cit.jdwglib.dwg.objects.DwgAttrib;
 import com.iver.cit.jdwglib.dwg.objects.DwgBlock;
+import com.iver.cit.jdwglib.dwg.objects.DwgBlockControl;
 import com.iver.cit.jdwglib.dwg.objects.DwgBlockHeader;
 import com.iver.cit.jdwglib.dwg.objects.DwgCircle;
 import com.iver.cit.jdwglib.dwg.objects.DwgEllipse;
 import com.iver.cit.jdwglib.dwg.objects.DwgEndblk;
 import com.iver.cit.jdwglib.dwg.objects.DwgInsert;
 import com.iver.cit.jdwglib.dwg.objects.DwgLayer;
+import com.iver.cit.jdwglib.dwg.objects.DwgLayerControl;
 import com.iver.cit.jdwglib.dwg.objects.DwgLine;
 import com.iver.cit.jdwglib.dwg.objects.DwgLwPolyline;
 import com.iver.cit.jdwglib.dwg.objects.DwgMText;
@@ -95,20 +97,25 @@ public class DWGProcessor {
 
     protected BufferedImage process(final String filename, final OutputStream outputStream)
 	    throws IOException {
+	
 	final DwgFile dwgFile = readDwgFile(filename);
-
+	
+	dwgFile.initializeLayerTable();
+	dwgFile.applyExtrusions();
+	dwgFile.blockManagement();
+	dwgFile.calculateCadModelDwgPolylines();
+	dwgFile.calculateGisModelDwgPolylines();
+	
 	final Vector<DwgObject> dwgObjects = dwgFile.getDwgObjects();
 	final ReferenceConverter referenceConverter = new ReferenceConverter(dwgObjects, scaleRatio);
-
-	final BufferedImage bufferedImage = new BufferedImage((int) referenceConverter
-		.convX(referenceConverter.maxX),
+	final BufferedImage bufferedImage = new BufferedImage((int) referenceConverter.convX(referenceConverter.maxX),
 		(int) referenceConverter.convY(referenceConverter.minY), BufferedImage.TYPE_INT_RGB);
-
 	final Graphics2D graphics2D = bufferedImage.createGraphics();
+	
 	graphics2D.setFont(new Font(FONT_NAME, Font.PLAIN, fontSize));
 	graphics2D.setBackground(Color.WHITE);
 	graphics2D.setColor(Color.BLACK);
-	graphics2D.clearRect(0, 0, (int) referenceConverter.convX(referenceConverter.maxX),
+	graphics2D.clearRect(0, 0, (int) referenceConverter.convX(referenceConverter.maxX), 
 		(int) referenceConverter.convY(referenceConverter.minY));
 
 	for (final DwgObject dwgObject : dwgObjects) {
@@ -121,8 +128,6 @@ public class DWGProcessor {
 
     private void drawObject(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
 	    final DwgObject dwgObject) {
-
-	if (dwgObject.getColor() != 0) {
 
 	    if (dwgObject instanceof DwgLine) {
 		final DwgLine dwgLine = (DwgLine) dwgObject;
@@ -137,8 +142,8 @@ public class DWGProcessor {
 		drawText(referenceConverter, graphics2D, dwgText);
 		
 	    } else if (dwgObject instanceof DwgMText) {		
-		final DwgMText dwgText = (DwgMText) dwgObject;
-		drawText(referenceConverter, graphics2D, dwgText);
+		final DwgMText dwgMText = (DwgMText) dwgObject;
+		drawText(referenceConverter, graphics2D, dwgMText);
 
 	    } else if (dwgObject instanceof DwgLwPolyline) {
 		final DwgLwPolyline dwgLwPolyline = (DwgLwPolyline) dwgObject;
@@ -151,13 +156,12 @@ public class DWGProcessor {
 	    } else if (dwgObject instanceof DwgCircle) {
 		final DwgCircle dwgCircle = (DwgCircle) dwgObject;
 		drawCircle(referenceConverter, graphics2D, dwgCircle);
-	    }
-	}
+	    }            
     }
 
-    protected void drawText(ReferenceConverter referenceConverter, Graphics2D graphics2D, DwgMText dwgText) {	   
-        graphics2D.drawString(getText(dwgText), convXCoord(dwgText.getInsertionPoint()[0], referenceConverter),
-    	    convYCoord(dwgText.getInsertionPoint()[1], referenceConverter));
+    protected void drawText(ReferenceConverter referenceConverter, Graphics2D graphics2D, DwgMText dwgMText) {	   
+        graphics2D.drawString(getText(dwgMText), convXCoord(dwgMText.getInsertionPoint()[0], referenceConverter), 
+        	convYCoord(dwgMText.getInsertionPoint()[1], referenceConverter));
     }
     
     protected static String getText(DwgMText dwgText) {
@@ -257,8 +261,7 @@ public class DWGProcessor {
 	graphics2DDrawArc(referenceConverter, graphics2D, radius, xc, yc, startAngle, endAngle);
     }
 
-    protected void drawText(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
-	    final DwgText dwgText) {
+    protected void drawText(final ReferenceConverter referenceConverter, final Graphics2D graphics2D, final DwgText dwgText) {
 	final Point2D point2D = dwgText.getInsertionPoint();
 	graphics2D.drawString(dwgText.getText(), convXCoord(point2D.getX(), referenceConverter),
 		convYCoord(point2D.getY(), referenceConverter));
@@ -345,10 +348,7 @@ public class DWGProcessor {
 	public ReferenceConverter(final Vector<DwgObject> dwgObjects, int scaleRatio) {
 	    this.scaleRatio = scaleRatio;
 	    for (final DwgObject dwgObject : dwgObjects) {
-		if (dwgObject.getColor() == 0) {
-		    continue;
-
-		} else if (dwgObject instanceof DwgText) {
+		if (dwgObject instanceof DwgText) {
 		    final DwgText dwgText = (DwgText) dwgObject;
 
 		    minX = Math.min(minX, dwgText.getInsertionPoint().getX());
@@ -521,13 +521,9 @@ public class DWGProcessor {
 		  
 		} else if (dwgObject instanceof DwgVertex2D) {
 		    //final DwgVertex2D dwgPolyline2D = (DwgVertex2D) dwgObject;
-		    
-		      		    
-		} else {
-//		    throw new IllegalArgumentException("Unknown DwgObject: "
-//			    + dwgObject.getClass().getName());
-//		    
-		    System.out.println(" ********* DWG Processor -> Unknown DwgObject: " + dwgObject.getClass().getName());
+		    		      		   
+		} else {    
+		   // System.out.println(" ********* DWG Processor -> Unknown DwgObject: " + dwgObject.getClass().getName());
 		}
 	    }
 	}
