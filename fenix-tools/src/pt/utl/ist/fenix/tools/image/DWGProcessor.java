@@ -25,14 +25,12 @@ import com.iver.cit.jdwglib.dwg.objects.DwgArc;
 import com.iver.cit.jdwglib.dwg.objects.DwgAttdef;
 import com.iver.cit.jdwglib.dwg.objects.DwgAttrib;
 import com.iver.cit.jdwglib.dwg.objects.DwgBlock;
-import com.iver.cit.jdwglib.dwg.objects.DwgBlockControl;
 import com.iver.cit.jdwglib.dwg.objects.DwgBlockHeader;
 import com.iver.cit.jdwglib.dwg.objects.DwgCircle;
 import com.iver.cit.jdwglib.dwg.objects.DwgEllipse;
 import com.iver.cit.jdwglib.dwg.objects.DwgEndblk;
 import com.iver.cit.jdwglib.dwg.objects.DwgInsert;
 import com.iver.cit.jdwglib.dwg.objects.DwgLayer;
-import com.iver.cit.jdwglib.dwg.objects.DwgLayerControl;
 import com.iver.cit.jdwglib.dwg.objects.DwgLine;
 import com.iver.cit.jdwglib.dwg.objects.DwgLwPolyline;
 import com.iver.cit.jdwglib.dwg.objects.DwgMText;
@@ -98,14 +96,7 @@ public class DWGProcessor {
     protected BufferedImage process(final String filename, final OutputStream outputStream)
 	    throws IOException {
 	
-	final DwgFile dwgFile = readDwgFile(filename);
-	
-	dwgFile.initializeLayerTable();
-	dwgFile.applyExtrusions();
-	dwgFile.blockManagement();
-	dwgFile.calculateCadModelDwgPolylines();
-	dwgFile.calculateGisModelDwgPolylines();
-	
+	final DwgFile dwgFile = readDwgFile(filename);	
 	final Vector<DwgObject> dwgObjects = dwgFile.getDwgObjects();
 	final ReferenceConverter referenceConverter = new ReferenceConverter(dwgObjects, scaleRatio);
 	final BufferedImage bufferedImage = new BufferedImage((int) referenceConverter.convX(referenceConverter.maxX),
@@ -125,7 +116,7 @@ public class DWGProcessor {
 	graphics2D.dispose();
 	return bufferedImage;
     }
-
+   
     private void drawObject(final ReferenceConverter referenceConverter, final Graphics2D graphics2D,
 	    final DwgObject dwgObject) {
 
@@ -158,22 +149,7 @@ public class DWGProcessor {
 		drawCircle(referenceConverter, graphics2D, dwgCircle);
 	    }            
     }
-
-    protected void drawText(ReferenceConverter referenceConverter, Graphics2D graphics2D, DwgMText dwgMText) {	   
-        graphics2D.drawString(getText(dwgMText), convXCoord(dwgMText.getInsertionPoint()[0], referenceConverter), 
-        	convYCoord(dwgMText.getInsertionPoint()[1], referenceConverter));
-    }
     
-    protected static String getText(DwgMText dwgText) {
-	String text = dwgText.getText();	
-        String[] strings = text.split(";");	
-        if(strings.length > 1) {
-            strings = strings[strings.length - 1].split("}");
-            text = strings[0];
-        }
-	return text;
-    }
-
     protected void drawCircle(ReferenceConverter referenceConverter, Graphics2D graphics2D,
 	    DwgCircle dwgCircle) {
 
@@ -263,8 +239,21 @@ public class DWGProcessor {
 
     protected void drawText(final ReferenceConverter referenceConverter, final Graphics2D graphics2D, final DwgText dwgText) {
 	final Point2D point2D = dwgText.getInsertionPoint();
-	graphics2D.drawString(dwgText.getText(), convXCoord(point2D.getX(), referenceConverter),
-		convYCoord(point2D.getY(), referenceConverter));
+	graphics2D.drawString(dwgText.getText(), convXCoord(point2D.getX(), referenceConverter), convYCoord(point2D.getY(), referenceConverter));	
+    }
+    
+    protected void drawText(ReferenceConverter referenceConverter, Graphics2D graphics2D, DwgMText dwgMText) {	   
+        graphics2D.drawString(getText(dwgMText), convXCoord(dwgMText.getInsertionPoint()[0], referenceConverter), convYCoord(dwgMText.getInsertionPoint()[1], referenceConverter));
+    }
+    
+    protected static String getText(DwgMText dwgText) {
+	String text = dwgText.getText();	
+        String[] strings = text.split(";");	
+        if(strings.length > 1) {
+            strings = strings[strings.length - 1].split("}");
+            text = strings[0];
+        }        
+	return text;
     }
 
     private void graphics2DDrawArc(ReferenceConverter referenceConverter, Graphics2D graphics2D,
@@ -304,6 +293,7 @@ public class DWGProcessor {
 	System.setErr(outputStream);
 	try {
 	    dwgFile.read();
+	    initializeDwgFile(dwgFile);
 	} finally {
 	    System.setOut(outPrintStream);
 	    System.setErr(errPrintStream);
@@ -318,10 +308,17 @@ public class DWGProcessor {
 		    .substring(indexOfError + 7);
 	    throw new Error(errorMessage);
 	}
-
 	return dwgFile;
     }
 
+    private void initializeDwgFile(final DwgFile dwgFile) {
+	dwgFile.initializeLayerTable();
+	dwgFile.applyExtrusions();
+	dwgFile.blockManagement();
+	dwgFile.calculateCadModelDwgPolylines();
+	dwgFile.calculateGisModelDwgPolylines();
+    }
+    
     protected int calcDegreeAngle(final double radians) {
 	return (int) Math.round((radians * 180) / Math.PI);
     }
@@ -348,6 +345,7 @@ public class DWGProcessor {
 	public ReferenceConverter(final Vector<DwgObject> dwgObjects, int scaleRatio) {
 	    this.scaleRatio = scaleRatio;
 	    for (final DwgObject dwgObject : dwgObjects) {
+		
 		if (dwgObject instanceof DwgText) {
 		    final DwgText dwgText = (DwgText) dwgObject;
 
