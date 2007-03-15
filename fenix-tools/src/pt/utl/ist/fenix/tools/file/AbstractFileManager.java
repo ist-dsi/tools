@@ -1,7 +1,6 @@
 package pt.utl.ist.fenix.tools.file;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -161,7 +160,7 @@ public abstract class AbstractFileManager implements IFileManager {
 		FileSet fs = new FileSet();
 		fs.addMetaInfo(fileMetadata);
 		fs.addContentFile(fileToSave);
-		originalFilename = StringNormalizer.normalize(originalFilename);
+		originalFilename = StringNormalizer.normalize(pt.utl.ist.fenix.tools.util.FileUtils.getFilenameOnly(originalFilename));
 		FileSetDescriptor fsDescriptor = saveFileSet(filePath, originalFilename, privateFile, fs,
 				FileSetType.SIMPLE);
 		return fsDescriptor.getContentFileDescriptor(0);
