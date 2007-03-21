@@ -4,11 +4,20 @@ import sun.text.Normalizer;
 
 public class StringNormalizer {
 
+    	private static String normalize(String string, boolean toLowerCase) {
+    	    String returnValue = Normalizer.normalize(string, Normalizer.DECOMP, Normalizer.DONE).replaceAll("[^\\p{ASCII}]",
+		"");
+    	    return (toLowerCase) ? returnValue.toLowerCase() : returnValue;
+    	    
+    	}
 	public static String normalize(String string) {
-		return Normalizer.normalize(string, Normalizer.DECOMP, Normalizer.DONE).replaceAll("[^\\p{ASCII}]",
-				"").toLowerCase();
+	    return normalize(string, true);
 	}
 
+	public static String normalizePreservingCapitalizedLetters(String string) {
+	    return normalize(string, false);
+	}
+	
 	public static void normalize(String[] words) {
 		for (int i = 0; i < words.length; i++) {
 			words[i] = normalize(words[i]);

@@ -160,7 +160,7 @@ public abstract class AbstractFileManager implements IFileManager {
 		FileSet fs = new FileSet();
 		fs.addMetaInfo(fileMetadata);
 		fs.addContentFile(fileToSave);
-		originalFilename = StringNormalizer.normalize(pt.utl.ist.fenix.tools.util.FileUtils.getFilenameOnly(originalFilename));
+		originalFilename = StringNormalizer.normalizePreservingCapitalizedLetters(pt.utl.ist.fenix.tools.util.FileUtils.getFilenameOnly(originalFilename));
 		FileSetDescriptor fsDescriptor = saveFileSet(filePath, originalFilename, privateFile, fs,
 				FileSetType.SIMPLE);
 		return fsDescriptor.getContentFileDescriptor(0);
@@ -169,7 +169,7 @@ public abstract class AbstractFileManager implements IFileManager {
 	public FileDescriptor saveFile(VirtualPath filePath, String originalFilename, boolean privateFile,
 			Collection<FileSetMetaData> fileMetadata, InputStream fileInputStream) {
 		File dirTemp;
-		originalFilename = StringNormalizer.normalize(originalFilename);
+		originalFilename = StringNormalizer.normalizePreservingCapitalizedLetters(originalFilename);
 		
 		try {
 			dirTemp = FileUtils.createTemporaryDir("filemanager_", "_temp_persisted_stream");
