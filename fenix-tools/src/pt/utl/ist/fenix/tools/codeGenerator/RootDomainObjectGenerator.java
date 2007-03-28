@@ -5,8 +5,10 @@ package pt.utl.ist.fenix.tools.codeGenerator;
 
 import java.io.IOException;
 import java.util.Formatter;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +30,7 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
         String rootObjectSourceCodeFilePath = outputFolder + "/" + CLASS_NAME.replace('.', '/')
                 + sourceSuffix;
         Set<String> usedNames = new HashSet<String>();
+        Map<DomainClass, String> classes = new HashMap<DomainClass, String>();
 
         String rootObjectSourceCode = FileUtils.readFile(rootObjectSourceCodeFilePath);
         int lastBrace = rootObjectSourceCode.lastIndexOf('}');
@@ -61,6 +64,7 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
                         methods.format("return (domainObject == null || domainObject.getRootDomainObject() == null) ? null : domainObject;\n\t}\n");
                         
                         usedNames.add(className);
+                        classes.put(otherDomainClass, className);
                     }
 
                     //appendAddToClosureAccessMap(resultSourceCode, otherDomainClass, slotName);
@@ -73,7 +77,7 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
                 if (roleSlot.getMultiplicityUpper() != 1) {
                     final String slotName = StringUtils.capitalize(roleSlot.getName());
                     final DomainClass otherDomainClass = (DomainClass) roleSlot.getType();
-                    appendAddToClosureAccessMap(resultSourceCode, otherDomainClass, slotName);
+                    appendAddToClosureAccessMap(resultSourceCode, otherDomainClass.getFullName(), classes.get(otherDomainClass), slotName);
                 }
             }
             resultSourceCode.append("\n\t}");
@@ -127,13 +131,13 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
         resultSourceCode.append("\n\t}");
 	}
 
-    private void appendAddToClosureAccessMap(final StringBuilder resultSourceCode, final DomainClass otherDomainClass, final String slotName) {
+    private void appendAddToClosureAccessMap(final StringBuilder resultSourceCode, final String fullName, final String name, final String slotName) {
     	resultSourceCode.append("\n\t\tclosureAccessMap.put(");
-    	resultSourceCode.append(otherDomainClass.getFullName());
+    	resultSourceCode.append(fullName);
     	resultSourceCode.append(".class.getName(), new DomainObjectReader() {");
     	resultSourceCode.append("\n\t\t\tpublic DomainObject readDomainObjectByOID(final Integer idInternal) {");
     	resultSourceCode.append("\n\t\t\t\treturn read");
-    	resultSourceCode.append(otherDomainClass.getName());
+    	resultSourceCode.append(name);
     	resultSourceCode.append("ByOID(idInternal);");
     	resultSourceCode.append("\n\t\t\t}");
     	resultSourceCode.append("\n\t\t\tpublic java.util.Set readAllDomainObjects() {");
