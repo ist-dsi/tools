@@ -49,6 +49,7 @@ public class DSpaceFileManager extends AbstractFileManager {
 		try {
 			return dspaceClient.uploadFileSet(virtualPath, originalFileName, fileSet, privateFile);
 		} catch (DSpaceClientException e) {
+		    	logger.warning(this.getClass().getName() + ": " + e.getMessage());
 			throw new FileManagerException(e.getMessage(), e);
 		}
 	}
