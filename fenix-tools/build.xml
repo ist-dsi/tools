@@ -56,7 +56,7 @@
 				fork="yes" failonerror="true" maxmemory="1024m" jvmargs="-Dfile.encoding=iso8859-1">
 			<arg value="/home/marvin/plantas"/>
 			<arg value="/home/marvin/plantas"/>
-			<arg value="1250"/>
+			<arg value="1200"/>
 			<classpath>
 				<pathelement path="${build.home}"/>
 				<fileset dir="${lib}/">

@@ -343,7 +343,6 @@ public class DWGProcessor {
 	int scaleRatio = 0;
 
 	public ReferenceConverter(final Vector<DwgObject> dwgObjects, int scaleRatio) {
-	    this.scaleRatio = scaleRatio;
 	    for (final DwgObject dwgObject : dwgObjects) {
 		
 		if (dwgObject instanceof DwgText) {
@@ -524,6 +523,12 @@ public class DWGProcessor {
 		   // System.out.println(" ********* DWG Processor -> Unknown DwgObject: " + dwgObject.getClass().getName());
 		}
 	    }
+
+	    this.scaleRatio = (int) Math.round(scaleRatio / (1 - (minX / maxX)));
+	}
+
+	private double maxAbsValue(double maxX, double minX, double maxY, double minY) {
+	    return Math.max( Math.max(Math.abs(maxX), Math.abs(minX)), Math.max(Math.abs(maxY), Math.abs(minY)));
 	}
 
 	public static double getEllipseWidth(final DwgEllipse dwgEllipse) {
