@@ -76,6 +76,7 @@ public class FileSearchCriteria {
 		PUBLISHER("publisher"),
 		DESCRIPTION("description"),
 		TYPE("type"),
+		INFORMATIONS("informations"),
 		UNIT("unit"),
 		ANY(MetadataQuery.ANY_FIELD);
 		
