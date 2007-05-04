@@ -83,8 +83,14 @@ public class DSpaceHttpClient implements IDSpaceClient {
 				throw new DSpaceClientException(e);
 			}
 
-		return ((FileSetUploadResponse) executeRemoteMethod("uploadFileSet", request, username, password,
+		FileSetDescriptor descriptor =  ((FileSetUploadResponse) executeRemoteMethod("uploadFileSet", request, username, password,
 				FileSetUploadResponse.class, additionalParts)).getFileSetDescriptor();
+		
+		if(descriptor.getContentFileDescriptor(0).getSize()==0) {
+			throw new DSpaceClientException("File size is 0kb. Seems upload went wrong!");
+		}
+		
+		return descriptor;
 	}
 
 	public FileSetDescriptor addFileToItem(VirtualPath path, String name, String itemHandle, FileSet fileSet,
