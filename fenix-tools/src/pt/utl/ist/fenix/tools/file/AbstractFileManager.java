@@ -130,7 +130,7 @@ public abstract class AbstractFileManager implements IFileManager {
 	protected Collection<FileSetMetaData> createMetaData(String author, String title) {
 		Collection<FileSetMetaData> metadata = new ArrayList<FileSetMetaData>();
 		metadata.add(FileSetMetaData.createAuthorMeta(author));
-		metadata.add(FileSetMetaData.createTitleMeta(title));
+		metadata.add(FileSetMetaData.createTitleMeta(pt.utl.ist.fenix.tools.util.FileUtils.getFilenameOnly(title)));
 		return metadata;
 	}
 
@@ -169,7 +169,7 @@ public abstract class AbstractFileManager implements IFileManager {
 	public FileDescriptor saveFile(VirtualPath filePath, String originalFilename, boolean privateFile,
 			Collection<FileSetMetaData> fileMetadata, InputStream fileInputStream) {
 		File dirTemp;
-		originalFilename = StringNormalizer.normalizePreservingCapitalizedLetters(originalFilename);
+		originalFilename = StringNormalizer.normalizePreservingCapitalizedLetters(pt.utl.ist.fenix.tools.util.FileUtils.getFilenameOnly(originalFilename));
 		
 		try {
 			dirTemp = FileUtils.createTemporaryDir("filemanager_", "_temp_persisted_stream");
