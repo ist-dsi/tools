@@ -29,8 +29,35 @@
 			types for the installer to use... Please have a look at the example
 			build.properties.spec for the metadata specification use...
 		-->
-		<propertiesConfigurator specFile="doc/PropertiesConfigurator/build.properties.spec" file="doc/PropertiesConfigurator/build.properties">
+		<propertiesConfigurator specFile="doc/PropertiesConfigurator/build.properties.spec" file="doc/PropertiesConfigurator/build.properties"
+			encoding="iso-8859-1">
 			<echo message="Properties configurator executed ok!"/>
+		</propertiesConfigurator>
+    </target>
+	<target name="test-properties-generator"
+    		description="Generate properties" depends="compile-properties-configurator">
+    	 	<taskdef classname="pt.linkare.ant.PropertiesConfiguratorTask" name="propertiesConfigurator">
+			<classpath>
+			    <pathelement path="${propconfig.lib}"/>
+			</classpath>
+		</taskdef>
+		<!--
+			Generates a test.properties file and possibly a
+		.test.properties.crypt file
+			The test.properties will contain all the persistent properties and 
+			the .test.properties.crypt property file will have all persistent and non 
+			persistent properties in an encrypted file. The purpose of this file is to
+			define the defaults for a future run if necessary.
+			This task exposes the read properties as the Property Core Task does...
+			The build.properties.spec file will have the definition of the properties
+			types for the installer to use... Please have a look at the example
+			build.properties.spec for the metadata specification use...
+		-->
+		<propertiesConfigurator
+		specFile="doc/PropertiesConfigurator/test.properties.spec"
+		file="doc/PropertiesConfigurator/test.properties"
+			encoding="iso-8859-1" debug="true">
+			<echo message="Test Properties configurator executed ok!"/>
 		</propertiesConfigurator>
     </target>
 	

@@ -52,7 +52,7 @@
 # type=file
 #   additional metadata: validateFile=yes/no (should the file exist?)
 #                        createFile=Should the file be created if it does not exist? (validateFile must be set to "no")
-#
+#						 persistAbsolutePath=Should a relative path be converted to the absolute path?
 # type=hostname  
 #   additional metadata: validate=yes/no (must this be a valid hostname - resolvable to at least one IP address)
 #   
@@ -85,8 +85,9 @@
 #
 #
 # type=path
-#   additional metadata: validatePathh=yes/no (should the path exist?)
+#   additional metadata: validatePath=yes/no (should the path exist?)
 #                        createPath=Should the path be created if it does not exist? (validatePath must be set to "no")
+#						 persistAbsolutePath=Should a relative path be converted to an absolute one?
 #
 # type=stringReplace - it gets a string from input but then it replaces it in replaceString and writes out the replaceString as the value
 #   additional metadata: replaceString=The string to replace in ${0} is replaced by the actual value
@@ -257,6 +258,11 @@ db.alias=//localhost:3306/${db.name}?useUnicode=true&amp;characterEncoding=latin
 # @generated.3.defaultValue=https://${value}:8080/${app.name}/privado
 filter.hostnames=localhost,localhost.localdomain
 
+
+
+# @message = Institution Name
+# @type = string
+institution.name=Nome com acentuações
 
 #------------------------------------------------------------------------------
 # End of build.properties.spec file
