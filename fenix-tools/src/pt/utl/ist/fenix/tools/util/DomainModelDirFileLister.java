@@ -14,7 +14,6 @@ public class DomainModelDirFileLister {
 
 		public boolean accept(File file) {
 			if(file.isDirectory()) return false;
-			System.out.println("File "+file.getAbsolutePath()+" is a domain model file ? "+file.getAbsolutePath().endsWith(".dml"));
 	    	return file.getAbsolutePath().endsWith(".dml");
 		}
     	
