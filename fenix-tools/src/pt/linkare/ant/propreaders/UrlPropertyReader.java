@@ -1,5 +1,6 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -11,7 +12,7 @@ public class UrlPropertyReader extends AbstractPropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		String url=null;
 		while(url==null)
 		{
@@ -30,7 +31,7 @@ public class UrlPropertyReader extends AbstractPropertyReader{
 		return url;
 	}
 	
-	private String readPropertySimple()
+	private String readPropertySimple() throws UnsupportedEncodingException
 	{
 		String message=buildDefaultMessage();
 		

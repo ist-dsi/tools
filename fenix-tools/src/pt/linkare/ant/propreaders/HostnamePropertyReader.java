@@ -1,5 +1,6 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -11,7 +12,7 @@ public class HostnamePropertyReader extends AbstractPropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		String hostname=null;
 		while(hostname==null)
 		{
@@ -28,7 +29,7 @@ public class HostnamePropertyReader extends AbstractPropertyReader{
 		return hostname;
 	}
 	
-	protected String readPropertySimple()
+	protected String readPropertySimple() throws UnsupportedEncodingException
 	{
 		String message=buildDefaultMessage();
 		

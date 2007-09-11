@@ -1,6 +1,7 @@
 package pt.linkare.ant.propreaders;
 
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +16,8 @@ import pt.linkare.ant.StdIn;
 
 public abstract  class AbstractPropertyReader implements PropertyReader{
     	
+	private String encoding="iso-8859-1";
+	
 	private boolean debug=false;
 	/**
 	* @return Returns true if this task is to debug information
@@ -55,9 +58,9 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 		return prop;
 	}
 
-	public StdIn getInput()
+	public StdIn getInput() throws UnsupportedEncodingException
 	{
-		return StdIn.getInstance();
+		return StdIn.getInstance(encoding);
 	}
 
 
@@ -267,7 +270,7 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 		return InstallerPropertiesReader.getInstance().parseInputPropertyMetaInfo(getProperty().getPropertyMap(),propName, propSpec, defaultValue);
 	}
 	
-	public Collection<InputProperty> readPropertyValue(boolean fromDefault) throws InvalidPropertySpecException{
+	public Collection<InputProperty> readPropertyValue(boolean fromDefault) throws InvalidPropertySpecException, UnsupportedEncodingException{
 	
 		if(fromDefault)
 			getProperty().setPropertyValue(InstallerPropertiesReader.getInstance().getDefaultValue(getProperty()));
@@ -278,7 +281,15 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 		
 	}
 	
-	public abstract String readProperty() throws InvalidPropertySpecException;
+	public abstract String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException;
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
 	
 	/*
 	public abstract JComponent getEditComponent();

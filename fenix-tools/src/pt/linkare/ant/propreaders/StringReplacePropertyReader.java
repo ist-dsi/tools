@@ -1,5 +1,7 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
+
 import pt.linkare.ant.InvalidPropertySpecException;
 
 public class StringReplacePropertyReader extends AbstractPropertyReader{
@@ -8,11 +10,11 @@ public class StringReplacePropertyReader extends AbstractPropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		return readPropertyReplace();
 	}
 	
-	private String readPropertyReplace() throws InvalidPropertySpecException
+	private String readPropertyReplace() throws InvalidPropertySpecException, UnsupportedEncodingException
 	{
 		String message=buildDefaultMessage();
 		String replaceString=getProperty().getMetaData("replaceString");

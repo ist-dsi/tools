@@ -1,19 +1,22 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
+
 import pt.linkare.ant.InvalidPropertySpecException;
 import pt.linkare.ant.StdIn;
 
 public class BooleanPropertyReader extends AbstractPropertyReader{
 
+	
 	public BooleanPropertyReader() {
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		return readPropertyBoolean();
 	}
 	
-	private String readPropertyBoolean()
+	private String readPropertyBoolean() throws UnsupportedEncodingException
 	{
 		String yesOption=getProperty().getMetaData("yesOption");
 		String noOption=getProperty().getMetaData("noOption");

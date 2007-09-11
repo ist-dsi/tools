@@ -1,5 +1,6 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,14 +16,14 @@ public class LangLocationPropertyReader extends AbstractPropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		
 		return getLocationString();
 	}
 	
 
 	
-	public String getLocationString() throws InvalidPropertySpecException
+	public String getLocationString() throws InvalidPropertySpecException, UnsupportedEncodingException
 	{
 		MenuMessage menuOptionsLocation=new MenuMessage();
 		menuOptionsLocation.setMessage(buildDefaultMessage(false));

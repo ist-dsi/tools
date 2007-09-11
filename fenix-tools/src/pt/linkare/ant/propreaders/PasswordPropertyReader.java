@@ -1,5 +1,7 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
+
 import pt.linkare.ant.InvalidPropertySpecException;
 
 
@@ -9,11 +11,11 @@ public class PasswordPropertyReader extends StringPropertyReader{
 		super();
 	}
 	
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		return readPropertySimple();
 	}
 	
-	private String readPropertySimple()
+	private String readPropertySimple() throws UnsupportedEncodingException
 	{
 		String message=buildDefaultMessage();
 		

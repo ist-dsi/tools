@@ -1,5 +1,7 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
+
 import pt.linkare.ant.InvalidPropertySpecException;
 
 public class IntegerPropertyReader extends AbstractPropertyReader{
@@ -8,7 +10,7 @@ public class IntegerPropertyReader extends AbstractPropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		Integer valueRet=null;
 
 		int min=Integer.MIN_VALUE;
@@ -46,7 +48,7 @@ public class IntegerPropertyReader extends AbstractPropertyReader{
 		return valueRet.toString();
 	}
 	
-	private Integer readPropertyInteger()
+	private Integer readPropertyInteger() throws UnsupportedEncodingException
 	{
 		String message=buildDefaultMessage();
 		

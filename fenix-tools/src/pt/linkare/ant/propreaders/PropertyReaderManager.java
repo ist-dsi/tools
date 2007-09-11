@@ -1,5 +1,6 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -11,20 +12,33 @@ public class PropertyReaderManager {
 
 	private boolean debug=false;
 	
-	private PropertyReaderManager() {
+	private String encoding="iso-8859-1";
+	
+	public String getEncoding() {
+		return encoding;
+	}
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+	private PropertyReaderManager(String encoding) {
 		super();
+		setEncoding(encoding);
 	}
 	
-	private static PropertyReaderManager instance=new PropertyReaderManager();
+	private static PropertyReaderManager instance=null;
 	private String additionalPackageForPropertyReaders=null;
 	
-	public static PropertyReaderManager getInstance(boolean debug)
+	public static PropertyReaderManager getInstance(boolean debug,String encoding)
 	{
+		if(instance==null)
+			instance=new PropertyReaderManager(encoding);
 		instance.setDebug(debug);
 		return instance;
 	}
-	public static PropertyReaderManager getInstance()
+	public static PropertyReaderManager getInstance(String encoding)
 	{
+		if(instance==null)
+			instance=new PropertyReaderManager(encoding);
 		return instance;
 	}
 	
@@ -63,8 +77,8 @@ public class PropertyReaderManager {
 		
 	}
 	
-	private static Class getClassForPropertyTypeFromAdditionalPackage(String type) {
-		String packagePrefix=getInstance().getAdditionalPackageForPropertyReaders();
+	private static Class getClassForPropertyTypeFromAdditionalPackage(String type,String encoding) {
+		String packagePrefix=getInstance(encoding).getAdditionalPackageForPropertyReaders();
 		if(packagePrefix==null)
 			return null;
 		String className=packagePrefix+"."+capitalize(type)+"PropertyReader";
@@ -80,7 +94,7 @@ public class PropertyReaderManager {
 		}
 	}
 	
-	private static Class getClassForPropertyType(String type)
+	private static Class getClassForPropertyType(String type,String encoding)
 	{
 		Class c=getClassForPropertyTypeFromSystemProperty(type);
 		if(c==null)
@@ -89,26 +103,26 @@ public class PropertyReaderManager {
 		}
 		if(c==null)
 		{
-			c=getClassForPropertyTypeFromAdditionalPackage(type);
+			c=getClassForPropertyTypeFromAdditionalPackage(type,encoding);
 		}
 		return c;
 	}
 	
 	
 
-	private static PropertyReader getPropertyReaderForType(String type)
+	private static PropertyReader getPropertyReaderForType(String type,String encoding)
 	{
-		if(getInstance().registeredPropertyReaders.containsKey(type))
-			return getInstance().registeredPropertyReaders.get(type);
+		if(getInstance(encoding).registeredPropertyReaders.containsKey(type))
+			return getInstance(encoding).registeredPropertyReaders.get(type);
 	
-		Class cPropReader=getClassForPropertyType(type);
+		Class cPropReader=getClassForPropertyType(type,encoding);
 		if(cPropReader!=null)
 		{
 			PropertyReader reader;
 			try {
 				reader = (PropertyReader)cPropReader.newInstance();
-				getInstance().registeredPropertyReaders.put(type, reader);
-				reader.setDebug(getInstance().isDebug());
+				getInstance(encoding).registeredPropertyReaders.put(type, reader);
+				reader.setDebug(getInstance(encoding).isDebug());
 				return reader;
 			}
 			catch (InstantiationException e) {
@@ -135,14 +149,15 @@ public class PropertyReaderManager {
 		return name.substring(0,1).toUpperCase()+name.substring(1);
 	}
 	
-	public Collection<InputProperty> readProperty(InputProperty prop,boolean fromDefault) throws InvalidPropertySpecException,NoPropertyReaderException
+	public Collection<InputProperty> readProperty(InputProperty prop,boolean fromDefault) throws InvalidPropertySpecException,NoPropertyReaderException, UnsupportedEncodingException
 	{
 		if(prop!=null)
 		{
-				PropertyReader propReader=getPropertyReaderForType(prop.getPropertyType());
+				PropertyReader propReader=getPropertyReaderForType(prop.getPropertyType(),encoding);
 				if(propReader==null)
 					throw new NoPropertyReaderException("No property reader available for property of type "+prop.getPropertyType());
 				propReader.setProperty(prop);
+				propReader.setEncoding(getEncoding());
 				return propReader.readPropertyValue(fromDefault);
 			
 		}

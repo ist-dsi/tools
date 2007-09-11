@@ -2,9 +2,9 @@ package pt.linkare.ant.propreaders;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import pt.linkare.ant.InvalidPropertySpecException;
-import pt.linkare.ant.StdIn;
 
 public class FilePropertyReader extends AbstractPropertyReader{
 
@@ -12,15 +12,16 @@ public class FilePropertyReader extends AbstractPropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		return readPropertyFile();
 	}
 	
 	
-	private String readPropertyFile() throws InvalidPropertySpecException
+	private String readPropertyFile() throws InvalidPropertySpecException, UnsupportedEncodingException
 	{
 		boolean pathMustExist=parseBoolean(getProperty().getMetaData("validateFile"), false);
 		boolean createPath=parseBoolean(getProperty().getMetaData("createFile"), false);
+		boolean persistAbsolutePath=parseBoolean(getProperty().getMetaData("persistAbsolutePath"), false);
 		createPath=pathMustExist?false:createPath;
 		
 		StringBuffer message=new StringBuffer();
@@ -75,6 +76,13 @@ public class FilePropertyReader extends AbstractPropertyReader{
 			}
 			
 		}
+		
+		if(persistAbsolutePath)
+		{
+			File f=new File(pathRetVal);
+			pathRetVal=f.getAbsolutePath();
+		}
+
 		return pathRetVal;
 		
 	}

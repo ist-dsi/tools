@@ -1,5 +1,7 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
+
 import pt.linkare.ant.InvalidPropertySpecException;
 
 public class HostnameListPropertyReader extends HostnamePropertyReader{
@@ -8,7 +10,7 @@ public class HostnameListPropertyReader extends HostnamePropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		
 		String baseValue=null;
 		boolean validated=false;

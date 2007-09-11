@@ -1,5 +1,6 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,14 +16,14 @@ public class LangVariantPropertyReader extends AbstractPropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		
 		return getVariantString();
 	}
 	
 
 	
-	public String getVariantString() throws InvalidPropertySpecException
+	public String getVariantString() throws InvalidPropertySpecException, UnsupportedEncodingException
 	{
 		MenuMessage menuOptionsVariant=new MenuMessage();
 		menuOptionsVariant.setMessage(buildDefaultMessage(false));

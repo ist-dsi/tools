@@ -1,5 +1,6 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import pt.linkare.ant.InvalidPropertySpecException;
@@ -11,12 +12,12 @@ public class MultipleOptionsPropertyReader extends AbstractPropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		return readPropertyMultiple();
 	}
 	
 	
-	private String readPropertyMultiple() throws InvalidPropertySpecException
+	private String readPropertyMultiple() throws InvalidPropertySpecException, UnsupportedEncodingException
 	{
 		MenuMessage menuMessage=buildMenuMessage();
 		if("*".equals(getProperty().getPropertyDefaultValue()))

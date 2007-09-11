@@ -1,5 +1,7 @@
 package pt.linkare.ant.propreaders;
 
+import java.io.UnsupportedEncodingException;
+
 import pt.linkare.ant.InvalidPropertySpecException;
 import pt.linkare.ant.MenuMessage;
 
@@ -9,12 +11,12 @@ public class MenuPropertyReader extends AbstractPropertyReader{
 		super();
 	}
 
-	public String readProperty() throws InvalidPropertySpecException {
+	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 		return readPropertyMenu();
 	}
 	
 	
-	private String readPropertyMenu() throws InvalidPropertySpecException
+	private String readPropertyMenu() throws InvalidPropertySpecException, UnsupportedEncodingException
 	{
 		MenuMessage menuMessage=buildMenuMessage();
 		
