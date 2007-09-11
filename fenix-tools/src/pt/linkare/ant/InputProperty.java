@@ -1,5 +1,6 @@
 package pt.linkare.ant;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class InputProperty {
 	private boolean propertyPersistNull=true;
 	private String propertyType=null;
 	private HashMap<String, String> propertyMetaData=new HashMap<String, String>();
+	private String encoding=null;
 	
 	private String propertyValue=null;
 	
@@ -45,10 +47,12 @@ public class InputProperty {
 		this.setRead(other.isRead());
 		this.setDependencies(other.getDependencies());
 		this.propertyMetaData=other.propertyMetaData;
+		this.setEncoding(other.getEncoding());
 	}
 	
-	public InputProperty(InputPropertyMap propertyMap) {
+	public InputProperty(InputPropertyMap propertyMap,String enconding) {
 		super();
+		this.setEncoding(enconding);
 		this.propertyMap=propertyMap;
 	}
 
@@ -216,7 +220,7 @@ public class InputProperty {
 		this.read = read;
 	}
 	
-	public Collection<InputProperty> readNow(boolean fromDefault) throws InvalidPropertySpecException,NoPropertyReaderException
+	public Collection<InputProperty> readNow(boolean fromDefault) throws InvalidPropertySpecException,NoPropertyReaderException, UnsupportedEncodingException
 	{
 		ArrayList<InputProperty> generatedProperties=new ArrayList<InputProperty>();
 		
@@ -235,7 +239,7 @@ public class InputProperty {
 		
 		
 		if(validateDependencies())
-			generatedProperties.addAll(PropertyReaderManager.getInstance().readProperty(this,fromDefault));
+			generatedProperties.addAll(PropertyReaderManager.getInstance(getEncoding()).readProperty(this,fromDefault));
 		else
 			setPropertyValue(null);
 
@@ -284,6 +288,14 @@ public class InputProperty {
 	 */
 	public void setPropertyPersistNull(boolean propertyPersistNull) {
 		this.propertyPersistNull = propertyPersistNull;
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
 	}
 
 

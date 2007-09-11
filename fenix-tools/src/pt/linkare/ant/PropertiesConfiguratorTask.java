@@ -17,6 +17,7 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 	private File specFile=null;
 	private File file=null;
 	private String additionalPackageForPropertyReaders=null;
+	private String encoding="ISO-8859-1";
 	
 	/*
 	 * (non-Javadoc)
@@ -32,13 +33,13 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 		
 		//initialize stdin in ant way
 		debug("Creating standard input wrapper on project");
-		StdIn.getInstance(getProject());
+		StdIn.getInstance(getProject(),getEncoding());
 		debug("Setting additional package for property readers to "+getAdditionalPackageForPropertyReaders());
-		PropertyReaderManager.getInstance(this.isDebug()).setAdditionalPackageForPropertyReaders(getAdditionalPackageForPropertyReaders());
+		PropertyReaderManager.getInstance(this.isDebug(),this.getEncoding()).setAdditionalPackageForPropertyReaders(getAdditionalPackageForPropertyReaders());
 		try
 		{
 			debug("Reading properties spec from file "+getSpecFile().getName()+" and current properties from "+getFile().getName());
-			Properties props=InstallerPropertiesReader.readProperties(getSpecFile(),getFile(),this.isDebug());
+			Properties props=InstallerPropertiesReader.readProperties(getSpecFile(),getFile(),this.isDebug(),this.getEncoding());
 			//Use addProperties of the base PropertyTask as it resolves and replaces values
 			debug("Add the properties to the project...");
 			addProperties(props);
@@ -125,6 +126,14 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 		if(debug)
 			System.out.println(getClass().getName()+":"+message);
 
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
 	}
 	
 

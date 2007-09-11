@@ -2,6 +2,7 @@ package pt.linkare.ant;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,26 +22,30 @@ public class StdIn {
 
     public static final String CRLF = System.getProperty("line.separator");
 
-    private StdIn() {
-	bis = new BufferedReader(new InputStreamReader(System.in));
+    private String encoding="iso-8859-1";
+    
+    private StdIn(String encoding) throws UnsupportedEncodingException {
+    	this.encoding=encoding;
+    	bis = new BufferedReader(new InputStreamReader(System.in,encoding));
     }
 
-    private StdIn(Project proj) {
+    private StdIn(Project proj,String encoding) {
 	this.proj = proj;
+	this.encoding=encoding;
     }
 
     private static StdIn instance = null;
 
-    public static synchronized StdIn getInstance() {
+    public static synchronized StdIn getInstance(String encoding) throws UnsupportedEncodingException {
 	if (instance == null) {
-	    instance = new StdIn();
+	    instance = new StdIn(encoding);
 	}
 	return instance;
     }
 
-    public static synchronized StdIn getInstance(Project p) {
+    public static synchronized StdIn getInstance(Project p,String encoding) {
 	if (instance == null) {
-	    instance = new StdIn(p);
+	    instance = new StdIn(p,encoding);
 	}
 	return instance;
     }

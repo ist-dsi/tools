@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.security.InvalidAlgorithmParameterException;
@@ -27,14 +26,24 @@ public class PropertiesSerializer {
 	private InputPropertyMap properties=null;
 	private File outputPropertyFile=null;
 	private boolean defaultCipherSourced=false;
-	
+	private String encoding=null;
 	
 
-	public PropertiesSerializer() {
+	public PropertiesSerializer(String encoding) {
 		super();
+		setEncoding(encoding);
 	}
 
 	
+	public String getEncoding() {
+		return encoding;
+	}
+
+
+	private void setEncoding(String encoding) {
+		this.encoding=encoding;
+	}
+
 	/**
 	 * @return Returns the defaultCipherSourced.
 	 */
@@ -66,7 +75,9 @@ public class PropertiesSerializer {
 
 	private BufferedWriter getOut() throws IOException
 	{
-		return new BufferedWriter(new FileWriter(getOutputPropertyFile()));
+		return new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(getOutputPropertyFile()),getEncoding())
+				);
 	}
 	
 	private BufferedWriter getCipherOut() throws IOException
@@ -75,10 +86,16 @@ public class PropertiesSerializer {
 			return null;
 		
 		File outCipherFile=InstallerPropertiesReader.buildLastPropertiesFile(getOutputPropertyFile());
+		
+		String passCrypt=System.getProperty("ant.propreaders.pass");
+		boolean automateBatch=passCrypt!=null && passCrypt.length()!=0;
+		
 		//Ask the user for a password to open the encrypted file...
-		if(StdIn.getInstance().readBooleanOption("Do you want to write all the configuration properties to an encrypted file at "+outCipherFile.getPath()+"?", "y","n"))
+		if(automateBatch || StdIn.getInstance(getEncoding()).readBooleanOption("Do you want to write all the configuration properties to an encrypted file at "+outCipherFile.getPath()+"?", "y","n"))
 		{
-			String passCrypt=StdIn.getInstance().readString("Please enter the password to protect the configuration file!",1);
+			if(!automateBatch)
+				passCrypt=StdIn.getInstance(getEncoding()).readString("Please enter the password to protect the configuration file!",1);
+			
 			try {
 				final byte[] salt = { 
 						(byte)0xaa, (byte)0xbb, (byte)0xcc, (byte)0xdd,
@@ -96,7 +113,7 @@ public class PropertiesSerializer {
 				outCipherFile.createNewFile();
 				CipherOutputStream cos=new CipherOutputStream(new FileOutputStream(outCipherFile),cipher);
 				
-				BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(cos));
+				BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(cos,getEncoding()));
 				bw.write("##"+passCrypt+"##");
 				bw.newLine();
 				return bw;
@@ -186,9 +203,9 @@ public class PropertiesSerializer {
 		return this.generatePropertiesFile();
 	}
 	
-	public static Properties outputPropertiesFile(File out,InputPropertyMap props,boolean defaultCipherSourced) throws IOException
+	public static Properties outputPropertiesFile(File out,InputPropertyMap props,boolean defaultCipherSourced,String encoding) throws IOException
 	{
-		PropertiesSerializer serialThis=new PropertiesSerializer();
+		PropertiesSerializer serialThis=new PropertiesSerializer(encoding);
 		return serialThis.generatePropertiesFile(out, props,defaultCipherSourced);
 	}
 

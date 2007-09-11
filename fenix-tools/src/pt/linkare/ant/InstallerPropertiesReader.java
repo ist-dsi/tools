@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -17,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +54,8 @@ public class InstallerPropertiesReader {
 	private static InstallerPropertiesReader instance = null;
 
 	private InputPropertyMap allProperties=new InputPropertyMap();
+
+	private String encoding;
 	
 	/**
 	 * Helper constructer
@@ -60,12 +64,20 @@ public class InstallerPropertiesReader {
 	 *            The input file to read the properties spec
 	 * @param propFileOutput
 	 *            The generated output properties file
+	 * @param encoding 
+	 * @throws UnsupportedEncodingException 
 	 */
-	private InstallerPropertiesReader(File propFileInput, File propFileOutput, boolean debug) {
+	private InstallerPropertiesReader(File propFileInput, File propFileOutput, boolean debug, String encoding) throws UnsupportedEncodingException {
 		super();
+		this.debug=debug;
+		this.setEncoding(encoding);
 		this.setPropFileInput(propFileInput);
 		this.setPropFileOutput(propFileOutput);
-		this.debug=debug;
+	}
+
+	private void setEncoding(String encoding) {
+		this.encoding=encoding;
+		System.out.println("Encoding is set to "+encoding);
 	}
 
 	/**
@@ -82,8 +94,8 @@ public class InstallerPropertiesReader {
 
 	}
 
-	public synchronized static InstallerPropertiesReader getInstance(File inputFile, File outputFile, boolean debug) {
-		instance = new InstallerPropertiesReader(inputFile, outputFile, debug);
+	public synchronized static InstallerPropertiesReader getInstance(File inputFile, File outputFile, boolean debug, String encoding) throws UnsupportedEncodingException {
+		instance = new InstallerPropertiesReader(inputFile, outputFile, debug, encoding);
 		return instance;
 	}
 
@@ -116,17 +128,19 @@ public class InstallerPropertiesReader {
 	/**
 	 * @param propFileOutput
 	 *            The propFileOutput to set.
+	 * @throws UnsupportedEncodingException 
 	 */
-	public void setPropFileOutput(File propFileOutput) {
+	public void setPropFileOutput(File propFileOutput) throws UnsupportedEncodingException {
 		this.propFileOutput = propFileOutput;
 		readOutputPropertiesFile();
 		defaultInLastPropertiesFile = readLastPropertiesFile();
 	}
 
-	public static Properties readProperties(File fInput, File fOutput, boolean debug) throws IOException,
+	public static Properties readProperties(File fInput, File fOutput, boolean debug,String encoding) throws IOException,
 			InvalidPropertySpecException, NoPropertyReaderException {
 
-		InstallerPropertiesReader propReader = InstallerPropertiesReader.getInstance(fInput, fOutput, debug);
+		
+		InstallerPropertiesReader propReader = InstallerPropertiesReader.getInstance(fInput, fOutput, debug,encoding);
 
 		propReader.parse();
 
@@ -152,7 +166,7 @@ public class InstallerPropertiesReader {
 		}
 		propReader.allProperties.putAll(generatedProperties);
 		return PropertiesSerializer.outputPropertiesFile(propReader.getPropFileOutput(), propReader.allProperties,
-				propReader.defaultInLastPropertiesFile);
+				propReader.defaultInLastPropertiesFile,encoding);
 	}
 
 	public void parse() throws IOException {
@@ -219,7 +233,7 @@ public class InstallerPropertiesReader {
 	public InputProperty parseInputPropertyMetaInfo(InputPropertyMap map, java.lang.String propName,
 			java.lang.String metadata, java.lang.String defaultPropValue) {
 		debug("Parsing metainfo for property " + propName);
-		InputProperty retVal = new InputProperty(map);
+		InputProperty retVal = new InputProperty(map,getEncoding());
 
 		retVal.setPropertyName(propName);
 
@@ -357,18 +371,21 @@ public class InstallerPropertiesReader {
 
 	private Properties lastPropertiesValues = new Properties();
 
-	private boolean readLastPropertiesFile() {
+	private boolean readLastPropertiesFile() throws UnsupportedEncodingException {
 		if (getPropFileOutput() == null) return false;
 		File f = buildLastPropertiesFile(getPropFileOutput());
 
 		if (f != null && f.exists() && f.isFile() && f.canRead()) {
 
+			String passCrypt=System.getProperty("ant.propreaders.pass");
+			boolean automateBatch=passCrypt!=null && passCrypt.length()!=0;
+			
 			// Ask the user for a password to open the encrypted file...
-			if (StdIn.getInstance().readBooleanOption(
+			if (automateBatch || StdIn.getInstance(getEncoding()).readBooleanOption(
 					"Found a configuration file from a previous run of the configuration... Do you want to use it?",
 					"y", "n")) {
-				String passCrypt = StdIn.getInstance().readString(
-						"Please enter the password to open the configuration file found!", 1);
+				if(!automateBatch)
+					passCrypt = StdIn.getInstance(getEncoding()).readString("Please enter the password to open the configuration file found!", 1);
 				try {
 					final byte[] salt = { (byte) 0xaa, (byte) 0xbb, (byte) 0xcc, (byte) 0xdd, (byte) 0x22, (byte) 0x44,
 							(byte) 0xab, (byte) 0x12 };
@@ -391,8 +408,9 @@ public class InstallerPropertiesReader {
 
 					String line = null;
 					while ((line = br.readLine()) != null) {
-						bos.write(line.getBytes());
-						bos.write(CRLF.getBytes());
+						System.out.println("Read line : "+line+" - "+line.getBytes(getEncoding()));
+						bos.write(line.getBytes(getEncoding()));
+						bos.write(CRLF.getBytes(getEncoding()));
 					}
 					ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
 
@@ -401,7 +419,11 @@ public class InstallerPropertiesReader {
 					bis.close();
 					cis.close();
 
-					return StdIn.getInstance()
+					
+					if(automateBatch)
+						return true;
+					
+					return StdIn.getInstance(getEncoding())
 							.readBooleanOption(
 									"Do you want to use the defaults in this file as defaults to all the properties?",
 									"y", "n");
@@ -454,6 +476,10 @@ public class InstallerPropertiesReader {
 
 	public void debug(String message) {
 		if (debug) System.out.println(getClass().getName() + ":" + message);
+	}
+
+	public String getEncoding() {
+		return encoding;
 	}
 
 }
