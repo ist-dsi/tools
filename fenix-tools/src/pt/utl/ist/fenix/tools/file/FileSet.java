@@ -12,13 +12,11 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.tree.BaseElement;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-
 import pt.linkare.scorm.xmlbeans.ScormAsset;
 import pt.linkare.scorm.xmlbeans.ScormData;
 
 /**
- * @author JosÃ© Pedro Pereira - Linkare TI
+ * @author José Pedro Pereira - Linkare TI
  *
  * This class represents an abstraction over the file system to enable the use
  * of related files, metadata associated to files, files containing metadata and 

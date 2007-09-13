@@ -13,8 +13,9 @@ import org.dom4j.Element;
 import org.dom4j.tree.BaseElement;
 
 /**
- * @author JosÃ© Pedro Pereira - Linkare TI This class represents an abstraction over the file system to enable the use
- *         of related files, metadata associated to files, files containing metadata and groups of related files...
+ * @author José Pedro Pereira - Linkare TI 
+ * This class represents an abstraction over the file system to enable the use
+ * of related files, metadata associated to files, files containing metadata and groups of related files...
  */
 
 @SuppressWarnings("serial")

@@ -77,7 +77,7 @@ public class InstallerPropertiesReader {
 
 	private void setEncoding(String encoding) {
 		this.encoding=encoding;
-		System.out.println("Encoding is set to "+encoding);
+		debug("Encoding is set to "+encoding);
 	}
 
 	/**
@@ -408,7 +408,6 @@ public class InstallerPropertiesReader {
 
 					String line = null;
 					while ((line = br.readLine()) != null) {
-						System.out.println("Read line : "+line+" - "+line.getBytes(getEncoding()));
 						bos.write(line.getBytes(getEncoding()));
 						bos.write(CRLF.getBytes(getEncoding()));
 					}

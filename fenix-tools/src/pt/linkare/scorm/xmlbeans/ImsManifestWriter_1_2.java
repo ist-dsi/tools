@@ -68,15 +68,13 @@ import org.imsproject.xsd.imscpRootv1P1P2.ResourcesType;
 import org.imsproject.xsd.imscpRootv1P1P2.SchemaDocument;
 import org.imsproject.xsd.imscpRootv1P1P2.SchemaversionDocument;
 
-import com.sun.mail.iap.ByteArray;
-
 import pt.linkare.scorm.utils.MultiStringKey;
 import pt.linkare.scorm.utils.ScormException;
 import pt.linkare.scorm.utils.ScormMetaData;
 import pt.linkare.scorm.utils.ScormMetaDataHash;
 import pt.linkare.scorm.utils.ScormMetaInfoEnum;
 import pt.utl.ist.fenix.tools.file.utils.FileUtils;
-import sun.net.www.MimeTable;
+import javax.activation.MimetypesFileTypeMap;
 
 /**
  * @author Oscar Ferreira - Linkare TI
@@ -598,7 +596,8 @@ public class ImsManifestWriter_1_2 {
 	private File instrospectMetaForFile(String resourceRelativeLocation, File resFile, ManifestDocument manDoc)
 			throws IOException, ScormException {
 
-		String fileContentType = MimeTable.getDefaultTable().getContentTypeFor(resFile.getName());
+		
+		String fileContentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(resFile.getName());
 		fileContentType = (fileContentType == null ? "application/octet-stream" : fileContentType);
 		long fileSizeBytes = resFile.length();
 

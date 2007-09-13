@@ -18,7 +18,7 @@ import pt.linkare.scorm.utils.ScormMetaData;
  * This class is an abstraction around the concept of metadata
  * It clearly uses the Dublin Core approach to MetaData which will
  * be enough for now
- * @author JosÃ© Pedro Pereira - Linkare TI
+ * @author José Pedro Pereira - Linkare TI
  *
  */
 @SuppressWarnings("serial")

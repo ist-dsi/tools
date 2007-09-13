@@ -15,9 +15,10 @@ import java.io.PrintStream;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
+
 import pt.utl.ist.fenix.tools.util.FileUtils;
 import pt.utl.ist.fenix.tools.util.PropertiesManager;
-import sun.awt.image.codec.JPEGImageEncoderImpl;
 
 import com.iver.cit.jdwglib.dwg.DwgFile;
 import com.iver.cit.jdwglib.dwg.DwgObject;
@@ -40,7 +41,7 @@ import com.iver.cit.jdwglib.dwg.objects.DwgSeqend;
 import com.iver.cit.jdwglib.dwg.objects.DwgSolid;
 import com.iver.cit.jdwglib.dwg.objects.DwgText;
 import com.iver.cit.jdwglib.dwg.objects.DwgVertex2D;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+
 
 public class DWGProcessor {
 
@@ -88,8 +89,7 @@ public class DWGProcessor {
 	    throws IOException {
 
 	final BufferedImage bufferedImage = process(filename, outputStream);
-	final JPEGImageEncoder imageEncoder = new JPEGImageEncoderImpl(outputStream);
-	imageEncoder.encode(bufferedImage);
+	ImageIO.write(bufferedImage, "jpg", outputStream);
 	outputStream.close();
     }
 
