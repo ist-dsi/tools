@@ -18,6 +18,8 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 	private File file=null;
 	private String additionalPackageForPropertyReaders=null;
 	private String encoding="ISO-8859-1";
+	private String propertyCryptPassword=null;
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -35,7 +37,9 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 		debug("Creating standard input wrapper on project");
 		StdIn.getInstance(getProject(),getEncoding());
 		debug("Setting additional package for property readers to "+getAdditionalPackageForPropertyReaders());
-		PropertyReaderManager.getInstance(this.isDebug(),this.getEncoding()).setAdditionalPackageForPropertyReaders(getAdditionalPackageForPropertyReaders());
+		PropertyReaderManager manager=PropertyReaderManager.getInstance(this.isDebug(),this.getEncoding());
+		manager.setAdditionalPackageForPropertyReaders(getAdditionalPackageForPropertyReaders());
+		manager.setPropertyCryptPassword(getPropertyCryptPassword());
 		try
 		{
 			debug("Reading properties spec from file "+getSpecFile().getName()+" and current properties from "+getFile().getName());
@@ -136,5 +140,13 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 		this.encoding = encoding;
 	}
 	
+	public String getPropertyCryptPassword() {
+		return propertyCryptPassword;
+	}
+
+	public void setPropertyCryptPassword(String propertyCryptPassword) {
+		this.propertyCryptPassword = propertyCryptPassword;
+	}
+
 
 }

@@ -2,6 +2,7 @@
 <project basedir="../../" default="build-properties-generator" name="Properties Configurator Test">
 
 	<property name="encoding" value="ISO-8859-15"/>
+	<property environment="env"/>
 
     <property name="lib" location="${basedir}/lib" />
 	<property name="propconfig.lib" location="${basedir}/deploy/ant-properties-configurator.jar" />
@@ -30,7 +31,7 @@
 			build.properties.spec for the metadata specification use...
 		-->
 		<propertiesConfigurator specFile="doc/PropertiesConfigurator/build.properties.spec" file="doc/PropertiesConfigurator/build.properties"
-			encoding="iso-8859-1">
+			encoding="iso-8859-1" propertyCryptPassword="${env.PROP_CRYPT_PASS}">
 			<echo message="Properties configurator executed ok!"/>
 		</propertiesConfigurator>
     </target>
@@ -56,7 +57,7 @@
 		<propertiesConfigurator
 		specFile="doc/PropertiesConfigurator/test.properties.spec"
 		file="doc/PropertiesConfigurator/test.properties"
-			encoding="iso-8859-1" debug="true">
+			encoding="iso-8859-1" debug="false" propertyCryptPassword="${env.PROP_CRYPT_PASS}">
 			<echo message="Test Properties configurator executed ok!"/>
 		</propertiesConfigurator>
     </target>

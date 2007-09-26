@@ -21,6 +21,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
+import pt.linkare.ant.propreaders.PropertyReaderManager;
+
 public class PropertiesSerializer {
 
 	private InputPropertyMap properties=null;
@@ -87,7 +89,7 @@ public class PropertiesSerializer {
 		
 		File outCipherFile=InstallerPropertiesReader.buildLastPropertiesFile(getOutputPropertyFile());
 		
-		String passCrypt=System.getProperty("ant.propreaders.pass");
+		String passCrypt=PropertyReaderManager.getInstance(getEncoding()).getPropertyCryptPassword();
 		boolean automateBatch=passCrypt!=null && passCrypt.length()!=0;
 		
 		//Ask the user for a password to open the encrypted file...

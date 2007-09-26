@@ -32,6 +32,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
+import pt.linkare.ant.propreaders.PropertyReaderManager;
+
 /**
  * This class is the main responsible for parsing the properties spec file and asking for input to the user... It
  * controls the main process - It is not dependent of ant
@@ -377,7 +379,7 @@ public class InstallerPropertiesReader {
 
 		if (f != null && f.exists() && f.isFile() && f.canRead()) {
 
-			String passCrypt=System.getProperty("ant.propreaders.pass");
+			String passCrypt=PropertyReaderManager.getInstance(getEncoding()).getPropertyCryptPassword();
 			boolean automateBatch=passCrypt!=null && passCrypt.length()!=0;
 			
 			// Ask the user for a password to open the encrypted file...

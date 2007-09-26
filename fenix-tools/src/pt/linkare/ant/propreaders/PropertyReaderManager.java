@@ -12,6 +12,8 @@ public class PropertyReaderManager {
 
 	private boolean debug=false;
 	
+	private String propertyCryptPassword=null;
+	
 	private String encoding="iso-8859-1";
 	
 	public String getEncoding() {
@@ -191,6 +193,12 @@ public class PropertyReaderManager {
 	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+	public String getPropertyCryptPassword() {
+		return propertyCryptPassword;
+	}
+	public void setPropertyCryptPassword(String propertyCryptPassword) {
+		this.propertyCryptPassword = propertyCryptPassword;
 	}
 	
 	
