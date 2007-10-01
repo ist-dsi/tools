@@ -145,7 +145,10 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 	}
 
 	public void setPropertyCryptPassword(String propertyCryptPassword) {
-		this.propertyCryptPassword = propertyCryptPassword;
+		if(propertyCryptPassword!=null && propertyCryptPassword.length()>0)
+			this.propertyCryptPassword = propertyCryptPassword;
+		else
+			this.propertyCryptPassword = null;
 	}
 
 
