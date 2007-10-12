@@ -3,6 +3,10 @@
 
 	<property name="encoding" value="ISO-8859-15"/>
 	<property environment="env"/>
+<fail unless="env.PROP_CRYPT_PASS">You must define an environment property
+to be used as a password for the encrypted property files named
+PROP_CRYPT_PASS like so:
+export PROP_CRYPT_PASS=myfilespassword</fail>
 
     <property name="lib" location="${basedir}/lib" />
 	<property name="propconfig.lib" location="${basedir}/deploy/ant-properties-configurator.jar" />
@@ -54,6 +58,7 @@
 			types for the installer to use... Please have a look at the example
 			build.properties.spec for the metadata specification use...
 		-->
+		
 		<propertiesConfigurator
 		specFile="doc/PropertiesConfigurator/test.properties.spec"
 		file="doc/PropertiesConfigurator/test.properties"
