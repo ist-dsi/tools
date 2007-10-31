@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -45,6 +46,7 @@ import com.iver.cit.jdwglib.dwg.objects.DwgVertex2D;
 
 public class DWGProcessor {
 
+    
     private static final String FONT_NAME = "Bitstream Vera Sans Mono";
 
     protected final int scaleRatio;
@@ -57,8 +59,19 @@ public class DWGProcessor {
 
     protected final int yAxisOffset;
 
+    protected final BigDecimal scalePercentage;
+    
+    protected BigDecimal HUNDRED_PERCENTAGE = BigDecimal.valueOf(100);
+    
+    
     public DWGProcessor() throws IOException {
+	this(BigDecimal.valueOf(100));
+    }
+    
+    public DWGProcessor(BigDecimal percentageOfScale) throws IOException {
 
+	scalePercentage = (percentageOfScale == null || percentageOfScale.compareTo(HUNDRED_PERCENTAGE) == 1) ? HUNDRED_PERCENTAGE : percentageOfScale;
+	
 	Properties properties = PropertiesManager.loadProperties("/configuration.properties");
 	String scaleRatioString = properties.getProperty("scaleRatio");
 	String fontSizeString = properties.getProperty("fontSize");
@@ -66,7 +79,9 @@ public class DWGProcessor {
 	String xAxisOffsetString = properties.getProperty("xAxisOffset");
 	String yAxisOffsetString = properties.getProperty("yAxisOffset");
 
-	scaleRatio = (int) Double.valueOf(scaleRatioString).doubleValue();
+	Double scaleDouble = Double.valueOf(scaleRatioString);
+	scaleRatio = (int) scalePercentage.divide(BigDecimal.valueOf(100)).multiply(BigDecimal.valueOf(scaleDouble)).doubleValue();
+	
 	fontSize = (int) (scaleRatio * Double.valueOf(fontSizeString));
 	padding = (int) (scaleRatio * Double.valueOf(paddingString));
 	xAxisOffset = (int) (scaleRatio * Double.valueOf(xAxisOffsetString));
