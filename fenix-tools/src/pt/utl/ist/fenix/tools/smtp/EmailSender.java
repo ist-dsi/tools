@@ -33,16 +33,17 @@ public class EmailSender {
 	try {
 	    Properties properties = PropertiesManager.loadProperties("/SMTPConfiguration.properties");
 	    session = Session.getDefaultInstance(properties, null);
-            for (final Entry<Object, Object> entry : session.getProperties().entrySet()) {
-                System.out.println("key: " + entry.getKey() + "   value: " + entry.getValue());
-            }
+	    for (final Entry<Object, Object> entry : session.getProperties().entrySet()) {
+		System.out.println("key: " + entry.getKey() + "   value: " + entry.getValue());
+	    }
 	    MAX_MAIL_RECIPIENTS = Integer.parseInt(properties.getProperty("mailSender.max.recipients"));
 	} catch (IOException e) {
 	    throw new RuntimeException(e);
 	}
     }
 
-    public static Collection<String> forward(final MimeMessage message, final List<String> bccAddressesToforward) {
+    public static Collection<String> forward(final MimeMessage message,
+	    final List<String> bccAddressesToforward) {
 	if (message == null) {
 	    throw new NullPointerException("error.message.cannot.be.null");
 	}
@@ -50,31 +51,36 @@ public class EmailSender {
 	final ArrayList<String> unsent = new ArrayList<String>(0);
 
 	for (int i = 0; i < bccAddressesToforward.size(); i += MAX_MAIL_RECIPIENTS) {
-	    final List<String> subList = bccAddressesToforward.subList(i, Math.min(bccAddressesToforward.size(), i + MAX_MAIL_RECIPIENTS));
+	    final List<String> subList = bccAddressesToforward.subList(i, Math.min(bccAddressesToforward
+		    .size(), i + MAX_MAIL_RECIPIENTS));
 	    try {
 		MimeMessage newMessage = new MimeMessage(message);
-		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.TO, new InternetAddress[]{});
-		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.CC, new InternetAddress[]{});
-		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.BCC, new InternetAddress[]{});
+		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.TO,
+			new InternetAddress[] {});
+		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.CC,
+			new InternetAddress[] {});
+		newMessage.setRecipients(javax.mail.internet.MimeMessage.RecipientType.BCC,
+			new InternetAddress[] {});
 		addRecipients(newMessage, Message.RecipientType.BCC, subList, unsent);
 		Transport.send(newMessage);
 	    } catch (SendFailedException e) {
 		registerInvalidAddresses(unsent, e, null, null, subList);
 	    } catch (MessagingException e) {
-            if (subList != null) {
-                unsent.addAll(subList);
-            }
-            
-            e.printStackTrace();
+		if (subList != null) {
+		    unsent.addAll(subList);
+		}
+
+		e.printStackTrace();
 	    }
 	}
 
 	return unsent;
     }
 
-    public static Collection<String> send(final String fromName, final String fromAddress, final String[] replyTos,
-	    final Collection<String> toAddresses, final Collection<String> ccAddresses,
-	    final Collection<String> bccAddresses, final String subject, final String body) {
+    public static Collection<String> send(final String fromName, final String fromAddress,
+	    final String[] replyTos, final Collection<String> toAddresses,
+	    final Collection<String> ccAddresses, final Collection<String> bccAddresses,
+	    final String subject, final String body) {
 
 	if (fromAddress == null) {
 	    throw new NullPointerException("error.from.address.cannot.be.null");
@@ -101,14 +107,14 @@ public class EmailSender {
 	    try {
 		final MimeMessage mimeMessageTo = new MimeMessage(session);
 		mimeMessageTo.setFrom(new InternetAddress(from));
-                mimeMessageTo.setSubject(subject);
-                mimeMessageTo.setReplyTo(replyToAddresses);
+		mimeMessageTo.setSubject(subject);
+		mimeMessageTo.setReplyTo(replyToAddresses);
 
-                final MimeMultipart mimeMultipart = new MimeMultipart();
-                final BodyPart bodyPart = new MimeBodyPart();
-                bodyPart.setText(body);
-                mimeMultipart.addBodyPart(bodyPart);
-                mimeMessageTo.setContent(mimeMultipart);
+		final MimeMultipart mimeMultipart = new MimeMultipart();
+		final BodyPart bodyPart = new MimeBodyPart();
+		bodyPart.setText(body);
+		mimeMultipart.addBodyPart(bodyPart);
+		mimeMessageTo.setContent(mimeMultipart);
 
 		if (hasToAddresses) {
 		    addRecipients(mimeMessageTo, Message.RecipientType.TO, toAddresses, unsentAddresses);
@@ -122,15 +128,15 @@ public class EmailSender {
 	    } catch (SendFailedException e) {
 		registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, null);
 	    } catch (MessagingException e) {
-            if (toAddresses != null) {
-                unsentAddresses.addAll(toAddresses);
-            }
-            
-            if (ccAddresses != null) {
-                unsentAddresses.addAll(ccAddresses);
-            }
-            
-            e.printStackTrace();
+		if (toAddresses != null) {
+		    unsentAddresses.addAll(toAddresses);
+		}
+
+		if (ccAddresses != null) {
+		    unsentAddresses.addAll(ccAddresses);
+		}
+
+		e.printStackTrace();
 	    }
 	}
 
@@ -139,27 +145,28 @@ public class EmailSender {
 	    for (int i = 0; i < bccAddresses.size(); i += MAX_MAIL_RECIPIENTS) {
 		List<String> subList = null;
 		try {
-		    subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i + MAX_MAIL_RECIPIENTS));
-                    final Message message = new MimeMessage(session);
+		    subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i
+			    + MAX_MAIL_RECIPIENTS));
+		    final Message message = new MimeMessage(session);
 		    message.setFrom(new InternetAddress(from));
-                    message.setSubject(subject);
+		    message.setSubject(subject);
 
-                    final MimeMultipart mimeMultipart = new MimeMultipart();
-                    final BodyPart bodyPart = new MimeBodyPart();
-                    bodyPart.setText(body);
-                    mimeMultipart.addBodyPart(bodyPart);
-                    message.setContent(mimeMultipart);
+		    final MimeMultipart mimeMultipart = new MimeMultipart();
+		    final BodyPart bodyPart = new MimeBodyPart();
+		    bodyPart.setText(body);
+		    mimeMultipart.addBodyPart(bodyPart);
+		    message.setContent(mimeMultipart);
 
 		    addRecipients(message, Message.RecipientType.BCC, subList, unsentAddresses);
 		    Transport.send(message);
 		} catch (SendFailedException e) {
 		    registerInvalidAddresses(unsentAddresses, e, null, null, subList);
 		} catch (MessagingException e) {
-            if (subList != null) {
-                unsentAddresses.addAll(subList);
-            }
-            
-            e.printStackTrace();
+		    if (subList != null) {
+			unsentAddresses.addAll(subList);
+		    }
+
+		    e.printStackTrace();
 		}
 	    }
 	}
@@ -191,8 +198,8 @@ public class EmailSender {
     }
 
     protected static String constructFromString(final String fromName, String fromAddress) {
-	return (fromName == null || fromName.length() == 0) ? fromAddress
-		: StringAppender.append("\"", fromName, "\" <", fromAddress, ">");
+	return (fromName == null || fromName.length() == 0) ? fromAddress : StringAppender.append("\"",
+		fromName, "\" <", fromAddress, ">");
     }
 
     protected static void addRecipients(final Message mensagem, final RecipientType recipientType,
