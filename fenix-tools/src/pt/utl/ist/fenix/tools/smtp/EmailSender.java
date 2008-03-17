@@ -3,8 +3,10 @@ package pt.utl.ist.fenix.tools.smtp;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.mail.Address;
@@ -50,8 +52,9 @@ public class EmailSender {
 
 	final ArrayList<String> unsent = new ArrayList<String>(0);
 
-	for (int i = 0; i < bccAddressesToforward.size(); i += MAX_MAIL_RECIPIENTS) {
-	    final List<String> subList = bccAddressesToforward.subList(i, Math.min(bccAddressesToforward
+	final List<String> bccAddressesList = new ArrayList<String>(new HashSet<String>(bccAddressesToforward));
+	for (int i = 0; i < bccAddressesList.size(); i += MAX_MAIL_RECIPIENTS) {
+	    final List<String> subList = bccAddressesList.subList(i, Math.min(bccAddressesList
 		    .size(), i + MAX_MAIL_RECIPIENTS));
 	    try {
 		MimeMessage newMessage = new MimeMessage(message);
@@ -141,7 +144,7 @@ public class EmailSender {
 	}
 
 	if (bccAddresses != null && !bccAddresses.isEmpty()) {
-	    final List<String> bccAddressesList = new ArrayList<String>(bccAddresses);
+	    final List<String> bccAddressesList = new ArrayList<String>(new HashSet<String>(bccAddresses));
 	    for (int i = 0; i < bccAddresses.size(); i += MAX_MAIL_RECIPIENTS) {
 		List<String> subList = null;
 		try {
