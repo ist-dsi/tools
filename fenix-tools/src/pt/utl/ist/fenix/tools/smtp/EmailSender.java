@@ -145,7 +145,7 @@ public class EmailSender {
 
 	if (bccAddresses != null && !bccAddresses.isEmpty()) {
 	    final List<String> bccAddressesList = new ArrayList<String>(new HashSet<String>(bccAddresses));
-	    for (int i = 0; i < bccAddresses.size(); i += MAX_MAIL_RECIPIENTS) {
+	    for (int i = 0; i < bccAddressesList.size(); i += MAX_MAIL_RECIPIENTS) {
 		List<String> subList = null;
 		try {
 		    subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i
