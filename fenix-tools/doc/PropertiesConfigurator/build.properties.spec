@@ -199,8 +199,8 @@ manager.url=http://localhost:8080/manager
 # @message = Persistence support type
 # @type = menu
 # @options = {"OJB Persistence support","Versioned Objects Persistence Support","Delegate Persistence Support"}
-# @optionsValues = {"net.sourceforge.fenixedu.persistenceTier.OJB.SuportePersistenteOJB","net.sourceforge.fenixedu.persistenceTier.versionedObjects.VersionedObjectsPersistenceSupport","net.sourceforge.fenixedu.persistenceTier.delegatedObjects.DelegatePersistenceSupport"}
-default.persistenceSupport=net.sourceforge.fenixedu.persistenceTier.OJB.SuportePersistenteOJB
+# @optionsValues = {"net.sourceforge.fenixedu.persistenceTier.SuportePersistenteOJB","net.sourceforge.fenixedu.persistenceTier.versionedObjects.VersionedObjectsPersistenceSupport","net.sourceforge.fenixedu.persistenceTier.delegatedObjects.DelegatePersistenceSupport"}
+default.persistenceSupport=net.sourceforge.fenixedu.persistenceTier.SuportePersistenteOJB
 
 # @message = Fenix Database name
 # @type = string
