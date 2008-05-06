@@ -25,15 +25,14 @@ public class PropertyTextBlockParser implements TextBlockParser {
 			if (line.trim().length() == 0)
 				continue;
 
-			line = line + CRLF;
 			if (line.trim().startsWith("#")) {
 				previousContentFinish = "";
-				startNextContent = line;
+				startNextContent = line+CRLF;
 			} else if (line.contains("=") && !continuation) {
 				previousContentFinish = "";
-				startNextContent = line;
+				startNextContent = line+CRLF;
 			} else {
-				previousContentFinish = line;
+				previousContentFinish = line+CRLF;
 				startNextContent = null;
 			}
 			//while we have a continuation line just keep ignoring a new = sign
