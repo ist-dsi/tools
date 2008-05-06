@@ -58,7 +58,7 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
                         methods.format("\n\tpublic %s read%sByOID(Integer idInternal){\n", otherDomainClass
                                 .getFullName(), className);
                         
-                        methods.format("\t\tfinal %s domainObject = (%s) eu.ist.fenixframework.pstm.Transaction.readDomainObject(%s.class.getName(), idInternal);\n",otherDomainClass.getFullName(), otherDomainClass.getFullName(), otherDomainClass.getFullName());
+                        methods.format("\t\tfinal %s domainObject = (%s) pt.ist.fenixframework.pstm.Transaction.readDomainObject(%s.class.getName(), idInternal);\n",otherDomainClass.getFullName(), otherDomainClass.getFullName(), otherDomainClass.getFullName());
                         methods.format("return (domainObject == null || domainObject.getRootDomainObject() == null) ? null : domainObject;\n\t}\n");
                         
                         usedNames.add(className);
