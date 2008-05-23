@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.mail.Address;
@@ -33,7 +32,12 @@ public class EmailSender {
     private static final Session session;
     static {
 	try {
-	    Properties properties = PropertiesManager.loadProperties("/SMTPConfiguration.properties");
+	    final Properties allProperties = PropertiesManager.loadProperties("/.build.properties");
+	    final Properties properties = new Properties();
+	    properties.put("mail.smtp.host", allProperties.get("mail.smtp.host"));
+	    properties.put("mail.smtp.name", allProperties.get("mail.smtp.name"));
+	    properties.put("mailSender.max.recipients", allProperties.get("mailSender.max.recipients"));
+	    properties.put("mailingList.host.name", allProperties.get("mailingList.host.name"));
 	    session = Session.getDefaultInstance(properties, null);
 	    for (final Entry<Object, Object> entry : session.getProperties().entrySet()) {
 		System.out.println("key: " + entry.getKey() + "   value: " + entry.getValue());
