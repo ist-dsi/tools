@@ -16,12 +16,13 @@
 	<classpathentry kind="lib" path="lib/gdbms-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/gdbms-drivers-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jdwglib.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-jsptags-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jsr173_1.0_api.jar"/>
 	<classpathentry kind="lib" path="lib/mail.jar"/>
 	<classpathentry kind="lib" path="lib/xbean.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jline-0.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-1.5.2.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>
