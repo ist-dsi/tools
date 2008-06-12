@@ -12,7 +12,7 @@ public abstract class FileManagerFactory {
 	             final Properties properties = PropertiesManager
 	                     .loadProperties("/FileManagerConfiguration.properties");
 	             final Class fileManagerImplementationClass = Class.forName(properties
-	             .getProperty("filemanager.factory.implementation.class"));
+	             .getProperty("file.manager.factory.implementation.class"));
 	             concreteFactory = (FileManagerFactory) fileManagerImplementationClass.newInstance();
 	         } catch (Exception e) {
 	             throw new RuntimeException("Error loading file manager implementation", e);

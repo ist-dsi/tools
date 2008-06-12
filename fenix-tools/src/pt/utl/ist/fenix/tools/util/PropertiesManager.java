@@ -6,19 +6,19 @@ import java.util.Properties;
 
 public class PropertiesManager {
 
-	private static final PropertiesManager instance = new PropertiesManager();
+    private static final PropertiesManager instance = new PropertiesManager();
 
     public static Properties loadProperties(final String fileName) throws IOException {
-    	final Properties properties = new Properties();
-    	loadProperties(properties, fileName);
-    	return properties;
-   }
+	final Properties properties = new Properties();
+	loadProperties(properties, fileName);
+	return properties;
+    }
 
     public static void loadProperties(final Properties properties, final String fileName) throws IOException {
-        final InputStream inputStream = instance.getClass().getResourceAsStream(fileName);
-        if (inputStream != null) {
-            properties.load(inputStream);
-        }
+	final InputStream inputStream = instance.getClass().getResourceAsStream(fileName);
+	if (inputStream != null) {
+	    properties.load(inputStream);
+	}
     }
 
 }
