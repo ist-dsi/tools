@@ -15,8 +15,8 @@ public class DSpaceFileManagerFactory extends FileManagerFactory {
     private static IContentFileManager contentFileManager = null;
 
     public static void init() {
-	synchronized (fileManager) {
-	    if (fileManager == null || scormFileManager == null || contentFileManager == null) {
+	synchronized (DSpaceFileManagerFactory.class) {
+	    if (fileManager != null || scormFileManager != null || contentFileManager != null) {
 		throw new Error(DSpaceFileManager.class.getName() + " has already been initialized.");
 	    }
 	    fileManager = new DSpaceFileManager();
@@ -26,8 +26,8 @@ public class DSpaceFileManagerFactory extends FileManagerFactory {
     }
 
     public static void init(final Properties properties) {
-	synchronized (fileManager) {
-	    if (fileManager == null || scormFileManager == null || contentFileManager == null) {
+	synchronized (DSpaceFileManagerFactory.class) {
+	    if (fileManager != null || scormFileManager != null || contentFileManager != null) {
 		throw new Error(DSpaceFileManager.class.getName() + " has already been initialized.");
 	    }
 	    fileManager = new DSpaceFileManager(properties);
