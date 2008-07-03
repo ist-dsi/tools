@@ -23,5 +23,9 @@
 	<classpathentry kind="lib" path="lib/jsr173_1.0_api.jar"/>
 	<classpathentry kind="lib" path="lib/mail.jar"/>
 	<classpathentry kind="lib" path="lib/xbean.jar"/>
+	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jline-0.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/ycad.jar"/>
+	<classpathentry kind="lib" path="lib/DXFExporter.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>

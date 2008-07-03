@@ -55,8 +55,8 @@
 	<target name="dwg">
 		<java classname="pt.utl.ist.fenix.tools.image.DWGProcessor"
 				fork="yes" failonerror="true" maxmemory="1024m" jvmargs="-Dfile.encoding=iso8859-1">
-			<arg value="/home/marvin/plantas"/>
-			<arg value="/home/marvin/plantas"/>
+			<arg value="/home/nmgo/Fenix/plantas"/>
+			<arg value="/home/nmgo/Fenix/plantas"/>
 			<arg value="1200"/>
 			<classpath>
 				<pathelement path="${build.home}"/>
