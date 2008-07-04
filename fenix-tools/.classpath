@@ -5,7 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
-	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/ant.jar"/>
 	<classpathentry kind="lib" path="lib/antlr.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.jar"/>
@@ -18,14 +17,11 @@
 	<classpathentry kind="lib" path="lib/gdbms-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/gdbms-drivers-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jdwglib.jar"/>
-	<classpathentry kind="lib" path="lib/jline-0.9.9.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-1.5.2.jar"/>
 	<classpathentry kind="lib" path="lib/jsr173_1.0_api.jar"/>
 	<classpathentry kind="lib" path="lib/mail.jar"/>
 	<classpathentry kind="lib" path="lib/xbean.jar"/>
 	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jline-0.9.9.jar"/>
-	<classpathentry kind="lib" path="lib/ycad.jar"/>
-	<classpathentry kind="lib" path="lib/DXFExporter.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>
