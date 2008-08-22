@@ -58,7 +58,7 @@ public class StdIn {
          */
     public boolean readBooleanOption(String message, String yesOption, String noOption) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 	fullMessage.append(" [" + yesOption + "/" + noOption + "] :");
 
 	while (true) {
@@ -86,7 +86,7 @@ public class StdIn {
          */
     public String readString(String message, int minLength) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 
 	while (true) {
 	    try {
@@ -110,7 +110,7 @@ public class StdIn {
          */
     public String readPrivateString(String message, int minLength) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 
 	while (true) {
 	    try {
@@ -135,7 +135,7 @@ public class StdIn {
          */
     public int readMenuOption(String message, String[] optionsMessages) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 	int currentOptionCount = 0;
 	for (String currentOptionMessage : optionsMessages) {
 	    ++currentOptionCount;
@@ -180,7 +180,7 @@ public class StdIn {
          */
     public int readMenuOptionOrQuit(String message, String[] optionsMessages, String quitOption) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 	int currentOptionCount = 0;
 	for (String currentOptionMessage : optionsMessages) {
 	    ++currentOptionCount;
@@ -231,7 +231,7 @@ public class StdIn {
          */
     public int readInteger(String message) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 
 	while (true) {
 	    try {
@@ -262,7 +262,7 @@ public class StdIn {
          */
     public int readIntegerOrDefault(String message, int defaultValue) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 
 	while (true) {
 	    try {
@@ -301,7 +301,7 @@ public class StdIn {
          */
     public String readStringOrDefault(String message, String defaultValue) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 
 	while (true) {
 	    try {
@@ -324,7 +324,7 @@ public class StdIn {
          */
     public String readPrivateStringOrDefault(String message, String defaultValue) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 
 	while (true) {
 	    try {
@@ -347,7 +347,7 @@ public class StdIn {
          */
     public String readStringOrDefault(String message, String defaultValue, int minLength) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 	fullMessage.append((minLength > 0 ? (" " + "min - " + minLength + " chars") : "") + ": ");
 
 	while (true) {
@@ -376,7 +376,7 @@ public class StdIn {
     public boolean readBooleanOptionOrDefault(String message, String yesOption, String noOption,
 	    boolean defaultValue) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 
 	while (true) {
 	    try {
@@ -407,7 +407,7 @@ public class StdIn {
     public int readMenuOptionOrQuitOrDefault(String message, String[] optionsMessages,
 	    String quitOption, int defaultOption) {
 
-	StringBuffer fullMessage = new StringBuffer(message);
+	StringBuilder fullMessage = new StringBuilder(message);
 	fullMessage.append(" [").append((defaultOption + 1)).append("]");
 	int currentOptionCount = 0;
 	for (String currentOptionMessage : optionsMessages) {
@@ -453,7 +453,7 @@ public class StdIn {
          * @see pt.linkare.ant.IStdIn#readMenuOption(pt.linkare.ant.MenuMessage)
          */
     public String readMenuOption(MenuMessage menuMessage) {
-	StringBuffer fullMessage = new StringBuffer(menuMessage.getMessage());
+	StringBuilder fullMessage = new StringBuilder(menuMessage.getMessage());
 	int currentOptionCount = 0;
 	for (String currentOptionMessage : menuMessage.getOptions()) {
 	    ++currentOptionCount;
@@ -495,7 +495,7 @@ public class StdIn {
          *      java.lang.String)
          */
     public String readMultipleOptionOrDefault(MenuMessage menuMessage, String propertyDefaultValue) {
-	StringBuffer fullMessage = new StringBuffer(menuMessage.getMessage());
+	StringBuilder fullMessage = new StringBuilder(menuMessage.getMessage());
 	int currentOptionCount = 0;
 	List<String> defaultValuesList = Arrays.asList(AbstractPropertyReader
 		.splitValues(propertyDefaultValue));
@@ -539,7 +539,7 @@ public class StdIn {
 		    }
 		}
 
-		StringBuffer retVal = new StringBuffer();
+		StringBuilder retVal = new StringBuilder();
 		for (int i = 0; i < valuesSelected.length; i++) {
 		    if (i > 0)
 			retVal.append(",");
@@ -561,7 +561,7 @@ public class StdIn {
          */
     public String readMenuOptionOrDefault(MenuMessage menuMessage, String propertyDefaultValue) {
 
-	StringBuffer fullMessage = new StringBuffer(menuMessage.getMessage());
+	StringBuilder fullMessage = new StringBuilder(menuMessage.getMessage());
 	int currentOptionCount = 0;
 	for (String currentOptionMessage : menuMessage.getOptions()) {
 	    ++currentOptionCount;
@@ -606,7 +606,7 @@ public class StdIn {
          * @see pt.linkare.ant.IStdIn#readMultipleOption(pt.linkare.ant.MenuMessage)
          */
     public String readMultipleOption(MenuMessage menuMessage) {
-	StringBuffer fullMessage = new StringBuffer(menuMessage.getMessage());
+	StringBuilder fullMessage = new StringBuilder(menuMessage.getMessage());
 	int currentOptionCount = 0;
 	for (String currentOptionMessage : menuMessage.getOptions()) {
 	    ++currentOptionCount;
@@ -646,7 +646,7 @@ public class StdIn {
 		    }
 		}
 
-		StringBuffer retVal = new StringBuffer();
+		StringBuilder retVal = new StringBuilder();
 		for (int i = 0; i < valuesSelected.length; i++) {
 		    if (i > 0)
 			retVal.append(", ");
@@ -667,7 +667,7 @@ public class StdIn {
          *      java.lang.String)
          */
     public String readMultipleOptionOrQuitOrDefault(MenuMessage menuMessage, String propertyDefaultValue) {
-	StringBuffer fullMessage = new StringBuffer(menuMessage.getMessage());
+	StringBuilder fullMessage = new StringBuilder(menuMessage.getMessage());
 	int currentOptionCount = 0;
 	List<String> defaultValuesList = Arrays.asList(AbstractPropertyReader
 		.splitValues(propertyDefaultValue));
@@ -713,7 +713,7 @@ public class StdIn {
 		    }
 		}
 
-		StringBuffer retVal = new StringBuffer();
+		StringBuilder retVal = new StringBuilder();
 		for (int i = 0; i < valuesSelected.length; i++) {
 		    if (i > 0)
 			retVal.append(", ");
@@ -733,7 +733,7 @@ public class StdIn {
          * @see pt.linkare.ant.IStdIn#readMultipleOptionOrQuit(pt.linkare.ant.MenuMessage)
          */
     public String readMultipleOptionOrQuit(MenuMessage menuMessage) {
-	StringBuffer fullMessage = new StringBuffer(menuMessage.getMessage());
+	StringBuilder fullMessage = new StringBuilder(menuMessage.getMessage());
 	int currentOptionCount = 0;
 	for (String currentOptionMessage : menuMessage.getOptions()) {
 	    ++currentOptionCount;
@@ -776,7 +776,7 @@ public class StdIn {
 		    }
 		}
 
-		StringBuffer retVal = new StringBuffer();
+		StringBuilder retVal = new StringBuilder();
 		for (int i = 0; i < valuesSelected.length; i++) {
 		    if (i > 0)
 			retVal.append(", ");
@@ -798,7 +798,7 @@ public class StdIn {
          */
     public String readMenuOptionOrQuitOrDefault(MenuMessage menuMessage, String propertyDefaultValue) {
 
-	StringBuffer fullMessage = new StringBuffer(menuMessage.getMessage());
+	StringBuilder fullMessage = new StringBuilder(menuMessage.getMessage());
 	int currentOptionCount = 0;
 	for (String currentOptionMessage : menuMessage.getOptions()) {
 	    ++currentOptionCount;
@@ -847,7 +847,7 @@ public class StdIn {
          */
     public String readMenuOptionOrQuit(MenuMessage menuMessage) {
 
-	StringBuffer fullMessage = new StringBuffer(menuMessage.getMessage());
+	StringBuilder fullMessage = new StringBuilder(menuMessage.getMessage());
 	int currentOptionCount = 0;
 	for (String currentOptionMessage : menuMessage.getOptions()) {
 	    ++currentOptionCount;

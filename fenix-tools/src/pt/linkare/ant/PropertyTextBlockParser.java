@@ -19,7 +19,7 @@ public class PropertyTextBlockParser implements TextBlockParser {
 		String startNextContent = null;
 
 		boolean continuation=false;
-		StringBuffer content = new StringBuffer();
+		StringBuilder content = new StringBuilder();
 		while ((line = br.readLine()) != null) {
 
 			if (line.trim().length() == 0)
@@ -52,7 +52,7 @@ public class PropertyTextBlockParser implements TextBlockParser {
 					outList.add(block);
 				}
 
-				content = new StringBuffer(startNextContent);
+				content = new StringBuilder(startNextContent);
 			}
 
 		}

@@ -22,7 +22,7 @@ public class MultipleOptionsPropertyReader extends AbstractPropertyReader{
 		MenuMessage menuMessage=buildMenuMessage();
 		if("*".equals(getProperty().getPropertyDefaultValue()))
 		{
-			StringBuffer defaultValue=new StringBuffer("");
+		    	StringBuilder defaultValue=new StringBuilder();
 			List<String> optionsValues=menuMessage.getOptionValues();
 			for(String optionValue:optionsValues)
 			{

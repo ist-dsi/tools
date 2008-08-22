@@ -27,7 +27,7 @@ public class BooleanPropertyReader extends AbstractPropertyReader{
 		if(yesOptionValue==null) yesOptionValue="1";
 		if(noOptionValue==null) noOptionValue="0";
 		
-		StringBuffer message=new StringBuffer();
+		StringBuilder message=new StringBuilder();
 		if(getProperty().getPropertyMessage()==null)
 		{
 			message.append("Please provide the value for property "+getProperty().getPropertyName());

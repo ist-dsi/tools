@@ -24,7 +24,7 @@ public class FilePropertyReader extends AbstractPropertyReader{
 		boolean persistAbsolutePath=parseBoolean(getProperty().getMetaData("persistAbsolutePath"), false);
 		createPath=pathMustExist?false:createPath;
 		
-		StringBuffer message=new StringBuffer();
+		StringBuilder message=new StringBuilder();
 		if(getProperty().getPropertyMessage()==null)
 		{
 			message.append("Please provide the value for property "+getProperty().getPropertyName());

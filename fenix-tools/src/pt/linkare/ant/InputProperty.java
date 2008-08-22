@@ -256,7 +256,7 @@ public class InputProperty {
 	}
 
 	private String metadataToString() {
-		StringBuffer metadataStr=new StringBuffer("");
+	    	StringBuilder metadataStr=new StringBuilder();
 		if(this.propertyMetaData!=null)
 			for(Map.Entry<String, String> entry: this.propertyMetaData.entrySet())
 			{

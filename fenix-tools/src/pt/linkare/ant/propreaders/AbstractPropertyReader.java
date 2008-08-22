@@ -69,7 +69,7 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 	}
 	
 	public java.lang.String buildDefaultMessage(boolean includeDefaultValue) {
-		StringBuffer message=new StringBuffer();
+		StringBuilder message=new StringBuilder();
 		if(getProperty().getPropertyMessage()==null)
 		{
 			message.append("Please provide the value for property "+getProperty().getPropertyName());
@@ -128,7 +128,7 @@ public abstract  class AbstractPropertyReader implements PropertyReader{
 			}
 		}
 		
-		StringBuffer message=new StringBuffer();
+		StringBuilder message=new StringBuilder();
 		if(getProperty().getPropertyMessage()==null)
 		{
 			message.append("Please choose one of the values for property "+getProperty().getPropertyName());

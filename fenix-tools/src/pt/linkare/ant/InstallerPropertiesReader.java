@@ -175,7 +175,7 @@ public class InstallerPropertiesReader {
 		
 		debug("Trying to read from file " + getPropFileInput().getName());
 		BufferedReader br = new BufferedReader(new FileReader(getPropFileInput()));
-		StringBuffer propMetaInfo = new StringBuffer();
+		StringBuilder propMetaInfo = new StringBuilder();
 		String propName = null;
 		String propDefaultValue = null;
 		String line = null;
@@ -203,7 +203,7 @@ public class InstallerPropertiesReader {
 				debug("Read property name " + propName + " and property default value " + propDefaultValue);
 				allProperties.put(parseInputPropertyMetaInfo(allProperties, propName, propMetaInfo.toString(),
 						propDefaultValue));
-				propMetaInfo = new StringBuffer();
+				propMetaInfo = new StringBuilder();
 				propName = null;
 				propDefaultValue = null;
 			}
@@ -261,7 +261,7 @@ public class InstallerPropertiesReader {
 			// @dependency=property2.name=value2 - also depends on property2.name having value2
 			// @dependency=property3.name=* - also depends on property3.name being defined - no matter the value
 			java.lang.String previousKey = null;
-			StringBuffer contentPreviousKey = new StringBuffer();
+			StringBuilder contentPreviousKey = new StringBuilder();
 
 			java.lang.String line = null;
 
@@ -283,7 +283,7 @@ public class InstallerPropertiesReader {
 						}
 					}
 					previousKey = line.substring(line.indexOf('@') + 1, line.indexOf('=')).trim();
-					contentPreviousKey = new StringBuffer(line.substring(line.indexOf('=') + 1).trim());
+					contentPreviousKey = new StringBuilder(line.substring(line.indexOf('=') + 1).trim());
 					debug("Property " + propName + " metainfo tag was started " + previousKey);
 				}
 				else if (line.startsWith("#")) {
