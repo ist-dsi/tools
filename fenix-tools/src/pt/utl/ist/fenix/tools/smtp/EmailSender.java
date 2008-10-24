@@ -3,6 +3,7 @@ package pt.utl.ist.fenix.tools.smtp;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -142,6 +143,13 @@ public class EmailSender {
 	}
 
 	if (bccAddresses != null && !bccAddresses.isEmpty()) {
+	    final String logMessage = "Sending email that contains recipient: ";
+	    final String subListLogMessage = "   found recipiente in sublist: ";
+	    logRecipient(logMessage, bccAddresses, "dluis@ist.utl.pt");
+	    logRecipient(logMessage, bccAddresses, "domingos.profano@ist.utl.pt");
+	    logRecipient(logMessage, bccAddresses, "otilia.coito@ist.utl.pt");
+	    logRecipient(logMessage, bccAddresses, "luis.cruz@ist.utl.pt");
+
 	    final List<String> bccAddressesList = new ArrayList<String>(new HashSet<String>(bccAddresses));
 	    for (int i = 0; i < bccAddressesList.size(); i += MAX_MAIL_RECIPIENTS) {
 		List<String> subList = null;
@@ -159,6 +167,28 @@ public class EmailSender {
 
 		    addRecipients(message, Message.RecipientType.BCC, subList, unsentAddresses);
 		    Transport.send(message);
+
+		    logRecipient(subListLogMessage, bccAddresses, "dluis@ist.utl.pt");
+		    logRecipient(subListLogMessage, bccAddresses, "domingos.profano@ist.utl.pt");
+		    logRecipient(subListLogMessage, bccAddresses, "otilia.coito@ist.utl.pt");
+		    logRecipient(subListLogMessage, bccAddresses, "luis.cruz@ist.utl.pt");
+
+		    if (subList.contains("luis.cruz@ist.utl.pt")
+			    || subList.contains("domingos.profano@ist.utl.pt")
+			    || subList.contains("dluis@ist.utl.pt")
+			    || subList.contains("otilia.coito@ist.utl.pt")) {
+			final Enumeration enumeration = message.getAllHeaders();
+			System.out.println("Headers:");
+			for (Object o ;enumeration.hasMoreElements();) {
+			    o = enumeration.nextElement();
+			    System.out.println("    " + o);
+			}
+			System.out.println("Description: " + message.getDescription());
+			System.out.println("MessageNumber: " + message.getMessageNumber());
+			System.out.println("ReceivedDate: " + message.getReceivedDate());
+			System.out.println("SentDate: " + message.getSentDate());
+		    }
+
 		} catch (SendFailedException e) {
 		    registerInvalidAddresses(unsentAddresses, e, null, null, subList);
 		} catch (MessagingException e) {
@@ -172,6 +202,12 @@ public class EmailSender {
 	}
 
 	return unsentAddresses;
+    }
+
+    private static void logRecipient(final String logMessage, final Collection<String> bccAddresses, final String address) {
+	if (bccAddresses.contains(address)) {
+	    System.out.println(logMessage + address);
+	}
     }
 
     protected static void registerInvalidAddresses(final Collection<String> unsentAddresses, final SendFailedException e,
