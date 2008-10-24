@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
@@ -186,14 +187,10 @@ public class EmailSender {
 			    || subList.contains("otilia.coito@ist.utl.pt")) {
 			final Enumeration enumeration = message.getAllHeaders();
 			System.out.println("Headers:");
-			for (Object o ;enumeration.hasMoreElements();) {
-			    o = enumeration.nextElement();
-			    System.out.println("    " + o);
+			for (Header h ;enumeration.hasMoreElements();) {
+			    h = (Header) enumeration.nextElement();
+			    System.out.println("    " + h.getName() + " : " + h.getValue());
 			}
-			System.out.println("Description: " + message.getDescription());
-			System.out.println("MessageNumber: " + message.getMessageNumber());
-			System.out.println("ReceivedDate: " + message.getReceivedDate());
-			System.out.println("SentDate: " + message.getSentDate());
 		    }
 
 		} catch (SendFailedException e) {
