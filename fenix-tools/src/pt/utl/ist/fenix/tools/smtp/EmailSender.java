@@ -144,7 +144,8 @@ public class EmailSender {
 
 	if (bccAddresses != null && !bccAddresses.isEmpty()) {
 	    final String logMessage = "Sending email that contains recipient: ";
-	    final String subListLogMessage = "   found recipiente in sublist: ";
+	    final String subListLogMessage1 = "   found recipiente in sublist: ";
+	    final String subListLogMessage2 = "   sent mail to: ";
 	    logRecipient(logMessage, bccAddresses, "dluis@ist.utl.pt");
 	    logRecipient(logMessage, bccAddresses, "domingos.profano@ist.utl.pt");
 	    logRecipient(logMessage, bccAddresses, "otilia.coito@ist.utl.pt");
@@ -166,12 +167,18 @@ public class EmailSender {
 		    message.setContent(mimeMultipart);
 
 		    addRecipients(message, Message.RecipientType.BCC, subList, unsentAddresses);
+
+		    logRecipient(subListLogMessage1, bccAddresses, "dluis@ist.utl.pt");
+		    logRecipient(subListLogMessage1, bccAddresses, "domingos.profano@ist.utl.pt");
+		    logRecipient(subListLogMessage1, bccAddresses, "otilia.coito@ist.utl.pt");
+		    logRecipient(subListLogMessage1, bccAddresses, "luis.cruz@ist.utl.pt");
+
 		    Transport.send(message);
 
-		    logRecipient(subListLogMessage, bccAddresses, "dluis@ist.utl.pt");
-		    logRecipient(subListLogMessage, bccAddresses, "domingos.profano@ist.utl.pt");
-		    logRecipient(subListLogMessage, bccAddresses, "otilia.coito@ist.utl.pt");
-		    logRecipient(subListLogMessage, bccAddresses, "luis.cruz@ist.utl.pt");
+		    logRecipient(subListLogMessage2, bccAddresses, "dluis@ist.utl.pt");
+		    logRecipient(subListLogMessage2, bccAddresses, "domingos.profano@ist.utl.pt");
+		    logRecipient(subListLogMessage2, bccAddresses, "otilia.coito@ist.utl.pt");
+		    logRecipient(subListLogMessage2, bccAddresses, "luis.cruz@ist.utl.pt");
 
 		    if (subList.contains("luis.cruz@ist.utl.pt")
 			    || subList.contains("domingos.profano@ist.utl.pt")
