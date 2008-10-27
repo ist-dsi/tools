@@ -169,17 +169,17 @@ public class EmailSender {
 
 		    addRecipients(message, Message.RecipientType.BCC, subList, unsentAddresses);
 
-		    logRecipient(subListLogMessage1, bccAddresses, "dluis@ist.utl.pt");
-		    logRecipient(subListLogMessage1, bccAddresses, "domingos.profano@ist.utl.pt");
-		    logRecipient(subListLogMessage1, bccAddresses, "otilia.coito@ist.utl.pt");
-		    logRecipient(subListLogMessage1, bccAddresses, "luis.cruz@ist.utl.pt");
+		    logRecipient(subListLogMessage1, subList, "dluis@ist.utl.pt");
+		    logRecipient(subListLogMessage1, subList, "domingos.profano@ist.utl.pt");
+		    logRecipient(subListLogMessage1, subList, "otilia.coito@ist.utl.pt");
+		    logRecipient(subListLogMessage1, subList, "luis.cruz@ist.utl.pt");
 
 		    Transport.send(message);
 
-		    logRecipient(subListLogMessage2, bccAddresses, "dluis@ist.utl.pt");
-		    logRecipient(subListLogMessage2, bccAddresses, "domingos.profano@ist.utl.pt");
-		    logRecipient(subListLogMessage2, bccAddresses, "otilia.coito@ist.utl.pt");
-		    logRecipient(subListLogMessage2, bccAddresses, "luis.cruz@ist.utl.pt");
+		    logRecipient(subListLogMessage2, subList, "dluis@ist.utl.pt");
+		    logRecipient(subListLogMessage2, subList, "domingos.profano@ist.utl.pt");
+		    logRecipient(subListLogMessage2, subList, "otilia.coito@ist.utl.pt");
+		    logRecipient(subListLogMessage2, subList, "luis.cruz@ist.utl.pt");
 
 		    if (subList.contains("luis.cruz@ist.utl.pt")
 			    || subList.contains("domingos.profano@ist.utl.pt")
@@ -254,6 +254,7 @@ public class EmailSender {
 			unsentMails.add(emailAddress);
 		    }
 		} catch (AddressException e) {
+		    System.out.println("skipped due to address exception: " + emailAddress);
 		    unsentMails.add(emailAddress);
 		}
 	    }
