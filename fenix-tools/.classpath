@@ -23,5 +23,8 @@
 	<classpathentry kind="lib" path="lib/xbean.jar"/>
 	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jline-0.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/poi-2.5.1-final-20040804.jar"/>
+	<classpathentry kind="lib" path="lib/poi-contrib-2.5.1-final-20040804.jar"/>
+	<classpathentry kind="lib" path="lib/poi-scratchpad-2.5.1-final-20040804.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>
