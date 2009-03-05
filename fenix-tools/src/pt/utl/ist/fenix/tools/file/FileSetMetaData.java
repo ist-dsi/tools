@@ -354,4 +354,10 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
             throw new RuntimeException("Error parsing xml string : "+xml,e);
         }
     }
+
+    public static FileSetMetaData buildFromXMLString(String xmlString) {
+        FileSetMetaData metadata = new FileSetMetaData();
+        metadata.fromXMLString(xmlString);
+        return metadata;
+    }
 }

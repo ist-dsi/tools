@@ -75,4 +75,9 @@ public class VirtualPath implements Serializable,XMLSerializable{
         }
 	}
 
+    public static VirtualPath buildFromXMLString(String xmlString) {
+        VirtualPath path = new VirtualPath();
+        path.fromXMLString(xmlString);
+        return path;
+    }
 }

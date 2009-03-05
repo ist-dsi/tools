@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import pt.utl.ist.fenix.tools.util.DomainModelDirFileLister;
 
-import dml.DmlCompiler;
+import pt.ist.fenixframework.pstm.DML;
 import dml.DomainModel;
 
 public abstract class DomainObjectGenerator {
@@ -24,7 +24,7 @@ public abstract class DomainObjectGenerator {
             } else {
                 try {
                     String[] dmlFilesArray = DomainModelDirFileLister.listDomainModelFiles(dmlDir);
-                    domainModel = DmlCompiler.getFenixDomainModel(dmlFilesArray);
+                    domainModel = DML.getDomainModel(dmlFilesArray);
                 } catch (antlr.ANTLRException ae) {
                     System.err.println("Error parsing the DML files, leaving the domain empty");
                 }
