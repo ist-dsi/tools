@@ -1,6 +1,5 @@
 package pt.utl.ist.fenix.tools.util.excel;
 
-import org.apache.commons.lang.exception.NestableException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
@@ -23,6 +22,11 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import pt.utl.ist.fenix.tools.excel.SpreadsheetBuilder;
+
+/**
+ * Use new approach to excel table generation: {@link SpreadsheetBuilder}
+ */
 public class StyledExcelSpreadsheet {
     private HSSFWorkbook workbook;
 
@@ -95,7 +99,7 @@ public class StyledExcelSpreadsheet {
 
     public void addHeader(String value) {
 	HSSFRow currentRow = getRow();
-	HSSFCell cell = currentRow.createCell((short) (currentRow.getLastCellNum() + 1));
+	HSSFCell cell = currentRow.createCell(getNextWritableCell());
 	cell.setCellValue(value);
 	cell.setCellStyle(excelStyle.getHeaderStyle());
     }
@@ -116,7 +120,7 @@ public class StyledExcelSpreadsheet {
 
     public void addHeader(String value, int columnSize) {
 	HSSFRow currentRow = getRow();
-	short thisCellNumber = (short) (currentRow.getLastCellNum() + 1);
+	int thisCellNumber = getNextWritableCell();
 	HSSFCell cell = currentRow.createCell(thisCellNumber);
 	cell.setCellValue(value);
 	cell.setCellStyle(excelStyle.getHeaderStyle());
@@ -125,14 +129,14 @@ public class StyledExcelSpreadsheet {
 
     public void addHeader(String value, HSSFCellStyle newStyle) {
 	HSSFRow currentRow = getRow();
-	HSSFCell cell = currentRow.createCell((short) (currentRow.getLastCellNum() + 1));
+	HSSFCell cell = currentRow.createCell(getNextWritableCell());
 	cell.setCellValue(value);
 	cell.setCellStyle(newStyle);
     }
 
     public void addHeader(String value, HSSFCellStyle newStyle, int columnSize) {
 	HSSFRow currentRow = getRow();
-	short thisCellNumber = (short) (currentRow.getLastCellNum() + 1);
+	int thisCellNumber = getNextWritableCell();
 	HSSFCell cell = currentRow.createCell(thisCellNumber);
 	cell.setCellValue(value);
 	cell.setCellStyle(newStyle);
@@ -172,19 +176,23 @@ public class StyledExcelSpreadsheet {
 	return sheet.getRow(rowNumber);
     }
 
+    public int getNextWritableCell() {
+	return getRow().getLastCellNum() == -1 ? 0 : getRow().getLastCellNum();
+    }
+
     public void addCell(Object value) {
-	addCell(value, getDefaultExcelStyle(value), (getRow().getLastCellNum() + 1));
+	addCell(value, getDefaultExcelStyle(value), getNextWritableCell());
     }
 
     public void addCell(Object value, boolean wrap) {
 	if (value == null) {
 	    value = "";
 	}
-	addCell(value, getDefaultExcelStyle(value), (getRow().getLastCellNum() + 1), wrap);
+	addCell(value, getDefaultExcelStyle(value), getNextWritableCell(), wrap);
     }
 
     public void addCell(Object value, HSSFCellStyle newStyle) {
-	addCell(value, newStyle, (getRow().getLastCellNum() + 1));
+	addCell(value, newStyle, getNextWritableCell());
     }
 
     public void addCell(Object value, int columnNumber) {
@@ -232,28 +240,28 @@ public class StyledExcelSpreadsheet {
 
     public void addDateTimeCell(DateTime value) {
 	HSSFRow currentRow = getRow();
-	HSSFCell cell = currentRow.createCell((short) (currentRow.getLastCellNum() + 1));
+	HSSFCell cell = currentRow.createCell(getNextWritableCell());
 	cell.setCellValue(dateTimeFormat.print(value));
 	cell.setCellStyle(getExcelStyle(excelStyle.getValueStyle(), wrapText));
     }
 
     public void addDateCell(LocalDate value) {
 	HSSFRow currentRow = getRow();
-	HSSFCell cell = currentRow.createCell((short) (currentRow.getLastCellNum() + 1));
+	HSSFCell cell = currentRow.createCell(getNextWritableCell());
 	cell.setCellValue(dateFormat.print(value));
 	cell.setCellStyle(getExcelStyle(excelStyle.getValueStyle(), wrapText));
     }
 
     public void addTimeCell(TimeOfDay value) {
 	HSSFRow currentRow = getRow();
-	HSSFCell cell = currentRow.createCell((short) (currentRow.getLastCellNum() + 1));
+	HSSFCell cell = currentRow.createCell(getNextWritableCell());
 	cell.setCellValue(timeFormat.print(value));
 	cell.setCellStyle(getExcelStyle(excelStyle.getValueStyle(), wrapText));
     }
 
     public void addDuration(Duration value, int columnNumber) {
 	HSSFRow currentRow = getRow();
-	HSSFCell cell = currentRow.createCell((short) (columnNumber));
+	HSSFCell cell = currentRow.createCell(columnNumber);
 	PeriodFormatter fmt = new PeriodFormatterBuilder().printZeroAlways().appendHours().appendSeparator(":")
 		.minimumPrintedDigits(2).appendMinutes().toFormatter();
 	MutablePeriod valueFormatted = new MutablePeriod(value.getMillis(), PeriodType.time());
@@ -270,7 +278,7 @@ public class StyledExcelSpreadsheet {
     }
 
     public void addDuration(Duration value) {
-	addDuration(value, getRow().getLastCellNum() + 1);
+	addDuration(value, getNextWritableCell());
     }
 
     public void sumColumn(int firstRow, int lastRow, int firstColumn, int lastColumn, HSSFCellStyle newStyle) {
@@ -309,13 +317,10 @@ public class StyledExcelSpreadsheet {
 
     protected void setCellBorder(HSSFCell cell) {
 	final short borderProperty = HSSFCellStyle.BORDER_THIN;
-	try {
-	    HSSFCellUtil.setCellStyleProperty(cell, workbook, "borderLeft", borderProperty);
-	    HSSFCellUtil.setCellStyleProperty(cell, workbook, "borderRight", borderProperty);
-	    HSSFCellUtil.setCellStyleProperty(cell, workbook, "borderTop", borderProperty);
-	    HSSFCellUtil.setCellStyleProperty(cell, workbook, "borderBottom", borderProperty);
-	} catch (NestableException e) {
-	}
+	HSSFCellUtil.setCellStyleProperty(cell, workbook, "borderLeft", borderProperty);
+	HSSFCellUtil.setCellStyleProperty(cell, workbook, "borderRight", borderProperty);
+	HSSFCellUtil.setCellStyleProperty(cell, workbook, "borderTop", borderProperty);
+	HSSFCellUtil.setCellStyleProperty(cell, workbook, "borderBottom", borderProperty);
     }
 
     public void setRegionBorder(int firstRow, int lastRow, int firstColumn, int lastColumn) {
@@ -334,21 +339,18 @@ public class StyledExcelSpreadsheet {
     public void mergeCells(int firstRow, int lastRow, int firstColumn, int lastColumn) {
 	Region region = new Region((short) firstRow, (short) firstColumn, (short) lastRow, (short) lastColumn);
 	getSheet().addMergedRegion(region);
-	try {
-	    HSSFRegionUtil.setBorderBottom(HSSFCellStyle.BORDER_THIN, region, getSheet(), getWorkbook());
-	    HSSFRegionUtil.setBorderTop(HSSFCellStyle.BORDER_THIN, region, getSheet(), getWorkbook());
-	    HSSFRegionUtil.setBorderLeft(HSSFCellStyle.BORDER_THIN, region, getSheet(), getWorkbook());
-	    HSSFRegionUtil.setBorderRight(HSSFCellStyle.BORDER_THIN, region, getSheet(), getWorkbook());
-	    HSSFRegionUtil.setBottomBorderColor(HSSFColor.BLACK.index, region, getSheet(), getWorkbook());
-	    HSSFRegionUtil.setTopBorderColor(HSSFColor.BLACK.index, region, getSheet(), getWorkbook());
-	    HSSFRegionUtil.setLeftBorderColor(HSSFColor.BLACK.index, region, getSheet(), getWorkbook());
-	    HSSFRegionUtil.setRightBorderColor(HSSFColor.BLACK.index, region, getSheet(), getWorkbook());
-	} catch (NestableException e) {
-	}
+	HSSFRegionUtil.setBorderBottom(HSSFCellStyle.BORDER_THIN, region, getSheet(), getWorkbook());
+	HSSFRegionUtil.setBorderTop(HSSFCellStyle.BORDER_THIN, region, getSheet(), getWorkbook());
+	HSSFRegionUtil.setBorderLeft(HSSFCellStyle.BORDER_THIN, region, getSheet(), getWorkbook());
+	HSSFRegionUtil.setBorderRight(HSSFCellStyle.BORDER_THIN, region, getSheet(), getWorkbook());
+	HSSFRegionUtil.setBottomBorderColor(HSSFColor.BLACK.index, region, getSheet(), getWorkbook());
+	HSSFRegionUtil.setTopBorderColor(HSSFColor.BLACK.index, region, getSheet(), getWorkbook());
+	HSSFRegionUtil.setLeftBorderColor(HSSFColor.BLACK.index, region, getSheet(), getWorkbook());
+	HSSFRegionUtil.setRightBorderColor(HSSFColor.BLACK.index, region, getSheet(), getWorkbook());
     }
 
     public int getMaxiumColumnNumber() {
-	int result = 0;
+	int result = -1;
 	for (int row = 0; row <= sheet.getLastRowNum(); row++) {
 	    result = sheet.getRow(row).getLastCellNum() > result ? sheet.getRow(row).getLastCellNum() : result;
 	}
