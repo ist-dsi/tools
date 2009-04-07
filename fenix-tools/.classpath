@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="lib/antlr.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/dml.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/dspace-integration.jar"/>
 	<classpathentry kind="lib" path="lib/dwg.jar"/>
@@ -23,8 +22,16 @@
 	<classpathentry kind="lib" path="lib/xbean.jar"/>
 	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jline-0.9.9.jar"/>
-	<classpathentry kind="lib" path="lib/poi-2.5.1-final-20040804.jar"/>
-	<classpathentry kind="lib" path="lib/poi-contrib-2.5.1-final-20040804.jar"/>
-	<classpathentry kind="lib" path="lib/poi-scratchpad-2.5.1-final-20040804.jar"/>
+	<classpathentry kind="lib" path="lib/dml-20090306.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-bean-collections-1.8.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-core-1.8.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/fenix-framework.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="lib/poi-3.5-beta5-20090219.jar"/>
+	<classpathentry kind="lib" path="lib/poi-contrib-3.5-beta5-20090219.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-3.5-beta5-20090219.jar"/>
+	<classpathentry kind="lib" path="lib/poi-scratchpad-3.5-beta5-20090219.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>
