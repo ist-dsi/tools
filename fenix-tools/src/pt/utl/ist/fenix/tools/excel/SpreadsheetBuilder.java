@@ -44,7 +44,7 @@ public abstract class SpreadsheetBuilder<Item> {
     }
 
     public abstract class ColumnGroup {
-	private ColumnBuilder[] columns;
+	private final ColumnBuilder[] columns;
 
 	public ColumnGroup(ColumnBuilder... columns) {
 	    this.columns = columns;
@@ -68,11 +68,13 @@ public abstract class SpreadsheetBuilder<Item> {
     }
 
     public class PropertyColumnGroup extends ColumnGroup {
-	private final String header;
+	private String header = null;
 
 	public PropertyColumnGroup(String headerKey, ResourceBundle headerBundle, ColumnBuilder... columns) {
 	    super(columns);
-	    this.header = headerBundle.getString(headerKey);
+	    if (headerKey != null && headerBundle != null) {
+		this.header = headerBundle.getString(headerKey);
+	    }
 	}
 
 	@Override
@@ -115,11 +117,13 @@ public abstract class SpreadsheetBuilder<Item> {
     }
 
     public abstract class ColumnBuilder {
-	private final String header;
+	private String header = null;
 	private CellConverter converter = null;
 
 	public ColumnBuilder(String headerKey, ResourceBundle headerBundle) {
-	    this.header = headerBundle.getString(headerKey);
+	    if (headerKey != null && headerBundle != null) {
+		this.header = headerBundle.getString(headerKey);
+	    }
 	}
 
 	public void setConverter(CellConverter converter) {
@@ -245,7 +249,7 @@ public abstract class SpreadsheetBuilder<Item> {
 
     private int startColumn = 0;
 
-    private ExcelStyle style;
+    private final ExcelStyle style;
 
     protected abstract List<ColumnBuilder> getColumns();
 
