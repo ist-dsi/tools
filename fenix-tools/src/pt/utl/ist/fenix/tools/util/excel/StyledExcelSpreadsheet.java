@@ -288,7 +288,7 @@ public class StyledExcelSpreadsheet {
 	    HSSFRow currentRow = getRow();
 	    HSSFCell cell = currentRow.createCell((short) col);
 	    cell.setCellStyle(getExcelStyle(newStyle, wrapText));
-	    cell.setCellFormula("sum(" + cellRef1.toString() + ":" + cellRef2.toString() + ")");
+	    cell.setCellFormula("sum(" + cellRef1.formatAsString() + ":" + cellRef2.formatAsString() + ")");
 	}
     }
 
@@ -307,7 +307,7 @@ public class StyledExcelSpreadsheet {
 		    if (formula.length() != 0) {
 			formula.append(";");
 		    }
-		    formula.append(refs[index].toString());
+		    formula.append(refs[index].formatAsString());
 		}
 	    }
 	    formula.append(")");
