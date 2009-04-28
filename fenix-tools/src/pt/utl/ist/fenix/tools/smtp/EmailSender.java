@@ -1,6 +1,7 @@
 package pt.utl.ist.fenix.tools.smtp;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -26,6 +27,8 @@ import javax.mail.internet.MimeMultipart;
 
 import pt.utl.ist.fenix.tools.util.PropertiesManager;
 import pt.utl.ist.fenix.tools.util.StringAppender;
+
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
 
 public class EmailSender {
 
@@ -81,6 +84,15 @@ public class EmailSender {
 	return unsent;
     }
 
+    private static String encode(final String string) {
+	try {
+	    return MimeUtility.encodeText(string);
+	} catch (final UnsupportedEncodingException e) {
+	    e.printStackTrace();
+	    return string;
+	}
+    }
+
     public static Collection<String> send(final String fromName, final String fromAddress, final String[] replyTos,
 	    final Collection<String> toAddresses, final Collection<String> ccAddresses, final Collection<String> bccAddresses,
 	    final String subject, final String body) {
@@ -99,7 +111,7 @@ public class EmailSender {
 	if (replyTos != null) {
 	    for (int i = 0; i < replyTos.length; i++) {
 		try {
-		    replyToAddresses[i] = new InternetAddress(replyTos[i]);
+		    replyToAddresses[i] = new InternetAddress(encode(replyTos[i]));
 		} catch (AddressException e) {
 		    throw new Error("invalid.reply.to.address: " + replyTos[i]);
 		}
@@ -109,8 +121,8 @@ public class EmailSender {
 	if (hasToAddresses || hasCCAddresses) {
 	    try {
 		final MimeMessage mimeMessageTo = new MimeMessage(session);
-		mimeMessageTo.setFrom(new InternetAddress(from));
-		mimeMessageTo.setSubject(subject);
+		mimeMessageTo.setFrom(new InternetAddress(encode(from)));
+		mimeMessageTo.setSubject(encode(subject));
 		mimeMessageTo.setReplyTo(replyToAddresses);
 
 		final MimeMultipart mimeMultipart = new MimeMultipart();
@@ -144,14 +156,6 @@ public class EmailSender {
 	}
 
 	if (bccAddresses != null && !bccAddresses.isEmpty()) {
-	    final String logMessage = "Sending email that contains recipient: ";
-	    final String subListLogMessage1 = "   found recipiente in sublist: ";
-	    final String subListLogMessage2 = "   sent mail to: ";
-	    logRecipient(logMessage, bccAddresses, "dluis@ist.utl.pt");
-	    logRecipient(logMessage, bccAddresses, "domingos.profano@ist.utl.pt");
-	    logRecipient(logMessage, bccAddresses, "otilia.coito@ist.utl.pt");
-	    logRecipient(logMessage, bccAddresses, "luis.cruz@ist.utl.pt");
-
 	    final List<String> bccAddressesList = new ArrayList<String>(new HashSet<String>(bccAddresses));
 	    for (int i = 0; i < bccAddressesList.size(); i += MAX_MAIL_RECIPIENTS) {
 		List<String> subList = null;
@@ -169,29 +173,7 @@ public class EmailSender {
 
 		    addRecipients(message, Message.RecipientType.BCC, subList, unsentAddresses);
 
-		    logRecipient(subListLogMessage1, subList, "dluis@ist.utl.pt");
-		    logRecipient(subListLogMessage1, subList, "domingos.profano@ist.utl.pt");
-		    logRecipient(subListLogMessage1, subList, "otilia.coito@ist.utl.pt");
-		    logRecipient(subListLogMessage1, subList, "luis.cruz@ist.utl.pt");
-
 		    Transport.send(message);
-
-		    logRecipient(subListLogMessage2, subList, "dluis@ist.utl.pt");
-		    logRecipient(subListLogMessage2, subList, "domingos.profano@ist.utl.pt");
-		    logRecipient(subListLogMessage2, subList, "otilia.coito@ist.utl.pt");
-		    logRecipient(subListLogMessage2, subList, "luis.cruz@ist.utl.pt");
-
-		    if (subList.contains("luis.cruz@ist.utl.pt")
-			    || subList.contains("domingos.profano@ist.utl.pt")
-			    || subList.contains("dluis@ist.utl.pt")
-			    || subList.contains("otilia.coito@ist.utl.pt")) {
-			final Enumeration enumeration = message.getAllHeaders();
-			System.out.println("Headers:");
-			for (Header h ;enumeration.hasMoreElements();) {
-			    h = (Header) enumeration.nextElement();
-			    System.out.println("    " + h.getName() + " : " + h.getValue());
-			}
-		    }
 
 		} catch (SendFailedException e) {
 		    registerInvalidAddresses(unsentAddresses, e, null, null, subList);
@@ -206,12 +188,6 @@ public class EmailSender {
 	}
 
 	return unsentAddresses;
-    }
-
-    private static void logRecipient(final String logMessage, final Collection<String> bccAddresses, final String address) {
-	if (bccAddresses.contains(address)) {
-	    System.out.println(logMessage + address);
-	}
     }
 
     protected static void registerInvalidAddresses(final Collection<String> unsentAddresses, final SendFailedException e,
@@ -248,7 +224,7 @@ public class EmailSender {
 		try {
 		    if (emailAddressFormatIsValid(emailAddress)) {
 			System.out.println("Sending to: " + emailAddress);
-			mensagem.addRecipient(recipientType, new InternetAddress(emailAddress));
+			mensagem.addRecipient(recipientType, new InternetAddress(encode(emailAddress)));
 		    } else {
 			System.out.println("skipped: " + emailAddress);
 			unsentMails.add(emailAddress);
