@@ -299,13 +299,13 @@ public class StyledExcelSpreadsheet {
 		refs[colIndex] = new CellReference(row, col);
 	    }
 	    HSSFRow currentRow = sheet.getRow(row);
-	    HSSFCell cell = currentRow.createCell((short) (lastColumn + 1));
+	    HSSFCell cell = currentRow.createCell((short) (lastColumn));
 	    cell.setCellStyle(getExcelStyle(newStyle, wrapText));
 	    StringBuilder formula = new StringBuilder();
 	    for (int index = 0; index < refs.length; index++) {
 		if (refs[index] != null) {
 		    if (formula.length() != 0) {
-			formula.append(";");
+			formula.append(",");
 		    }
 		    formula.append(refs[index].formatAsString());
 		}
@@ -325,7 +325,7 @@ public class StyledExcelSpreadsheet {
 
     public void setRegionBorder(int firstRow, int lastRow, int firstColumn, int lastColumn) {
 	for (int rowIndex = firstRow; rowIndex < lastRow; rowIndex++) {
-	    for (int colIndex = firstColumn; colIndex < lastColumn; colIndex++) {
+	    for (int colIndex = firstColumn; colIndex <= lastColumn; colIndex++) {
 		HSSFRow row = sheet.getRow(rowIndex);
 		HSSFCell cell = row.getCell((short) colIndex);
 		if (cell == null) {
