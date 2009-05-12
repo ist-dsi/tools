@@ -120,5 +120,5 @@ public abstract class AbstractSpreadsheetBuilder<Item> {
 	rowStyles = Arrays.asList(styles);
     }
 
-    abstract void build(WorkbookBuilder book);
+    abstract protected void build(WorkbookBuilder book);
 }
