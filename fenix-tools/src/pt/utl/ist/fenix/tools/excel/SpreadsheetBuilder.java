@@ -19,7 +19,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.joda.time.DateTime;
 
 import pt.utl.ist.fenix.tools.util.excel.ExcelStyle;
 
@@ -29,20 +28,7 @@ import pt.utl.ist.fenix.tools.util.excel.ExcelStyle;
  * @param <Item>
  *            The type of the object that feeds the table.
  */
-public abstract class SpreadsheetBuilder<Item> {
-    protected static Map<Class<?>, CellConverter> BASE_CONVERTERS;
-
-    /*
-     * this is a fallback map used to convert any object build in a column with
-     * no custom converter, it is applied by object type and there can be no
-     * more that one converter for any given type.
-     */
-    static {
-	BASE_CONVERTERS = new HashMap<Class<?>, CellConverter>();
-	BASE_CONVERTERS.put(Integer.class, new IntegerCellConverter());
-	BASE_CONVERTERS.put(DateTime.class, new DateTimeCellConverter());
-    }
-
+public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilder<Item> {
     public abstract class ColumnGroup {
 	private final ColumnBuilder[] columns;
 
@@ -134,11 +120,7 @@ public abstract class SpreadsheetBuilder<Item> {
 	    if (converter != null) {
 		return converter.convert(content);
 	    }
-	    if (BASE_CONVERTERS.containsKey(content.getClass())) {
-		CellConverter converter = BASE_CONVERTERS.get(content.getClass());
-		return converter.convert(content);
-	    }
-	    return content;
+	    return SpreadsheetBuilder.this.convert(content);
 	}
 
 	protected void setValue(HSSFCell cell, Object value) {
