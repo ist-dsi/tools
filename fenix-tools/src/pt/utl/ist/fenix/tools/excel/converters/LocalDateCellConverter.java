@@ -1,4 +1,4 @@
-package pt.utl.ist.fenix.tools.excel;
+package pt.utl.ist.fenix.tools.excel.converters;
 
 import org.joda.time.LocalDate;
 

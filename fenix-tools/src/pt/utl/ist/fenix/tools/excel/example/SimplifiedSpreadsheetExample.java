@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 import org.joda.time.LocalDate;
 
-import pt.utl.ist.fenix.tools.excel.CellConverter;
 import pt.utl.ist.fenix.tools.excel.SimplifiedSpreadsheetBuilder;
 import pt.utl.ist.fenix.tools.excel.WorkbookExportFormat;
+import pt.utl.ist.fenix.tools.excel.converters.CellConverter;
 import pt.utl.ist.fenix.tools.excel.styles.CellDataFormat;
 
 public class SimplifiedSpreadsheetExample {
@@ -41,7 +41,7 @@ public class SimplifiedSpreadsheetExample {
 			return ((LocalDate) source).toDateTimeAtCurrentTime().toDate();
 		    }
 		});
-		
+
 		addTypeStyle(LocalDate.class, new CellDataFormat("dd/MM/yyyy"));
 	    }
 

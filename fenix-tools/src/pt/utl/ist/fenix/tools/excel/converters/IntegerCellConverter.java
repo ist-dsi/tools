@@ -1,4 +1,4 @@
-package pt.utl.ist.fenix.tools.excel;
+package pt.utl.ist.fenix.tools.excel.converters;
 
 public class IntegerCellConverter implements CellConverter {
     @Override

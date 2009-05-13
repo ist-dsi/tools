@@ -1,8 +1,7 @@
 package pt.utl.ist.fenix.tools.excel;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,18 +14,13 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import pt.utl.ist.fenix.tools.util.excel.ExcelStyle;
-
 /**
- * @author Pedro Santos
+ * @author Pedro Santos (pedro.miguel.santos@ist.utl.pt)
  * 
  * @param <Item>
- *            The type of the object that feeds the table.
+ *            The type of object that is used to fill the lines.
  */
 public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilder<Item> {
     public abstract class ColumnGroup {
@@ -36,9 +30,7 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 	    this.columns = columns;
 	}
 
-	public void fillHeader(HSSFCell cell) {
-	    cell.setCellStyle(style.getHeaderStyle());
-	}
+	public abstract void fillHeader(HSSFWorkbook book, HSSFCell cell);
 
 	@Override
 	public String toString() {
@@ -64,9 +56,8 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 	}
 
 	@Override
-	public void fillHeader(HSSFCell cell) {
-	    super.fillHeader(cell);
-	    cell.setCellValue(header);
+	public void fillHeader(HSSFWorkbook book, HSSFCell cell) {
+	    setHeaderValue(book, cell, header);
 	}
 
 	@Override
@@ -91,9 +82,8 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 	}
 
 	@Override
-	public void fillHeader(HSSFCell cell) {
-	    super.fillHeader(cell);
-	    cell.setCellValue(header);
+	public void fillHeader(HSSFWorkbook book, HSSFCell cell) {
+	    setHeaderValue(book, cell, header);
 	}
 
 	@Override
@@ -104,7 +94,6 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 
     public abstract class ColumnBuilder {
 	private String header = null;
-	private CellConverter converter = null;
 
 	public ColumnBuilder(String headerKey, ResourceBundle headerBundle) {
 	    if (headerKey != null && headerBundle != null) {
@@ -112,53 +101,14 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 	    }
 	}
 
-	public void setConverter(CellConverter converter) {
-	    this.converter = converter;
-	}
-
-	private Object convert(Object content) {
-	    if (converter != null) {
-		return converter.convert(content);
-	    }
-	    return SpreadsheetBuilder.this.convert(content);
-	}
-
-	protected void setValue(HSSFCell cell, Object value) {
-	    CellStyle cellStyle = book.createCellStyle();
-	    CreationHelper helper = book.getCreationHelper();
-	    if (value != null) {
-		Object content = convert(value);
-		if (content instanceof Boolean) {
-		    cell.setCellValue((Boolean) content);
-		} else if (content instanceof Double) {
-		    cell.setCellValue((Double) content);
-		} else if (content instanceof String) {
-		    cell.setCellValue((String) content);
-		} else if (content instanceof Calendar) {
-		    cell.setCellValue((Calendar) content);
-		} else if (content instanceof Date) {
-		    cell.setCellValue((Date) content);
-		    cellStyle.setDataFormat(helper.createDataFormat().getFormat("dd/mm/yy hh:mm"));
-		    cell.setCellStyle(cellStyle);
-		} else if (content instanceof RichTextString) {
-		    cell.setCellValue((RichTextString) content);
-		} else {
-		    cell.setCellValue(content.toString());
-		}
-	    } else {
-		cell.setCellValue((String) null);
-	    }
-	}
-
-	public void fillHeader(HSSFCell cell) {
-	    cell.setCellValue(header);
-	    cell.setCellStyle(style.getHeaderStyle());
+	public void fillHeader(HSSFWorkbook book, HSSFCell cell) {
+	    setHeaderValue(book, cell, header);
 	}
 
 	/**
-	 * Extend and call {@link #setValue(HSSFCell, Object)}
+	 * Extend and call {@link #setValue(HSSFWorkbook, HSSFCell, Object)}
 	 */
-	public abstract void fillCell(HSSFCell cell, Item item);
+	public abstract void fillCell(HSSFWorkbook book, HSSFCell cell, Item item);
 
 	@Override
 	public String toString() {
@@ -175,8 +125,8 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 	}
 
 	@Override
-	public void fillCell(HSSFCell cell, Item item) {
-	    cell.setCellValue(getFormattedProperties(format, item));
+	public void fillCell(HSSFWorkbook book, HSSFCell cell, Item item) {
+	    setValue(book, cell, getFormattedProperties(format, item));
 	}
     }
 
@@ -189,10 +139,9 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 	}
 
 	@Override
-	public void fillCell(HSSFCell cell, Item item) {
+	public void fillCell(HSSFWorkbook book, HSSFCell cell, Item item) {
 	    try {
-		Object content = PropertyUtils.getProperty(item, property);
-		setValue(cell, content);
+		setValue(book, cell, PropertyUtils.getProperty(item, property));
 	    } catch (Exception e) {
 		throw new RuntimeException("could not read property '" + property + "' from object " + item, e);
 	    }
@@ -213,17 +162,17 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 	}
 
 	@Override
-	public void fillCell(HSSFCell cell, Item item) {
+	public void fillCell(HSSFWorkbook book, HSSFCell cell, Item item) {
 	    try {
 		if (PropertyUtils.getProperty(item, nullCheck) != null)
-		    super.fillCell(cell, item);
+		    super.fillCell(book, cell, item);
 	    } catch (Exception e) {
 		throw new RuntimeException("could not read property '" + nullCheck + "' from object " + item, e);
 	    }
 	}
     }
 
-    protected final HSSFWorkbook book;
+    private final Collection<Item> items;
 
     private boolean hasHeader = true;
 
@@ -231,15 +180,12 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 
     private int startColumn = 0;
 
-    private final ExcelStyle style;
-
     protected abstract List<ColumnBuilder> getColumns();
 
     protected abstract List<ColumnGroup> getColumnGroups();
 
-    public SpreadsheetBuilder(HSSFWorkbook book) {
-	this.book = book;
-	this.style = new ExcelStyle(book);
+    public SpreadsheetBuilder(Collection<Item> items) {
+	this.items = items;
     }
 
     public SpreadsheetBuilder<Item> hideHeader() {
@@ -255,64 +201,6 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
     public SpreadsheetBuilder<Item> setStartColumn(int start) {
 	startColumn = start;
 	return this;
-    }
-
-    public HSSFSheet build(String name, List<Item> items) {
-	List<ColumnBuilder> columns = getColumns();
-	Map<ColumnBuilder, ColumnGroup> groupMap = new HashMap<ColumnBuilder, ColumnGroup>();
-	for (ColumnGroup group : getColumnGroups()) {
-	    for (ColumnBuilder column : group.columns) {
-		groupMap.put(column, group);
-	    }
-	}
-	HSSFSheet sheet = book.createSheet();
-	int rownum = startRow;
-	int colnum = startColumn;
-	if (hasHeader) {
-	    if (!groupMap.isEmpty()) {
-		List<ColumnGroup> used = new ArrayList<ColumnGroup>();
-		HSSFRow header = sheet.createRow(rownum++);
-		for (ColumnBuilder column : columns) {
-		    if (groupMap.containsKey(column)) {
-			ColumnGroup group = groupMap.get(column);
-			if (!used.contains(group)) {
-			    HSSFCell cell = header.createCell(colnum);
-			    group.fillHeader(cell);
-			    CellRangeAddress range = new CellRangeAddress(cell.getRowIndex(), cell.getRowIndex(), cell
-				    .getColumnIndex(), cell.getColumnIndex() + group.columns.length - 1);
-			    cell.getRow().getSheet().addMergedRegion(range);
-			    colnum = header.getLastCellNum() + group.columns.length - 1;
-			    used.add(group);
-			}
-		    } else {
-			HSSFCell cell = header.createCell(colnum);
-			column.fillHeader(cell);
-			CellRangeAddress range = new CellRangeAddress(cell.getRowIndex(), cell.getRowIndex() + 1, cell
-				.getColumnIndex(), cell.getColumnIndex());
-			cell.getRow().getSheet().addMergedRegion(range);
-			colnum = header.getLastCellNum();
-		    }
-		}
-		colnum = startColumn;
-	    }
-	    HSSFRow header = sheet.createRow(rownum++);
-	    for (ColumnBuilder column : columns) {
-		column.fillHeader(header.createCell(colnum));
-		colnum = header.getLastCellNum();
-	    }
-	}
-	for (Item item : items) {
-	    HSSFRow row = sheet.createRow(rownum++);
-	    colnum = startColumn;
-	    for (ColumnBuilder column : columns) {
-		column.fillCell(row.createCell(colnum), item);
-		colnum = row.getLastCellNum();
-	    }
-	}
-	for (int i = 0; i < sheet.getLastRowNum(); i++) {
-	    sheet.autoSizeColumn(i);
-	}
-	return sheet;
     }
 
     public static String getFormattedProperties(String format, Object object) {
@@ -372,7 +260,61 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
     }
 
     @Override
-    void build(WorkbookBuilder book) {
-	// Unsuppoted
+    final void build(WorkbookBuilder bookBuilder) {
+	List<ColumnBuilder> columns = getColumns();
+	Map<ColumnBuilder, ColumnGroup> groupMap = new HashMap<ColumnBuilder, ColumnGroup>();
+	for (ColumnGroup group : getColumnGroups()) {
+	    for (ColumnBuilder column : group.columns) {
+		groupMap.put(column, group);
+	    }
+	}
+	HSSFWorkbook book = bookBuilder.getExcelBook();
+	HSSFSheet sheet = book.createSheet();
+	int rownum = startRow;
+	int colnum = startColumn;
+	if (hasHeader) {
+	    if (!groupMap.isEmpty()) {
+		List<ColumnGroup> used = new ArrayList<ColumnGroup>();
+		HSSFRow header = sheet.createRow(rownum++);
+		for (ColumnBuilder column : columns) {
+		    if (groupMap.containsKey(column)) {
+			ColumnGroup group = groupMap.get(column);
+			if (!used.contains(group)) {
+			    HSSFCell cell = header.createCell(colnum);
+			    group.fillHeader(book, cell);
+			    CellRangeAddress range = new CellRangeAddress(cell.getRowIndex(), cell.getRowIndex(), cell
+				    .getColumnIndex(), cell.getColumnIndex() + group.columns.length - 1);
+			    cell.getRow().getSheet().addMergedRegion(range);
+			    colnum = header.getLastCellNum() + group.columns.length - 1;
+			    used.add(group);
+			}
+		    } else {
+			HSSFCell cell = header.createCell(colnum);
+			column.fillHeader(book, cell);
+			CellRangeAddress range = new CellRangeAddress(cell.getRowIndex(), cell.getRowIndex() + 1, cell
+				.getColumnIndex(), cell.getColumnIndex());
+			cell.getRow().getSheet().addMergedRegion(range);
+			colnum = header.getLastCellNum();
+		    }
+		}
+		colnum = startColumn;
+	    }
+	    HSSFRow header = sheet.createRow(rownum++);
+	    for (ColumnBuilder column : columns) {
+		column.fillHeader(book, header.createCell(colnum));
+		colnum = header.getLastCellNum();
+	    }
+	}
+	for (Item item : items) {
+	    HSSFRow row = sheet.createRow(rownum++);
+	    colnum = startColumn;
+	    for (ColumnBuilder column : columns) {
+		column.fillCell(book, row.createCell(colnum), item);
+		colnum = row.getLastCellNum();
+	    }
+	}
+	for (int i = 0; i < sheet.getLastRowNum(); i++) {
+	    sheet.autoSizeColumn(i);
+	}
     }
 }

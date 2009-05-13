@@ -19,10 +19,17 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import pt.utl.ist.fenix.tools.excel.SimplifiedSpreadsheetBuilder;
+import pt.utl.ist.fenix.tools.excel.SpreadsheetBuilder;
+
+/**
+ * Use new approach to excel table generation: {@link SpreadsheetBuilder} or
+ * {@link SimplifiedSpreadsheetBuilder}.
+ */
 public class Spreadsheet {
 
     public class Row {
-	private List<Object> cells = new ArrayList<Object>();
+	private final List<Object> cells = new ArrayList<Object>();
 
 	protected Row() {
 	}
@@ -63,7 +70,7 @@ public class Spreadsheet {
 
     private String name;
 
-    private List<Object> header;
+    private final List<Object> header;
 
     private List<Row> rows = new ArrayList<Row>();
 

@@ -1,5 +1,8 @@
 package pt.utl.ist.fenix.tools.excel;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,19 +21,32 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 
+import pt.utl.ist.fenix.tools.excel.converters.BigDecimalCellConverter;
+import pt.utl.ist.fenix.tools.excel.converters.CellConverter;
+import pt.utl.ist.fenix.tools.excel.converters.DateTimeCellConverter;
+import pt.utl.ist.fenix.tools.excel.converters.IntegerCellConverter;
+import pt.utl.ist.fenix.tools.excel.converters.LocalDateCellConverter;
+import pt.utl.ist.fenix.tools.excel.converters.YearMonthDayCellConverter;
 import pt.utl.ist.fenix.tools.excel.styles.CellDataFormat;
 import pt.utl.ist.fenix.tools.excel.styles.CellStyle;
 import pt.utl.ist.fenix.tools.excel.styles.ComposedCellStyle;
 
+/**
+ * Common infrastructure for the Spreadsheet builder. Handles the conversion,
+ * and style application mechanisms. Subclasses must fill cells using the
+ * {@link #setHeaderValue(HSSFWorkbook, HSSFCell, Object)} and
+ * {@link #setValue(HSSFWorkbook, HSSFCell, Object)} methods.
+ * 
+ * @author Pedro Santos (pedro.miguel.santos@ist.utl.pt)
+ * 
+ * @param <Item>
+ *            The type of object that is used to fill the lines.
+ */
 public abstract class AbstractSpreadsheetBuilder<Item> {
-    protected static Map<Class<?>, CellConverter> BASE_CONVERTERS;
+    private static Map<Class<?>, CellConverter> BASE_CONVERTERS;
 
-    /*
-     * this is a fallback map used to convert any object build in a column with
-     * no custom converter, it is applied by object type and there can be no
-     * more that one converter for any given type.
-     */
     static {
+	// TODO: grow this list to all common basic types.
 	BASE_CONVERTERS = new HashMap<Class<?>, CellConverter>();
 	BASE_CONVERTERS.put(Integer.class, new IntegerCellConverter());
 	BASE_CONVERTERS.put(DateTime.class, new DateTimeCellConverter());
@@ -39,13 +55,13 @@ public abstract class AbstractSpreadsheetBuilder<Item> {
 	BASE_CONVERTERS.put(BigDecimal.class, new BigDecimalCellConverter());
     }
 
-    protected Map<Class<?>, CellConverter> converters = new HashMap<Class<?>, CellConverter>();
+    private final Map<Class<?>, CellConverter> converters = new HashMap<Class<?>, CellConverter>(BASE_CONVERTERS);
 
-    protected static CellStyle HEADER_STYLE = CellStyle.HEADER_STYLE;
+    private static CellStyle HEADER_STYLE = CellStyle.HEADER_STYLE;
 
-    protected CellStyle headerStyle = HEADER_STYLE;
+    private CellStyle headerStyle = HEADER_STYLE;
 
-    protected static Map<Class<?>, CellStyle> TYPE_STYLES;
+    private static Map<Class<?>, CellStyle> TYPE_STYLES;
 
     static {
 	TYPE_STYLES = new HashMap<Class<?>, CellStyle>();
@@ -54,32 +70,103 @@ public abstract class AbstractSpreadsheetBuilder<Item> {
 	TYPE_STYLES.put(LocalDate.class, new CellDataFormat("dd/MM/yyyy"));
     }
 
-    protected Map<Class<?>, CellStyle> typeStyles = new HashMap<Class<?>, CellStyle>(TYPE_STYLES);
+    private final Map<Class<?>, CellStyle> typeStyles = new HashMap<Class<?>, CellStyle>(TYPE_STYLES);
 
-    protected static List<CellStyle> ROW_STYLES = Collections.emptyList();
+    private static List<CellStyle> ROW_STYLES = Collections.emptyList();
 
-    protected List<CellStyle> rowStyles = new ArrayList<CellStyle>(ROW_STYLES);
+    private List<CellStyle> rowStyles = new ArrayList<CellStyle>(ROW_STYLES);
 
-    protected Object convert(Object content) {
+    private Object convert(Object content) {
 	if (converters.containsKey(content.getClass())) {
 	    CellConverter converter = converters.get(content.getClass());
-	    return converter.convert(content);
-	}
-	if (BASE_CONVERTERS.containsKey(content.getClass())) {
-	    CellConverter converter = BASE_CONVERTERS.get(content.getClass());
 	    return converter.convert(content);
 	}
 	return content;
     }
 
+    /**
+     * Adds a custom type converter.
+     * 
+     * @param type
+     *            The type of object to be converted
+     * @param converter
+     *            The converter class
+     */
     protected void addConverter(Class<?> type, CellConverter converter) {
 	converters.put(type, converter);
     }
 
+    /**
+     * Overrides the header style.
+     * 
+     * @param style
+     *            The style specification
+     */
+    protected void setHeaderStyle(CellStyle style) {
+	headerStyle = style;
+    }
+
+    /**
+     * Merges the specified style the the existing header style.
+     * 
+     * @param style
+     *            The style specification
+     */
+    protected void appendHeaderStyle(CellStyle style) {
+	headerStyle = style;
+    }
+
+    /**
+     * Adds a new style by object type.
+     * 
+     * @param type
+     *            The type of object (before conversion) on which all cells of
+     *            that object have the specified style applied.
+     * @param style
+     *            The style specification
+     */
+    protected void addTypeStyle(Class<?> type, CellStyle style) {
+	typeStyles.put(type, style);
+    }
+
+    /**
+     * Adds a set of row styles. If more than one is specified they are applied
+     * alternated on the lines, this can be used to achieve that grey/white line
+     * background alternation.
+     * 
+     * @param styles
+     *            A set of style specifications
+     */
+    protected void setRowStyle(CellStyle... styles) {
+	rowStyles = Arrays.asList(styles);
+    }
+
+    /**
+     * Sets a header cell to the specified value, converts the object if needed,
+     * and decides the style to apply.
+     * 
+     * @param book
+     *            The excel book.
+     * @param cell
+     *            The header cell to fill.
+     * @param value
+     *            The value to fill it with.
+     */
     protected void setHeaderValue(HSSFWorkbook book, HSSFCell cell, Object value) {
 	setValue(book, cell, value, headerStyle.getStyle(book));
     }
 
+    /**
+     * Sets a cell to the specified value, converts the object if needed, and
+     * decides the style to apply.
+     * 
+     * @param book
+     *            The excel book.
+     * @param cell
+     *            The cell to fill.
+     * @param value
+     *            The value to fill it with.
+     */
     protected void setValue(HSSFWorkbook book, HSSFCell cell, Object value) {
 	ComposedCellStyle style = new ComposedCellStyle();
 	if (!rowStyles.isEmpty()) {
@@ -115,17 +202,17 @@ public abstract class AbstractSpreadsheetBuilder<Item> {
 	cell.setCellStyle(style);
     }
 
-    protected void setHeaderStyle(CellStyle style) {
-	headerStyle = style;
-    }
-
-    protected void addTypeStyle(Class<?> type, CellStyle style) {
-	typeStyles.put(type, style);
-    }
-
-    protected void setRowStyle(CellStyle... styles) {
-	rowStyles = Arrays.asList(styles);
-    }
-
     abstract void build(WorkbookBuilder book);
+
+    public void build(WorkbookExportFormat format, String filename) throws IOException {
+	new WorkbookBuilder().add(this).build(format, filename);
+    }
+
+    public void build(WorkbookExportFormat format, File file) throws IOException {
+	new WorkbookBuilder().add(this).build(format, file);
+    }
+
+    public void build(WorkbookExportFormat format, OutputStream output) throws IOException {
+	new WorkbookBuilder().add(this).build(format, output);
+    }
 }

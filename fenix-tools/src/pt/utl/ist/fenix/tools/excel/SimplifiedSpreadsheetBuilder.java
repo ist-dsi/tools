@@ -1,8 +1,5 @@
 package pt.utl.ist.fenix.tools.excel;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +8,12 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+/**
+ * @author Pedro Santos (pedro.miguel.santos@ist.utl.pt)
+ * 
+ * @param <Item>
+ *            The type of object that is used to fill the lines.
+ */
 public abstract class SimplifiedSpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilder<Item> {
 
     private final Collection<Item> items;
@@ -33,7 +36,7 @@ public abstract class SimplifiedSpreadsheetBuilder<Item> extends AbstractSpreads
     protected abstract void makeLine(Item item);
 
     @Override
-    void build(WorkbookBuilder bookBuilder) {
+    final void build(WorkbookBuilder bookBuilder) {
 	isHeader = true;
 	for (final Item item : items) {
 	    current = new ArrayList<Object>();
@@ -58,17 +61,8 @@ public abstract class SimplifiedSpreadsheetBuilder<Item> extends AbstractSpreads
 		setValue(book, row.createCell(colnum++), value);
 	    }
 	}
-    }
-
-    public void build(WorkbookExportFormat format, String filename) throws IOException {
-	new WorkbookBuilder().add(this).build(format, filename);
-    }
-
-    public void build(WorkbookExportFormat format, File file) throws IOException {
-	new WorkbookBuilder().add(this).build(format, file);
-    }
-
-    public void build(WorkbookExportFormat format, OutputStream output) throws IOException {
-	new WorkbookBuilder().add(this).build(format, output);
+	for (int i = 0; i < sheet.getLastRowNum(); i++) {
+	    sheet.autoSizeColumn(i);
+	}
     }
 }

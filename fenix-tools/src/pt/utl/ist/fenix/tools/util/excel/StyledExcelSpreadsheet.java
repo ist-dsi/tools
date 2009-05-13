@@ -22,19 +22,21 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import pt.utl.ist.fenix.tools.excel.SimplifiedSpreadsheetBuilder;
 import pt.utl.ist.fenix.tools.excel.SpreadsheetBuilder;
 
 /**
- * Use new approach to excel table generation: {@link SpreadsheetBuilder}
+ * Use new approach to excel table generation: {@link SpreadsheetBuilder} or
+ * {@link SimplifiedSpreadsheetBuilder}.
  */
 public class StyledExcelSpreadsheet {
-    private HSSFWorkbook workbook;
+    private final HSSFWorkbook workbook;
 
     private HSSFSheet sheet;
 
-    private ExcelStyle excelStyle;
+    private final ExcelStyle excelStyle;
 
-    private boolean wrapText;
+    private final boolean wrapText;
 
     private static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("dd/MM/yyyy");
 

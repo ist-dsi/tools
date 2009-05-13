@@ -1,4 +1,4 @@
-package pt.utl.ist.fenix.tools.excel;
+package pt.utl.ist.fenix.tools.excel.converters;
 
 /**
  * Converter from some domain entity that is to be set on an cell to a type that
