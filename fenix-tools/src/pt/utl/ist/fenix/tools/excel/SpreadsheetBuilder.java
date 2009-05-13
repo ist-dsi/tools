@@ -370,4 +370,9 @@ public abstract class SpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilde
 
 	return String.format(builder.toString(), args.toArray());
     }
+
+    @Override
+    void build(WorkbookBuilder book) {
+	// Unsuppoted
+    }
 }
