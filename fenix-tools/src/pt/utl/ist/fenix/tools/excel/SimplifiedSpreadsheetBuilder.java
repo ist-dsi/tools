@@ -7,20 +7,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 public abstract class SimplifiedSpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilder<Item> {
+
     private final Collection<Item> items;
-
     private boolean isHeader;
-
     private final List<String> headers = new ArrayList<String>();
-
     private final List<List<Object>> matrix = new ArrayList<List<Object>>();
-
     private List<Object> current;
 
     public SimplifiedSpreadsheetBuilder(Collection<Item> items) {
@@ -39,26 +35,27 @@ public abstract class SimplifiedSpreadsheetBuilder<Item> extends AbstractSpreads
     @Override
     void build(WorkbookBuilder bookBuilder) {
 	isHeader = true;
-	for (Item item : items) {
+	for (final Item item : items) {
 	    current = new ArrayList<Object>();
 	    makeLine(item);
 	    matrix.add(current);
 	    isHeader = false;
 	}
-	HSSFWorkbook book = bookBuilder.getExcelBook();
-	HSSFSheet sheet = book.createSheet();
+	final HSSFWorkbook book = bookBuilder.getExcelBook();
+	final HSSFSheet sheet = book.createSheet();
 	int rownum = 0;
 	int colnum = 0;
-	HSSFRow headerRow = sheet.createRow(rownum++);
-	for (String headerString : headers) {
-	    headerRow.createCell(colnum++).setCellValue(headerString);
+
+	final HSSFRow headerRow = sheet.createRow(rownum++);
+	for (final String headerString : headers) {
+	    setHeaderValue(book, headerRow.createCell(colnum++), headerString);
 	}
-	for (List<Object> line : matrix) {
+
+	for (final List<Object> line : matrix) {
 	    colnum = 0;
-	    HSSFRow row = sheet.createRow(rownum++);
-	    for (Object value : line) {
-		HSSFCell cell = row.createCell(colnum++);
-		setValue(book, cell, value);
+	    final HSSFRow row = sheet.createRow(rownum++);
+	    for (final Object value : line) {
+		setValue(book, row.createCell(colnum++), value);
 	    }
 	}
     }

@@ -5,6 +5,6 @@ import org.joda.time.DateTime;
 public class DateTimeCellConverter implements CellConverter {
     @Override
     public Object convert(Object source) {
-	return ((DateTime) source).toDate();
+	return (source != null) ? ((DateTime) source).toDate() : null;
     }
 }

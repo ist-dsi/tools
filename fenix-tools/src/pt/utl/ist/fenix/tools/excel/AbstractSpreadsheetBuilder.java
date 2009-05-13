@@ -1,5 +1,6 @@
 package pt.utl.ist.fenix.tools.excel;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,6 +16,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.YearMonthDay;
 
 import pt.utl.ist.fenix.tools.excel.styles.CellDataFormat;
 import pt.utl.ist.fenix.tools.excel.styles.CellStyle;
@@ -32,6 +34,9 @@ public abstract class AbstractSpreadsheetBuilder<Item> {
 	BASE_CONVERTERS = new HashMap<Class<?>, CellConverter>();
 	BASE_CONVERTERS.put(Integer.class, new IntegerCellConverter());
 	BASE_CONVERTERS.put(DateTime.class, new DateTimeCellConverter());
+	BASE_CONVERTERS.put(YearMonthDay.class, new YearMonthDayCellConverter());
+	BASE_CONVERTERS.put(LocalDate.class, new LocalDateCellConverter());
+	BASE_CONVERTERS.put(BigDecimal.class, new BigDecimalCellConverter());
     }
 
     protected Map<Class<?>, CellConverter> converters = new HashMap<Class<?>, CellConverter>();
@@ -44,7 +49,9 @@ public abstract class AbstractSpreadsheetBuilder<Item> {
 
     static {
 	TYPE_STYLES = new HashMap<Class<?>, CellStyle>();
-	TYPE_STYLES.put(LocalDate.class, new CellDataFormat());
+	TYPE_STYLES.put(DateTime.class, new CellDataFormat());
+	TYPE_STYLES.put(YearMonthDay.class, new CellDataFormat("dd/MM/yyyy"));
+	TYPE_STYLES.put(LocalDate.class, new CellDataFormat("dd/MM/yyyy"));
     }
 
     protected Map<Class<?>, CellStyle> typeStyles = new HashMap<Class<?>, CellStyle>(TYPE_STYLES);
