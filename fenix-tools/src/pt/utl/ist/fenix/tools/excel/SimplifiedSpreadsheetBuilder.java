@@ -16,13 +16,19 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public abstract class SimplifiedSpreadsheetBuilder<Item> extends AbstractSpreadsheetBuilder<Item> {
 
+    private final String sheetname;
     private final Collection<Item> items;
     private boolean isHeader;
     private final List<String> headers = new ArrayList<String>();
     private final List<List<Object>> matrix = new ArrayList<List<Object>>();
     private List<Object> current;
 
-    public SimplifiedSpreadsheetBuilder(Collection<Item> items) {
+    public SimplifiedSpreadsheetBuilder(final Collection<Item> items) {
+	this(null, items);
+    }
+
+    public SimplifiedSpreadsheetBuilder(final String sheetname, final Collection<Item> items) {
+	this.sheetname = sheetname;
 	this.items = items;
     }
 
@@ -45,7 +51,7 @@ public abstract class SimplifiedSpreadsheetBuilder<Item> extends AbstractSpreads
 	    isHeader = false;
 	}
 	final HSSFWorkbook book = bookBuilder.getExcelBook();
-	final HSSFSheet sheet = book.createSheet();
+	final HSSFSheet sheet = createSheet(book);
 	int rownum = 0;
 	int colnum = 0;
 
@@ -64,5 +70,13 @@ public abstract class SimplifiedSpreadsheetBuilder<Item> extends AbstractSpreads
 	for (int i = 0; i < sheet.getLastRowNum(); i++) {
 	    sheet.autoSizeColumn(i);
 	}
+    }
+
+    private HSSFSheet createSheet(final HSSFWorkbook book) {
+	return hasSheetName() ? book.createSheet(this.sheetname) : book.createSheet();
+    }
+
+    private boolean hasSheetName() {
+	return sheetname != null && !sheetname.isEmpty();
     }
 }
