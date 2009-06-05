@@ -101,7 +101,7 @@ public class EmailSender {
 
 	final Collection<String> unsentAddresses = new ArrayList<String>(0);
 
-	final String from = constructFromString(fromName, fromAddress);
+	final String from = encode(constructFromString(fromName, fromAddress));
 	final boolean hasToAddresses = (toAddresses != null && !toAddresses.isEmpty()) ? true : false;
 	final boolean hasCCAddresses = (ccAddresses != null && !ccAddresses.isEmpty()) ? true : false;
 
@@ -119,7 +119,7 @@ public class EmailSender {
 	if (hasToAddresses || hasCCAddresses) {
 	    try {
 		final MimeMessage mimeMessageTo = new MimeMessage(session);
-		mimeMessageTo.setFrom(new InternetAddress(encode(from)));
+		mimeMessageTo.setFrom(new InternetAddress(from));
 		mimeMessageTo.setSubject(encode(subject));
 		mimeMessageTo.setReplyTo(replyToAddresses);
 
@@ -161,7 +161,8 @@ public class EmailSender {
 		    subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i + MAX_MAIL_RECIPIENTS));
 		    final Message message = new MimeMessage(session);
 		    message.setFrom(new InternetAddress(from));
-		    message.setSubject(subject);
+		    message.setSubject(encode(subject));
+		    message.setReplyTo(replyToAddresses);
 
 		    final MimeMultipart mimeMultipart = new MimeMultipart();
 		    final BodyPart bodyPart = new MimeBodyPart();
