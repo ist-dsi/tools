@@ -167,6 +167,25 @@ public class FileUtils {
 	return temporaryFile;
     }
 
+    public static File copyToTemporaryFile(final InputStream inputStream, String filename) throws IOException {
+	File tempDir = pt.utl.ist.fenix.tools.file.utils.FileUtils.createTemporaryDir("copy", "temp");
+	File temporaryFile = new File(tempDir.getPath() + File.separator + filename);
+	temporaryFile.deleteOnExit();
+
+	FileOutputStream targetFileOutputStream = null;
+	try {
+	    targetFileOutputStream = new FileOutputStream(temporaryFile);
+	    copy(inputStream, targetFileOutputStream);
+	} finally {
+	    if (targetFileOutputStream != null) {
+		targetFileOutputStream.close();
+	    }
+	    inputStream.close();
+	}
+
+	return temporaryFile;
+    }
+
     public static String getFilenameOnly(final String filename) {
 	for (final char separatorChar : SEPARATOR_CHARS) {
 	    if (filename.lastIndexOf(separatorChar) != -1) {
@@ -175,6 +194,10 @@ public class FileUtils {
 	}
 
 	return filename;
+    }
+
+    public static File createTemporaryDir(String prefix, String suffix) throws IOException {
+	return pt.utl.ist.fenix.tools.file.utils.FileUtils.createTemporaryDir(prefix, suffix);
     }
 
 }
