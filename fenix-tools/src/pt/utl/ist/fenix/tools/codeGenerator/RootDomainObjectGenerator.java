@@ -51,7 +51,8 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
                     DomainClass otherDomainClass = (DomainClass) roleSlot.getType();
                     String className = otherDomainClass.getName();
                     if(usedNames.contains(className)){
-                        className = otherDomainClass.getSuperclassName() + className;
+                	continue;
+                        //className = otherDomainClass.getSuperclassName() + className;
                     }
                     
                     if(!className.equals("DomainObject")){
