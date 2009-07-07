@@ -101,7 +101,7 @@ public class EmailSender {
 
 	final Collection<String> unsentAddresses = new ArrayList<String>(0);
 
-	final String from = encode(constructFromString(fromName, fromAddress));
+	final String from = constructFromString(encode(fromName), fromAddress);
 	final boolean hasToAddresses = (toAddresses != null && !toAddresses.isEmpty()) ? true : false;
 	final boolean hasCCAddresses = (ccAddresses != null && !ccAddresses.isEmpty()) ? true : false;
 
@@ -212,7 +212,7 @@ public class EmailSender {
     }
 
     protected static String constructFromString(final String fromName, String fromAddress) {
-	return (fromName == null || fromName.length() == 0) ? fromAddress : StringAppender.append("\"", fromName, "\" <",
+	return (fromName == null || fromName.length() == 0) ? fromAddress : StringAppender.append(fromName, " <",
 		fromAddress, ">");
     }
 
