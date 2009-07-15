@@ -172,7 +172,7 @@ public abstract class AbstractSpreadsheetBuilder<Item> {
 	if (!rowStyles.isEmpty()) {
 	    style.merge(rowStyles.get(cell.getRowIndex() % rowStyles.size()));
 	}
-	if (typeStyles.containsKey(value.getClass())) {
+	if (value != null && typeStyles.containsKey(value.getClass())) {
 	    style.merge(typeStyles.get(value.getClass()));
 	}
 	setValue(book, cell, value, style.getStyle(book));
