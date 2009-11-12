@@ -152,6 +152,7 @@ public class EmailSender {
 		}
 
 		Transport.send(mimeMessageTo);
+		System.out.println(mimeMessageTo.getMessageID());
 		emailSendResult.messageIDs.add(mimeMessageTo.getMessageID());
 	    } catch (SendFailedException e) {
 		registerInvalidAddresses(emailSendResult.unsentAddresses, e, toAddresses, ccAddresses, null);
@@ -188,6 +189,7 @@ public class EmailSender {
 		    addRecipients(message, Message.RecipientType.BCC, subList, emailSendResult.unsentAddresses);
 
 		    Transport.send(message);
+		    System.out.println(message.getMessageID());
 		    emailSendResult.messageIDs.add(message.getMessageID());
 		} catch (SendFailedException e) {
 		    registerInvalidAddresses(emailSendResult.unsentAddresses, e, null, null, subList);
