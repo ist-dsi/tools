@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import javax.mail.Address;
@@ -29,6 +31,18 @@ import pt.utl.ist.fenix.tools.util.StringAppender;
 
 
 public class EmailSender {
+
+    public static class EmailSendResult {
+	final Collection<String> unsentAddresses = new ArrayList<String>(0);
+	final SortedSet<String> messageIDs = new TreeSet<String>();
+
+	public Collection<String> getUnsentAddresses() {
+	    return unsentAddresses;
+	}
+	public SortedSet<String> getMessageIDs() {
+	    return messageIDs;
+	}
+    }
 
     private static final int MAX_MAIL_RECIPIENTS;
 
@@ -91,7 +105,7 @@ public class EmailSender {
 	}
     }
 
-    public static Collection<String> send(final String fromName, final String fromAddress, final String[] replyTos,
+    public static EmailSendResult send(final String fromName, final String fromAddress, final String[] replyTos,
 	    final Collection<String> toAddresses, final Collection<String> ccAddresses, final Collection<String> bccAddresses,
 	    final String subject, final String body) {
 
@@ -99,7 +113,7 @@ public class EmailSender {
 	    throw new NullPointerException("error.from.address.cannot.be.null");
 	}
 
-	final Collection<String> unsentAddresses = new ArrayList<String>(0);
+	final EmailSendResult emailSendResult = new EmailSendResult();
 
 	final String from = constructFromString(encode(fromName), fromAddress);
 	final boolean hasToAddresses = (toAddresses != null && !toAddresses.isEmpty()) ? true : false;
@@ -130,23 +144,24 @@ public class EmailSender {
 		mimeMessageTo.setContent(mimeMultipart);
 
 		if (hasToAddresses) {
-		    addRecipients(mimeMessageTo, Message.RecipientType.TO, toAddresses, unsentAddresses);
+		    addRecipients(mimeMessageTo, Message.RecipientType.TO, toAddresses, emailSendResult.unsentAddresses);
 		}
 
 		if (hasCCAddresses) {
-		    addRecipients(mimeMessageTo, Message.RecipientType.CC, ccAddresses, unsentAddresses);
+		    addRecipients(mimeMessageTo, Message.RecipientType.CC, ccAddresses, emailSendResult.unsentAddresses);
 		}
 
 		Transport.send(mimeMessageTo);
+		emailSendResult.messageIDs.add(mimeMessageTo.getMessageID());
 	    } catch (SendFailedException e) {
-		registerInvalidAddresses(unsentAddresses, e, toAddresses, ccAddresses, null);
+		registerInvalidAddresses(emailSendResult.unsentAddresses, e, toAddresses, ccAddresses, null);
 	    } catch (MessagingException e) {
 		if (toAddresses != null) {
-		    unsentAddresses.addAll(toAddresses);
+		    emailSendResult.unsentAddresses.addAll(toAddresses);
 		}
 
 		if (ccAddresses != null) {
-		    unsentAddresses.addAll(ccAddresses);
+		    emailSendResult.unsentAddresses.addAll(ccAddresses);
 		}
 
 		e.printStackTrace();
@@ -159,7 +174,7 @@ public class EmailSender {
 		List<String> subList = null;
 		try {
 		    subList = bccAddressesList.subList(i, Math.min(bccAddressesList.size(), i + MAX_MAIL_RECIPIENTS));
-		    final Message message = new MimeMessage(session);
+		    final MimeMessage message = new MimeMessage(session);
 		    message.setFrom(new InternetAddress(from));
 		    message.setSubject(encode(subject));
 		    message.setReplyTo(replyToAddresses);
@@ -170,15 +185,15 @@ public class EmailSender {
 		    mimeMultipart.addBodyPart(bodyPart);
 		    message.setContent(mimeMultipart);
 
-		    addRecipients(message, Message.RecipientType.BCC, subList, unsentAddresses);
+		    addRecipients(message, Message.RecipientType.BCC, subList, emailSendResult.unsentAddresses);
 
 		    Transport.send(message);
-
+		    emailSendResult.messageIDs.add(message.getMessageID());
 		} catch (SendFailedException e) {
-		    registerInvalidAddresses(unsentAddresses, e, null, null, subList);
+		    registerInvalidAddresses(emailSendResult.unsentAddresses, e, null, null, subList);
 		} catch (MessagingException e) {
 		    if (subList != null) {
-			unsentAddresses.addAll(subList);
+			emailSendResult.unsentAddresses.addAll(subList);
 		    }
 
 		    e.printStackTrace();
@@ -186,7 +201,7 @@ public class EmailSender {
 	    }
 	}
 
-	return unsentAddresses;
+	return emailSendResult;
     }
 
     protected static void registerInvalidAddresses(final Collection<String> unsentAddresses, final SendFailedException e,
