@@ -98,7 +98,7 @@ public class EmailSender {
 
     private static String encode(final String string) {
 	try {
-	    return MimeUtility.encodeText(string);
+	    return string == null ? "" : MimeUtility.encodeText(string);
 	} catch (final UnsupportedEncodingException e) {
 	    e.printStackTrace();
 	    return string;
