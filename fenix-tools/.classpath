@@ -31,7 +31,7 @@
 	<classpathentry kind="lib" path="lib/commons-beanutils-core-1.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="lib/dml-20090519.jar"/>
-	<classpathentry kind="lib" path="lib/fenix-framework-r42156.jar"/>
+	<classpathentry kind="lib" path="lib/dml-20091101.jar"/>
+	<classpathentry kind="lib" path="lib/fenix-framework-r44585.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>
