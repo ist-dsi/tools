@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class MultiLanguageString implements Serializable, Comparable<MultiLanguageString> {
 
-    private Map<Language, String> contentsMap;
+    private final Map<Language, String> contentsMap;
 
     public MultiLanguageString() {
 	this.contentsMap = new HashMap<Language, String>();
@@ -118,6 +118,22 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 	    result.append(value);
 	}
 	return result.toString();
+    }
+
+    public MultiLanguageString append(MultiLanguageString string) {
+	MultiLanguageString result = new MultiLanguageString();
+	for (Language language : getAllLanguages()) {
+	    result.setContent(language, getContent(language) + string.getContent(language));
+	}
+	return this;
+    }
+
+    public MultiLanguageString append(String string) {
+	MultiLanguageString result = new MultiLanguageString();
+	for (Language language : getAllLanguages()) {
+	    result.setContent(language, getContent(language) + string);
+	}
+	return this;
     }
 
     /**
