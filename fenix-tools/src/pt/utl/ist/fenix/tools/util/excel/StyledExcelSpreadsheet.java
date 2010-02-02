@@ -22,12 +22,10 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
-import pt.utl.ist.fenix.tools.excel.SimplifiedSpreadsheetBuilder;
-import pt.utl.ist.fenix.tools.excel.SpreadsheetBuilder;
+import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
 
 /**
- * Use new approach to excel table generation: {@link SpreadsheetBuilder} or
- * {@link SimplifiedSpreadsheetBuilder}.
+ * Use new approach to excel table generation: {@link SpreadsheetBuilder}.
  */
 public class StyledExcelSpreadsheet {
     private final HSSFWorkbook workbook;

@@ -19,12 +19,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import pt.utl.ist.fenix.tools.excel.SimplifiedSpreadsheetBuilder;
-import pt.utl.ist.fenix.tools.excel.SpreadsheetBuilder;
+import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
 
 /**
- * Use new approach to excel table generation: {@link SpreadsheetBuilder} or
- * {@link SimplifiedSpreadsheetBuilder}.
+ * Use new approach to excel table generation: {@link SpreadsheetBuilder}.
  */
 public class Spreadsheet {
 
