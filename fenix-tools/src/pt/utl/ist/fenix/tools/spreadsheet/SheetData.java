@@ -32,7 +32,7 @@ public abstract class SheetData<Item> {
     private boolean isHeader;
     private List<Cell> current;
 
-    public SheetData(List<Item> items) {
+    public SheetData(Iterable<Item> items) {
 	isHeader = true;
 	headers.add(new ArrayList<Cell>());
 	for (final Item item : items) {
@@ -59,6 +59,10 @@ public abstract class SheetData<Item> {
 	    headers.get(0).add(new Cell(header, (short) 1));
 	}
 	addCell(value);
+    }
+
+    protected void addCell(String upHeader, short upSpan, String header, short span, Object value, short valueSpan) {
+	addCell(new String[] { upHeader, header }, new short[] { upSpan, span }, value, valueSpan);
     }
 
     protected void addCell(String[] headers, short[] headerSpans, Object value, short valueSpan) {
