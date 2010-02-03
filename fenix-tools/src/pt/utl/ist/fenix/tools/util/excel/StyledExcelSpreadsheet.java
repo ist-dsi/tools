@@ -28,6 +28,8 @@ import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
  * Use new approach to excel table generation: {@link SpreadsheetBuilder}.
  */
 public class StyledExcelSpreadsheet {
+    private static final String EMPTY_STRING = "";
+
     private final HSSFWorkbook workbook;
 
     private HSSFSheet sheet;
@@ -186,7 +188,7 @@ public class StyledExcelSpreadsheet {
 
     public void addCell(Object value, boolean wrap) {
 	if (value == null) {
-	    value = "";
+	    value = EMPTY_STRING;
 	}
 	addCell(value, getDefaultExcelStyle(value), getNextWritableCell(), wrap);
     }
@@ -208,12 +210,17 @@ public class StyledExcelSpreadsheet {
     }
 
     private void addCell(Object value, HSSFCellStyle newStyle, int columnNumber, boolean wrap) {
+	if (value == null) {
+	    value = EMPTY_STRING;
+	}
 	if (value instanceof String) {
 	    addCell((String) value, newStyle, columnNumber, wrap);
 	} else if (value instanceof Integer) {
 	    addCell((Integer) value, newStyle, columnNumber, wrap);
 	} else if (value instanceof Double) {
 	    addCell((Double) value, newStyle, columnNumber, wrap);
+	} else {
+	    addCell(value.toString(), newStyle, columnNumber, wrap);
 	}
     }
 
