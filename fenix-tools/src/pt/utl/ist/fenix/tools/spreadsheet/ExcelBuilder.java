@@ -32,6 +32,7 @@ import pt.utl.ist.fenix.tools.spreadsheet.converters.excel.BigDecimalCellConvert
 import pt.utl.ist.fenix.tools.spreadsheet.converters.excel.DateTimeCellConverter;
 import pt.utl.ist.fenix.tools.spreadsheet.converters.excel.IntegerCellConverter;
 import pt.utl.ist.fenix.tools.spreadsheet.converters.excel.LocalDateCellConverter;
+import pt.utl.ist.fenix.tools.spreadsheet.converters.excel.MultiLanguageStringCellConverter;
 import pt.utl.ist.fenix.tools.spreadsheet.converters.excel.YearMonthDayCellConverter;
 import pt.utl.ist.fenix.tools.spreadsheet.styles.CellAlignment;
 import pt.utl.ist.fenix.tools.spreadsheet.styles.CellBorder;
@@ -58,6 +59,7 @@ class ExcelBuilder extends AbstractSheetBuilder {
 	BASE_CONVERTERS.put(YearMonthDay.class, new YearMonthDayCellConverter());
 	BASE_CONVERTERS.put(LocalDate.class, new LocalDateCellConverter());
 	BASE_CONVERTERS.put(BigDecimal.class, new BigDecimalCellConverter());
+	BASE_CONVERTERS.put(MultiLanguageStringCellConverter.class, new MultiLanguageStringCellConverter());
     }
 
     private static Map<Class<?>, CellStyle> TYPE_STYLES;

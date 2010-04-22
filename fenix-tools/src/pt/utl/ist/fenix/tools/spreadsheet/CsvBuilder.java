@@ -24,6 +24,7 @@ import pt.utl.ist.fenix.tools.spreadsheet.converters.csv.CalendarCellConverter;
 import pt.utl.ist.fenix.tools.spreadsheet.converters.csv.DateCellConverter;
 import pt.utl.ist.fenix.tools.spreadsheet.converters.csv.DateTimeCellConverter;
 import pt.utl.ist.fenix.tools.spreadsheet.converters.csv.LocalDateCellConverter;
+import pt.utl.ist.fenix.tools.spreadsheet.converters.csv.MultiLanguageStringCellConverter;
 import pt.utl.ist.fenix.tools.spreadsheet.converters.csv.YearMonthDayCellConverter;
 
 class CsvBuilder extends AbstractSheetBuilder {
@@ -38,6 +39,7 @@ class CsvBuilder extends AbstractSheetBuilder {
 	BASE_CONVERTERS.put(GregorianCalendar.class, new CalendarCellConverter());
 	BASE_CONVERTERS.put(Date.class, new DateCellConverter());
 	BASE_CONVERTERS.put(BigDecimal.class, new BigDecimalCellConverter());
+	BASE_CONVERTERS.put(MultiLanguageStringCellConverter.class, new MultiLanguageStringCellConverter());
     }
 
     {
