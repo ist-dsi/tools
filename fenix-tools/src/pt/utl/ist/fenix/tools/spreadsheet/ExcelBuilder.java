@@ -101,6 +101,10 @@ class ExcelBuilder extends AbstractSheetBuilder {
 
     private StyleCache styleCache;
 
+    int usefulAreaStart;
+
+    int usefulAreaEnd;
+
     protected void setHeaderStyle(CellStyle style) {
 	headerStyle = style;
     }
@@ -146,6 +150,8 @@ class ExcelBuilder extends AbstractSheetBuilder {
 		cell.setCellValue((Date) content);
 	    } else if (content instanceof RichTextString) {
 		cell.setCellValue((RichTextString) content);
+	    } else if (content instanceof Formula) {
+		cell.setCellFormula(((Formula) content).getFormula(cell, usefulAreaStart, usefulAreaEnd));
 	    } else {
 		cell.setCellValue(content.toString());
 	    }
@@ -181,10 +187,20 @@ class ExcelBuilder extends AbstractSheetBuilder {
 			}
 		    }
 		}
+		usefulAreaStart = rownum;
 		for (final List<Cell> line : data.matrix) {
 		    colnum = 0;
 		    final HSSFRow row = sheet.createRow(rownum++);
 		    for (Cell cell : line) {
+			setValue(book, row.createCell(colnum++), cell.value, cell.span);
+			colnum = colnum + cell.span - 1;
+		    }
+		}
+		usefulAreaEnd = rownum - 1;
+		if (data.hasFooter()) {
+		    colnum = 0;
+		    final HSSFRow row = sheet.createRow(rownum++);
+		    for (Cell cell : data.footer) {
 			setValue(book, row.createCell(colnum++), cell.value, cell.span);
 			colnum = colnum + cell.span - 1;
 		    }

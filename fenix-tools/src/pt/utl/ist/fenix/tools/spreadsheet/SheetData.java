@@ -2,6 +2,7 @@ package pt.utl.ist.fenix.tools.spreadsheet;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -29,14 +30,19 @@ public abstract class SheetData<Item> {
 
     final List<List<Cell>> headers = new ArrayList<List<Cell>>();
     final List<List<Cell>> matrix = new ArrayList<List<Cell>>();
+    final List<Cell> footer = new ArrayList<Cell>();
     private boolean isHeader;
+    private boolean isFooter;
     private List<Cell> current;
 
     public SheetData(Iterable<Item> items) {
 	isHeader = true;
 	headers.add(new ArrayList<Cell>());
-	for (final Item item : items) {
+	Iterator<Item> iterator = items.iterator();
+	while (iterator.hasNext()) {
+	    Item item = iterator.next();
 	    current = new ArrayList<Cell>();
+	    isFooter = !iterator.hasNext();
 	    makeLine(item);
 	    matrix.add(current);
 	    isHeader = false;
@@ -54,40 +60,87 @@ public abstract class SheetData<Item> {
      */
     protected abstract void makeLine(Item item);
 
-    protected void addCell(String header, Object value) {
-	if (isHeader) {
-	    headers.get(0).add(new Cell(header, (short) 1));
+    protected void addCell(Object header, Object value) {
+	if (!isFooter) {
+	    if (isHeader) {
+		addHeader(new Object[] { header }, new short[] { 1 });
+	    }
+	    addCell(value);
+	} else {
+	    addFooter(null);
 	}
-	addCell(value);
     }
 
-    protected void addCell(String upHeader, short upSpan, String header, short span, Object value, short valueSpan) {
-	addCell(new String[] { upHeader, header }, new short[] { upSpan, span }, value, valueSpan);
+    protected void addCell(Object upHeader, short upSpan, Object header, short span, Object value, short valueSpan) {
+	addCell(new Object[] { upHeader, header }, new short[] { upSpan, span }, value, valueSpan);
     }
 
-    protected void addCell(String[] headers, short[] headerSpans, Object value, short valueSpan) {
-	if (isHeader) {
-	    int currentColumn = this.headers.get(0).size();
-	    if (this.headers.size() < headers.length) {
-		for (int i = headers.length - this.headers.size(); i > 0; i--) {
-		    this.headers.add(new ArrayList<Cell>());
-		}
+    protected void addCell(Object[] headers, short[] headerSpans, Object value, short valueSpan) {
+	if (!isFooter) {
+	    if (isHeader) {
+		addHeader(headers, headerSpans);
 	    }
-	    for (int i = headers.length - 1; i >= 0; i--) {
-		String header = headers[i];
-		short span = headerSpans[i];
-		List<Cell> headerRow = this.headers.get(headers.length - i - 1);
-		int column = 0;
-		for (Cell cell : headerRow) {
-		    column += cell.span;
-		}
-		if (currentColumn - column > 0) {
-		    headerRow.add(new Cell("", (short) (currentColumn - column)));
-		}
-		headerRow.add(new Cell(header, span));
+	    addCell(value, valueSpan);
+	} else {
+	    addFooter(null);
+	}
+    }
+
+    protected void addCell(Object header, Object value, Object footer) {
+	if (!isFooter) {
+	    if (isHeader) {
+		addHeader(new Object[] { header }, new short[] { 1 });
+	    }
+	    addCell(value);
+	} else {
+	    addFooter(footer, (short) 1);
+	}
+    }
+
+    protected void addCell(Object upHeader, short upSpan, Object header, short span, Object value, short valueSpan,
+	    Object footer, short footerSpan) {
+	addCell(new Object[] { upHeader, header }, new short[] { upSpan, span }, value, valueSpan, footer, footerSpan);
+    }
+
+    protected void addCell(Object[] headers, short[] headerSpans, Object value, short valueSpan, Object footer, short footerSpan) {
+	if (!isFooter) {
+	    if (isHeader) {
+		addHeader(headers, headerSpans);
+	    }
+	    addCell(value, valueSpan);
+	} else {
+	    addFooter(footer, footerSpan);
+	}
+    }
+
+    private void addHeader(Object[] headers, short[] spans) {
+	int currentColumn = this.headers.get(0).size();
+	if (this.headers.size() < headers.length) {
+	    for (int i = headers.length - this.headers.size(); i > 0; i--) {
+		this.headers.add(new ArrayList<Cell>());
 	    }
 	}
-	addCell(value, valueSpan);
+	for (int i = headers.length - 1; i >= 0; i--) {
+	    Object header = headers[i];
+	    short span = spans[i];
+	    List<Cell> headerRow = this.headers.get(headers.length - i - 1);
+	    int column = 0;
+	    for (Cell cell : headerRow) {
+		column += cell.span;
+	    }
+	    if (currentColumn - column > 0) {
+		headerRow.add(new Cell("", (short) (currentColumn - column)));
+	    }
+	    headerRow.add(new Cell(header, span));
+	}
+    }
+
+    private void addFooter(Object footer) {
+	addFooter(footer, (short) 1);
+    }
+
+    private void addFooter(Object footer, short hspan) {
+	this.footer.add(new Cell(footer, hspan));
     }
 
     protected void addCell(Object value) {
@@ -95,6 +148,17 @@ public abstract class SheetData<Item> {
     }
 
     protected void addCell(Object value, short hspan) {
-	current.add(new Cell(value, hspan));
+	this.current.add(new Cell(value, hspan));
+    }
+
+    public boolean hasFooter() {
+	if (!footer.isEmpty()) {
+	    for (Cell cell : footer) {
+		if (cell.value != null) {
+		    return true;
+		}
+	    }
+	}
+	return false;
     }
 }
