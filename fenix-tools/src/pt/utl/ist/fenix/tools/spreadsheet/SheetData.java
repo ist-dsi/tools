@@ -61,12 +61,11 @@ public abstract class SheetData<Item> {
     protected abstract void makeLine(Item item);
 
     protected void addCell(Object header, Object value) {
-	if (!isFooter) {
-	    if (isHeader) {
-		addHeader(new Object[] { header }, new short[] { 1 });
-	    }
-	    addCell(value);
-	} else {
+	if (isHeader) {
+	    addHeader(new Object[] { header }, new short[] { 1 });
+	}
+	addCell(value);
+	if (isFooter) {
 	    addFooter(null);
 	}
     }
@@ -76,23 +75,21 @@ public abstract class SheetData<Item> {
     }
 
     protected void addCell(Object[] headers, short[] headerSpans, Object value, short valueSpan) {
-	if (!isFooter) {
-	    if (isHeader) {
-		addHeader(headers, headerSpans);
-	    }
-	    addCell(value, valueSpan);
-	} else {
+	if (isHeader) {
+	    addHeader(headers, headerSpans);
+	}
+	addCell(value, valueSpan);
+	if (isFooter) {
 	    addFooter(null);
 	}
     }
 
     protected void addCell(Object header, Object value, Object footer) {
-	if (!isFooter) {
-	    if (isHeader) {
-		addHeader(new Object[] { header }, new short[] { 1 });
-	    }
-	    addCell(value);
-	} else {
+	if (isHeader) {
+	    addHeader(new Object[] { header }, new short[] { 1 });
+	}
+	addCell(value);
+	if (isFooter) {
 	    addFooter(footer, (short) 1);
 	}
     }
@@ -103,12 +100,11 @@ public abstract class SheetData<Item> {
     }
 
     protected void addCell(Object[] headers, short[] headerSpans, Object value, short valueSpan, Object footer, short footerSpan) {
-	if (!isFooter) {
-	    if (isHeader) {
-		addHeader(headers, headerSpans);
-	    }
-	    addCell(value, valueSpan);
-	} else {
+	if (isHeader) {
+	    addHeader(headers, headerSpans);
+	}
+	addCell(value, valueSpan);
+	if (isFooter) {
 	    addFooter(footer, footerSpan);
 	}
     }
