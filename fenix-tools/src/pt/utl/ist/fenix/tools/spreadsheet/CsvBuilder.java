@@ -47,6 +47,7 @@ class CsvBuilder extends AbstractSheetBuilder {
     }
 
     public void build(Map<String, SheetData<?>> sheets, OutputStream output, String separator) throws IOException {
+	OutputStreamWriter writer = new OutputStreamWriter(output);
 	try {
 	    List<String> lines = new ArrayList<String>();
 	    for (SheetData<?> data : sheets.values()) {
@@ -73,9 +74,10 @@ class CsvBuilder extends AbstractSheetBuilder {
 		    lines.add(StringUtils.join(column, separator));
 		}
 	    }
-	    new OutputStreamWriter(output).write(StringUtils.join(lines, "\n"));
+	    writer.write(StringUtils.join(lines, "\n"));
 	} finally {
-	    output.close();
+	    writer.flush();
+	    writer.close();
 	}
     }
 }

@@ -159,9 +159,8 @@ class ExcelBuilder extends AbstractSheetBuilder {
 	    cell.setCellValue((String) null);
 	}
 	if (span > 1) {
-	    CellRangeAddress region = new CellRangeAddress(cell.getRowIndex(), cell.getRowIndex(), cell.getColumnIndex(), cell
-		    .getColumnIndex()
-		    + span - 1);
+	    CellRangeAddress region = new CellRangeAddress(cell.getRowIndex(), cell.getRowIndex(), cell.getColumnIndex(),
+		    cell.getColumnIndex() + span - 1);
 	    cell.getSheet().addMergedRegion(region);
 	}
 	cell.setCellStyle(style);
@@ -211,6 +210,7 @@ class ExcelBuilder extends AbstractSheetBuilder {
 	    }
 	    book.write(output);
 	} finally {
+	    output.flush();
 	    output.close();
 	}
     }
