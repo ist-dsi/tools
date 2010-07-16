@@ -36,4 +36,13 @@ public class StringNormalizer {
 	return stringBuilder.toString();
     }
 
+    public static String normalizeAndRemoveNonAlphaNumeric(String string) {
+	return normalizeAndReplaceNonAlphaNumeric(string, "");
+    }
+
+    public static String normalizeAndReplaceNonAlphaNumeric(String string, String replacement) {
+	string = normalize(string);
+	string = string.replaceAll("[^0-9a-zA-Z]", replacement);
+	return string.trim();
+    }
 }
