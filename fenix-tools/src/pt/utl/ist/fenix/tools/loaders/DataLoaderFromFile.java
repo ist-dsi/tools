@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,8 +36,7 @@ public class DataLoaderFromFile<T extends IFileLine> {
     }
 
     public Map<String, T> loadToMap(Class<T> clazz, String fileFullPathAndname) {
-	final String[] data = readFile(fileFullPathAndname);
-	return loadToMap(clazz, data);
+	return loadToMap(clazz, readFile(fileFullPathAndname));
     }
 
     public Collection<T> load(Class<T> clazz, InputStream stream, int size) {
@@ -44,10 +44,17 @@ public class DataLoaderFromFile<T extends IFileLine> {
     }
 
     public Map<String, T> loadToMap(Class<T> clazz, InputStream stream, int size) {
-	final String[] data = readStream(stream, size);
-	return loadToMap(clazz, data);
+	return loadToMap(clazz, readStream(stream, size));
     }
 
+    public Collection<T> load(Class<T> clazz, byte[] contents) {
+	return loadToMap(clazz, readContent(contents)).values();
+    }
+
+    public Map<String, T> loadToMap(Class<T> clazz, byte[] contents) {
+	return loadToMap(clazz, readContent(contents));
+    }
+    
     private Map<String, T> loadToMap(Class<T> clazz, String[] data) {
 	Map<String, T> result = new HashMap<String, T>(data.length);
 
@@ -99,20 +106,26 @@ public class DataLoaderFromFile<T extends IFileLine> {
     
     
     public static String[] readStream(InputStream inputStream, int size) {
-	String fileContents = null;
 	try {
 	    char[] buffer = new char[size];
-	    Reader reader = new InputStreamReader(inputStream, "ISO-8859-1");
+	    Reader reader = new InputStreamReader(inputStream, "UTF-8");
 
 	    reader.read(buffer);
-	    fileContents = new String(buffer);
+	    return new String(buffer).split("\n");
 	} catch (IOException e) {
 	    e.printStackTrace();
 	    throw new RuntimeException();
 	}
-
-	final String[] data = fileContents.split("\n");
-
-	return data;
     }
+    
+    public static String[] readContent(byte[] contents) {
+	try {
+	    String fileContents = new String(contents, "UTF-8");
+	    return fileContents.split("\n");
+	} catch (UnsupportedEncodingException e) {
+	    e.printStackTrace();
+	    throw new RuntimeException();
+	}
+    }
+
 }
