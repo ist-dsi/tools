@@ -122,18 +122,22 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 
     public MultiLanguageString append(MultiLanguageString string) {
 	MultiLanguageString result = new MultiLanguageString();
-	for (Language language : getAllLanguages()) {
-	    result.setContent(language, getContent(language) + string.getContent(language));
+	Set<Language> allLanguages = new HashSet<Language>();
+	allLanguages.addAll(string.getAllLanguages());
+	allLanguages.addAll(getAllLanguages());
+	for (Language language : allLanguages) {
+	    result.setContent(language, StringUtils.defaultString(getContent(language))
+		    + StringUtils.defaultString(string.getContent(language)));
 	}
-	return this;
+	return result;
     }
 
     public MultiLanguageString append(String string) {
 	MultiLanguageString result = new MultiLanguageString();
 	for (Language language : getAllLanguages()) {
-	    result.setContent(language, getContent(language) + string);
+	    result.setContent(language, StringUtils.defaultString(getContent(language)));
 	}
-	return this;
+	return result;
     }
 
     /**
