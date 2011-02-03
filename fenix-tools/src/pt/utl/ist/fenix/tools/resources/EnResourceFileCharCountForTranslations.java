@@ -56,6 +56,8 @@ public class EnResourceFileCharCountForTranslations {
 		final InputStreamReader inputStreamReader = new FileReader(enFilename);
 		final String contents = readFile(inputStreamReader);
 		parseResourceContents(getResourceFileSimpleName(enFilename), contents);
+		System.out.println("partialEnglishCharCount: " + totalEnglishCharCount);
+		System.out.println("partialPortugueseCharCount: " + totalPortugueseCharCount);
 	    } catch (final IOException e) {
 		e.printStackTrace();
 		return;
@@ -98,7 +100,6 @@ public class EnResourceFileCharCountForTranslations {
 		    // so the message does not continue to the next line.
 		    break;
 		}
-		System.out.println("Found a multiline message. Line: " + line);
 		text = text.trim();
 		text = text.substring(0, text.length() - 1);
 		line = lines[++lineNumber];
@@ -109,6 +110,11 @@ public class EnResourceFileCharCountForTranslations {
 	    if (isInPortuguese(resourceFileSimpleName, label, text)) {
 		totalPortugueseCharCount += text.length();
 	    } else {
+		if (text.contains("ç") || text.contains("ã") || text.contains("á") || text.contains("à") || text.contains("â")
+			|| text.contains("é") || text.contains("è") || text.contains("í") || text.contains("ì")
+			|| text.contains("ó") || text.contains("ú") || text.contains("ù")) {
+		    System.out.println("WARNING! THIS TEXT MIGHT NOT BE IN ENGLISH: " + text);
+		}
 		totalEnglishCharCount += text.length();
 	    }
 	    lineNumber++;
