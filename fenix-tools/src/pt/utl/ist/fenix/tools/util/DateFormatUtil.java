@@ -46,9 +46,21 @@ public class DateFormatUtil {
     public static boolean isBefore(final String format, final Date date1, final Date date2) {
 	return compareDates(format, date1, date2) < 0;
     }
+    
+    public static boolean isBeforeOrEqual(final String format, final Date date1, final Date date2) {
+	return compareDates(format, date1, date2) <= 0;
+    }
 
     public static boolean isAfter(final String format, final Date date1, final Date date2) {
 	return compareDates(format, date1, date2) > 0;
+    }
+    
+    public static boolean isAfterOrEqual(final String format, final Date date1, final Date date2) {
+	return compareDates(format, date1, date2) >= 0;
+    }
+    
+    public static boolean isInBetween(final String format, final Date needle, final Date lowerBound, final Date upperBound) {
+	return isAfterOrEqual(format, needle, lowerBound) && isBeforeOrEqual(format, needle, upperBound);
     }
 
 }
