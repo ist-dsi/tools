@@ -2,6 +2,7 @@ package pt.utl.ist.fenix.tools.resources;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EnResourceFileCharCountForTranslations {
+
+    private static final boolean WRITES_ALLOWED = false;
 
     private static final String RESOURCES_FOLDER = "./resources";
     private static final String RESOURCES_FILE_EXTENSION = ".properties";
@@ -51,13 +54,19 @@ public class EnResourceFileCharCountForTranslations {
 	System.out.println("Found " + EN_RESOURCE_FILES.size() + " _en files.");
 	System.out.println("Found " + PT_RESOURCE_FILES.size() + " _pt files.");
 
+	int fileCount = 400;
 	for (String enFilename : EN_RESOURCE_FILES.values()) {
 	    try {
 		final InputStreamReader inputStreamReader = new FileReader(enFilename);
 		final String contents = readFile(inputStreamReader);
+		inputStreamReader.close();
+
 		parseResourceContents(getResourceFileSimpleName(enFilename), contents);
 		System.out.println("partialEnglishCharCount: " + totalEnglishCharCount);
 		System.out.println("partialPortugueseCharCount: " + totalPortugueseCharCount);
+		if (--fileCount == 0) {
+		    break;
+		}
 	    } catch (final IOException e) {
 		e.printStackTrace();
 		return;
@@ -110,11 +119,6 @@ public class EnResourceFileCharCountForTranslations {
 	    if (isInPortuguese(resourceFileSimpleName, label, text)) {
 		totalPortugueseCharCount += text.length();
 	    } else {
-		if (text.contains("ç") || text.contains("ã") || text.contains("á") || text.contains("à") || text.contains("â")
-			|| text.contains("é") || text.contains("è") || text.contains("í") || text.contains("ì")
-			|| text.contains("ó") || text.contains("ú") || text.contains("ù")) {
-		    System.out.println("WARNING! THIS TEXT MIGHT NOT BE IN ENGLISH: " + text);
-		}
 		totalEnglishCharCount += text.length();
 	    }
 	    lineNumber++;
@@ -126,8 +130,9 @@ public class EnResourceFileCharCountForTranslations {
 	try {
 	    final InputStreamReader inputStreamReader = new FileReader(ptResourceFilename);
 	    final String contents = readFile(inputStreamReader);
+	    inputStreamReader.close();
 
-	    String ptText = findTextForLabel(contents, label);
+	    String ptText = findTextForLabel(ptResourceFilename, contents, label, text);
 	    return ptText.equals(text);
 	} catch (final IOException e) {
 	    e.printStackTrace();
@@ -136,7 +141,7 @@ public class EnResourceFileCharCountForTranslations {
 
     }
 
-    private static String findTextForLabel(String contents, String labelToFind) {
+    private static String findTextForLabel(String ptResourceFilename, String contents, String labelToFind, String textInEnglish) {
 	String[] lines = contents.split("\n");
 	int lineNumber = 0;
 	while (lineNumber < lines.length) {
@@ -170,6 +175,19 @@ public class EnResourceFileCharCountForTranslations {
 		return text;
 	    }
 	    lineNumber++;
+	}
+
+	System.out.println("WARNING! THIS LABEL WAS NOT FOUND IN THE PT FILE: " + labelToFind);
+	if (WRITES_ALLOWED) {
+	    try {
+		final FileWriter writer = new FileWriter(ptResourceFilename, true);
+		writer.write('\n' + labelToFind + " = " + textInEnglish);
+		writer.close();
+		System.out.println("LABEL WRITTEN BACK IN THE PT FILE FROM THE EN FILE: " + labelToFind);
+	    } catch (final IOException e) {
+		e.printStackTrace();
+		throw new RuntimeException();
+	    }
 	}
 
 	return "";
