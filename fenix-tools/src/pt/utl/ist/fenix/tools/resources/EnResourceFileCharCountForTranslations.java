@@ -15,6 +15,7 @@ public class EnResourceFileCharCountForTranslations {
     private static final boolean WRITES_ALLOWED = false;
 
     private static final String RESOURCES_FOLDER = "./resources";
+    private static final String RESOURCES_TRANSLATED_FOLDER = "./resourcesTranslated";
     private static final String RESOURCES_FILE_EXTENSION = ".properties";
 
     private static final String RESOURCES_PT_MARKER = "_pt";
@@ -22,15 +23,47 @@ public class EnResourceFileCharCountForTranslations {
 
     private static final Map<String, String> PT_RESOURCE_FILES = new HashMap<String, String>();
     private static final Map<String, String> EN_RESOURCE_FILES = new HashMap<String, String>();
+    private static final Map<String, String> EN_TRANSLATED_RESOURCE_FILES = new HashMap<String, String>();
 
     private static int totalEnglishCharCount = 0;
     private static int totalPortugueseCharCount = 0;
+    private static int totalTranslatedEnglishCharCount = 0;
 
     public static void main(String[] args) {
 	execute();
     }
 
     public static void execute() {
+	countEnAndPtChars();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println("#################################################################################################");
+	System.out.println();
+	System.out.println("#################################################################################################");
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	countPreviouslyEnTranslatedChars();
+    }
+
+    private static void countEnAndPtChars() {
 	File file = new File(RESOURCES_FOLDER);
 	FilenameFilter ptFilter = new FilenameFilter() {
 	    @Override
@@ -78,6 +111,43 @@ public class EnResourceFileCharCountForTranslations {
 	System.out.println("totalPortugueseCharCount: " + totalPortugueseCharCount);
     }
 
+    private static void countPreviouslyEnTranslatedChars() {
+	File file = new File(RESOURCES_TRANSLATED_FOLDER);
+	FilenameFilter enFilter = new FilenameFilter() {
+	    @Override
+	    public boolean accept(File dir, String name) {
+		return name.endsWith(RESOURCES_EN_MARKER + RESOURCES_FILE_EXTENSION);
+	    }
+	};
+
+	for (String resourceFilename : file.list(enFilter)) {
+	    EN_TRANSLATED_RESOURCE_FILES.put(getResourceFileSimpleName(resourceFilename), RESOURCES_TRANSLATED_FOLDER + "/"
+		    + resourceFilename);
+	}
+	System.out.println("Found " + EN_TRANSLATED_RESOURCE_FILES.size() + " _en previously translated files.");
+
+	int fileCount = 400;
+	for (String enFilename : EN_TRANSLATED_RESOURCE_FILES.values()) {
+	    try {
+		final InputStreamReader inputStreamReader = new FileReader(enFilename);
+		final String contents = readFile(inputStreamReader);
+		inputStreamReader.close();
+
+		parseTranslatedResourceContents(getResourceFileSimpleName(enFilename), contents);
+		System.out.println("partialTranslatedEnglishCharCount: " + totalTranslatedEnglishCharCount);
+		if (--fileCount == 0) {
+		    break;
+		}
+	    } catch (final IOException e) {
+		e.printStackTrace();
+		return;
+	    }
+	}
+
+	System.out.println();
+	System.out.println("totalTranslatedEnglishCharCount: " + totalTranslatedEnglishCharCount);
+    }
+
     private static void parseResourceContents(String resourceFileSimpleName, String contents) {
 	System.out.println();
 	System.out.println();
@@ -121,6 +191,50 @@ public class EnResourceFileCharCountForTranslations {
 	    } else {
 		totalEnglishCharCount += text.length();
 	    }
+	    lineNumber++;
+	}
+    }
+
+    private static void parseTranslatedResourceContents(String resourceFileSimpleName, String contents) {
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println();
+	System.out.println("Parsing file: " + resourceFileSimpleName);
+	String[] lines = contents.split("\n");
+	System.out.println("Found " + lines.length + " lines");
+	int lineNumber = 0;
+	while (lineNumber < lines.length) {
+	    String line = lines[lineNumber];
+	    if (shouldIgnoreLine(line, true)) {
+		lineNumber++;
+		continue;
+	    }
+
+	    String[] messageSplit = line.split("=", 2);
+	    if (messageSplit.length == 1) {
+		messageSplit = line.split(":", 2);
+	    }
+	    String label = messageSplit[0].trim();
+
+	    String text = messageSplit[1];
+	    while (text.endsWith("\\")) {
+		Integer numOfSlashes = countNumOfEndingSlashes(text);
+		if ((numOfSlashes % 2) == 0) {
+		    // Pair number of slashes means all the slashes are escaped
+		    // so the message does not continue to the next line.
+		    break;
+		}
+		text = text.trim();
+		text = text.substring(0, text.length() - 1);
+		line = lines[++lineNumber];
+
+		text += line.trim();
+	    }
+
+	    totalTranslatedEnglishCharCount += text.length();
+
 	    lineNumber++;
 	}
     }
