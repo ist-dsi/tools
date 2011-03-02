@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -28,6 +28,7 @@ public class JoinSQLScripts {
         loadDirectories(directoryTree, dir);
 
         System.out.println("Loaded " + directoryTree.size() + " directories, from " + directoryTree.firstKey() + " to " + directoryTree.lastKey());
+        System.out.println("Generate run file from " + fromDateString);
         directoryTree.put("Z_BaseDir", dir);
 
         try {
