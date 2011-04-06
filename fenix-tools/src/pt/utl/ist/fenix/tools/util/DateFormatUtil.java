@@ -62,5 +62,9 @@ public class DateFormatUtil {
     public static boolean isInBetween(final String format, final Date needle, final Date lowerBound, final Date upperBound) {
 	return isAfterOrEqual(format, needle, lowerBound) && isBeforeOrEqual(format, needle, upperBound);
     }
+    
+    public static boolean isInBetweenOpenEnd(final String format, final Date needle, final Date lowerBound, final Date upperBound) {
+	return isAfterOrEqual(format, needle, lowerBound) && isBefore(format, needle, upperBound);
+    }
 
 }
