@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -185,7 +185,8 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 
     @Override
     public String toString() {
-	return getContent();
+	final String content = getContent();
+	return content == null ? StringUtils.EMPTY : content;
     }
 
     public int compareTo(MultiLanguageString languageString) {
