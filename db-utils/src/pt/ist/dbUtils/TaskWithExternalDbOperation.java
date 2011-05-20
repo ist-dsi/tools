@@ -4,6 +4,8 @@ import java.sql.SQLException;
 
 public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOperation_Base {
 
+    private ThreadLocal<DbTransaction> transaction = new InheritableThreadLocal<DbTransaction>();
+
     private class EmbededExternalDbOperation extends ExternalDbOperation {
 
 	private final TaskWithExternalDbOperation instance;
@@ -21,13 +23,26 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
 	protected String getDbPropertyPrefix() {
 	    return instance.getDbPropertyPrefix();
 	}
-	
+
     }
 
     @Override
     public final void executeTask() {
-	final EmbededExternalDbOperation embededExternalDbOperation = new EmbededExternalDbOperation(this);
-	embededExternalDbOperation.execute();
+	try {
+	    final EmbededExternalDbOperation embededExternalDbOperation = new EmbededExternalDbOperation(this);
+	    transaction.set(embededExternalDbOperation);
+	    embededExternalDbOperation.execute();
+	} finally {
+	    transaction.remove();
+	}
+    }
+
+    protected void executeQuery(final ExternalDbQuery externalDbQuery) throws SQLException {
+	final DbTransaction dbTransaction = transaction.get();
+	if (dbTransaction == null) {
+	    throw new Error("error.not.inside.transaction");
+	}
+	dbTransaction.executeQuery(externalDbQuery);
     }
 
     protected abstract String getDbPropertyPrefix();

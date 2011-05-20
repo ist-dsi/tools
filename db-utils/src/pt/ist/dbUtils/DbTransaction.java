@@ -2,6 +2,8 @@ package pt.ist.dbUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import myorg._development.PropertiesManager;
@@ -27,7 +29,28 @@ public abstract class DbTransaction {
 	if (connection == null) {
 	    openConnection();
 	}
-	externalDbQuery.execute(connection);
+	PreparedStatement preparedStatement = null;
+	ResultSet resultSet = null;
+	try {
+	    preparedStatement = connection.prepareStatement(externalDbQuery.getQueryString());
+	    resultSet = preparedStatement.executeQuery();
+	    externalDbQuery.processResultSet(resultSet);
+	} finally {
+	    if (resultSet != null) {
+		try {
+		    resultSet.close();
+		} catch (final SQLException e) {
+		    e.printStackTrace();
+		}
+	    }
+	    if (preparedStatement != null) {
+		try {
+		    preparedStatement.close();
+		} catch (final SQLException e) {
+		    e.printStackTrace();
+		}
+	    }
+	}
     }
 
     protected void openConnection() {
