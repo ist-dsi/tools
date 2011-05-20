@@ -1,0 +1,6 @@
+package pt.ist.dbUtils;
+
+
+class TaskWithExternalDbOperation extends .myorg.domain.scheduler.Task {
+}
+
