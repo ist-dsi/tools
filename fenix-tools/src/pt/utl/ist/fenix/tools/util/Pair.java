@@ -34,4 +34,23 @@ public class Pair<K, V> implements Serializable {
 	return "Pair(" + getKey() + ", " + getValue() + ")";
     }
 
+    @Override
+    public int hashCode() {
+	int keyHashCode = getKey() != null ? getKey().hashCode() : 0;
+	int valueHashCode = getValue() != null ? getValue().hashCode() : 0;
+	return keyHashCode + valueHashCode;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+	if (object == null) {
+	    return false;
+	}
+	Pair<K, V> pair = (Pair<K, V>) object;
+	boolean keyEquals = getKey() != null ? getKey().equals(pair.getKey()) : pair.getKey() == null;
+	if (!keyEquals) {
+	    return false;
+	}
+	return getValue() != null ? getValue().equals(pair.getValue()) : pair.getValue() == null;
+    }
 }
