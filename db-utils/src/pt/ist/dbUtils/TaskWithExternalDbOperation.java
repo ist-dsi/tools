@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOperation_Base {
 
-    private ThreadLocal<DbTransaction> transaction = new InheritableThreadLocal<DbTransaction>();
+    private static ThreadLocal<DbTransaction> transaction = new InheritableThreadLocal<DbTransaction>();
 
     private class EmbededExternalDbOperation extends ExternalDbOperation {
 
