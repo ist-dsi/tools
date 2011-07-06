@@ -1,5 +1,6 @@
 package pt.ist.dbUtils;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,6 +30,15 @@ public abstract class DbTransaction {
 	if (connection == null) {
 	    openConnection();
 	}
+	if (externalDbQuery instanceof ExternalDbCall) {
+	    final ExternalDbCall externalDbCall = (ExternalDbCall) externalDbQuery;
+	    executeCall(externalDbCall);
+	} else {
+	    executeStatement(externalDbQuery);
+	}
+    }
+
+    private void executeStatement(final ExternalDbQuery externalDbQuery) throws SQLException {
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null;
 	try {
@@ -46,6 +56,32 @@ public abstract class DbTransaction {
 	    if (preparedStatement != null) {
 		try {
 		    preparedStatement.close();
+		} catch (final SQLException e) {
+		    e.printStackTrace();
+		}
+	    }
+	}
+    }
+
+    private void executeCall(final ExternalDbCall externalDbCall) throws SQLException {
+	CallableStatement callableStatement = null;
+	ResultSet resultSet = null;
+	try {
+	    callableStatement = connection.prepareCall(externalDbCall.getQueryString());
+	    externalDbCall.prepareCall(callableStatement);
+	    resultSet = callableStatement.executeQuery();
+	    externalDbCall.processResultSet(resultSet, callableStatement);
+	} finally {
+	    if (resultSet != null) {
+		try {
+		    resultSet.close();
+		} catch (final SQLException e) {
+		    e.printStackTrace();
+		}
+	    }
+	    if (callableStatement != null) {
+		try {
+		    callableStatement.close();
 		} catch (final SQLException e) {
 		    e.printStackTrace();
 		}
