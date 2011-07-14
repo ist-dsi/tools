@@ -27,7 +27,7 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
     }
 
     @Override
-    public final void executeTask() {
+    public void executeTask() {
 	try {
 	    final EmbededExternalDbOperation embededExternalDbOperation = new EmbededExternalDbOperation(this);
 	    transaction.set(embededExternalDbOperation);
