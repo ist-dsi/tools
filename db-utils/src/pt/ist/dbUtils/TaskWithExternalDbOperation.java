@@ -43,7 +43,7 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
 	    throw new Error("error.not.inside.transaction");
 	}
 	System.out.println("Executing query: ");
-	System.out.println(externalDbQuery);
+	System.out.println(externalDbQuery.getQueryString());
 	System.out.println();
 	dbTransaction.executeQuery(externalDbQuery);
 	System.out.println();
