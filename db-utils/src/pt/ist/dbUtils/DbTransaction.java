@@ -46,8 +46,8 @@ public abstract class DbTransaction {
 	    if (queryString != null) {
 		preparedStatement = connection.prepareStatement(queryString);
 		resultSet = preparedStatement.executeQuery();
-		externalDbQuery.processResultSet(resultSet);
 	    }
+	    externalDbQuery.processResultSet(resultSet);
 	} finally {
 	    if (resultSet != null) {
 		try {
@@ -70,9 +70,12 @@ public abstract class DbTransaction {
 	CallableStatement callableStatement = null;
 	ResultSet resultSet = null;
 	try {
-	    callableStatement = connection.prepareCall(externalDbCall.getQueryString());
-	    externalDbCall.prepareCall(callableStatement);
-	    resultSet = callableStatement.executeQuery();
+	    final String query = externalDbCall.getQueryString();
+	    if (query != null) {
+		callableStatement = connection.prepareCall(query);
+		externalDbCall.prepareCall(callableStatement);
+		resultSet = callableStatement.executeQuery();
+	    }
 	    externalDbCall.processResultSet(resultSet, callableStatement);
 	} finally {
 	    if (resultSet != null) {
