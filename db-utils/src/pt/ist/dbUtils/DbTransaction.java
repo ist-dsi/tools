@@ -42,9 +42,12 @@ public abstract class DbTransaction {
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null;
 	try {
-	    preparedStatement = connection.prepareStatement(externalDbQuery.getQueryString());
-	    resultSet = preparedStatement.executeQuery();
-	    externalDbQuery.processResultSet(resultSet);
+	    final String queryString = externalDbQuery.getQueryString();
+	    if (queryString != null) {
+		preparedStatement = connection.prepareStatement(queryString);
+		resultSet = preparedStatement.executeQuery();
+		externalDbQuery.processResultSet(resultSet);
+	    }
 	} finally {
 	    if (resultSet != null) {
 		try {
