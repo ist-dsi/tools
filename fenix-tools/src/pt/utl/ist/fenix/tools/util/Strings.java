@@ -66,4 +66,15 @@ public class Strings extends ObjectList<String> implements Serializable {
 	return string.substring(index).indexOf(c);
     }
 
+    public String getPresentationString() {
+	final StringBuilder builder = new StringBuilder();
+	for (final String string : this) {
+	    if (builder.length() > 0) {
+		builder.append(", ");
+	    }
+	    builder.append(string);
+	}
+	return builder.toString();
+    }
+
 }
