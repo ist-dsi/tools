@@ -61,7 +61,7 @@ public class Spreadsheet {
 	    }
 	}
 
-	protected List<Object> getCells() {
+	public List<Object> getCells() {
 	    return Collections.unmodifiableList(cells);
 	}
     }
