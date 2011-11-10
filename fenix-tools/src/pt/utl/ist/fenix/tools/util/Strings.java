@@ -7,36 +7,69 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class Strings extends ObjectList<String> implements Serializable {
+public class Strings implements Serializable {
+
+    private final ArrayList<String> stringList;
 
     public Strings(Collection<String> strings) {
-	super(strings);
+	stringList = new ArrayList<String>(strings);
     }
-    
+
+    public Strings(Strings oldStrings, String... newStrings) {
+	this(oldStrings.getUnmodifiableList());
+	for (String newString : newStrings) {
+	    stringList.add(newString);
+	}
+    }
+
     public Strings(String[] strings) {
 	this(Arrays.asList(strings));
     }
-    
+
     public Strings(String string) {
 	this(Collections.singleton(string));
+    }
+
+    public boolean isEmpty() {
+	return stringList.isEmpty();
+    }
+
+    public int size() {
+	return stringList.size();
+    }
+
+    public boolean contains(String string) {
+	return stringList.contains(string);
     }
 
     public boolean hasString(String string) {
 	return contains(string);
     }
-    
+
+    public Object[] toArray() {
+	return stringList.toArray();
+    }
+
+    public <T> T[] toArray(T[] arrayType) {
+	return stringList.toArray(arrayType);
+    }
+
+    public List<String> getUnmodifiableList() {
+	return Collections.unmodifiableList(stringList);
+    }
+
     public boolean hasStringIgnoreCase(String string) {
-	for (String stringInCollection : this) {
+	for (String stringInCollection : stringList) {
 	    if (stringInCollection.equalsIgnoreCase(string)) {
 		return true;
 	    }
 	}
 	return false;
     }
- 
+
     public String exportAsString() {
 	StringBuilder buffer = new StringBuilder("");
-	for (String string : this) {
+	for (String string : stringList) {
 	    buffer.append(string.length());
 	    buffer.append(":");
 	    buffer.append(string);
@@ -68,7 +101,7 @@ public class Strings extends ObjectList<String> implements Serializable {
 
     public String getPresentationString() {
 	final StringBuilder builder = new StringBuilder();
-	for (final String string : this) {
+	for (final String string : stringList) {
 	    if (builder.length() > 0) {
 		builder.append(", ");
 	    }
