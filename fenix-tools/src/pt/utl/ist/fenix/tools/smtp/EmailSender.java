@@ -6,25 +6,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.Message.RecipientType;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
+import javax.mail.util.ByteArrayDataSource;
 
 import pt.utl.ist.fenix.tools.util.PropertiesManager;
 import pt.utl.ist.fenix.tools.util.StringAppender;
@@ -108,6 +111,14 @@ public class EmailSender {
     public static EmailSendResult send(final String fromName, final String fromAddress, final String[] replyTos,
 	    final Collection<String> toAddresses, final Collection<String> ccAddresses, final Collection<String> bccAddresses,
 	    final String subject, final String body) {
+	return send(fromName, fromAddress, replyTos, toAddresses, ccAddresses, bccAddresses, subject, body,
+		new byte[0][0], new String[0], new String[0]);
+    }
+
+    public static EmailSendResult send(final String fromName, final String fromAddress, final String[] replyTos,
+	    final Collection<String> toAddresses, final Collection<String> ccAddresses, final Collection<String> bccAddresses,
+	    final String subject, final String body,
+	    final byte[][] attachments, final String[] attachmentFilenames, final String[] attachmentTypes) {
 
 	if (fromAddress == null) {
 	    throw new NullPointerException("error.from.address.cannot.be.null");
@@ -138,9 +149,13 @@ public class EmailSender {
 		mimeMessageTo.setReplyTo(replyToAddresses);
 
 		final MimeMultipart mimeMultipart = new MimeMultipart();
+
 		final BodyPart bodyPart = new MimeBodyPart();
 		bodyPart.setText(body);
 		mimeMultipart.addBodyPart(bodyPart);
+
+		addAttachments(mimeMultipart, attachments, attachmentFilenames, attachmentTypes);
+
 		mimeMessageTo.setContent(mimeMultipart);
 
 		if (hasToAddresses) {
@@ -184,6 +199,9 @@ public class EmailSender {
 		    final BodyPart bodyPart = new MimeBodyPart();
 		    bodyPart.setText(body);
 		    mimeMultipart.addBodyPart(bodyPart);
+
+		    addAttachments(mimeMultipart, attachments, attachmentFilenames, attachmentTypes);
+
 		    message.setContent(mimeMultipart);
 
 		    addRecipients(message, Message.RecipientType.BCC, subList, emailSendResult.unsentAddresses);
@@ -204,6 +222,22 @@ public class EmailSender {
 	}
 
 	return emailSendResult;
+    }
+
+    private static void addAttachments(final MimeMultipart mimeMultipart,
+	    final byte[][] attachments, final String[] attachmentFilenames, final String[] attachmentTypes)
+    		throws MessagingException {
+	for (int a = 0; a < attachments.length; a++) {
+	    final byte[] attachment = attachments[a];
+	    final String attachmentFilename = attachmentFilenames[a];
+	    final String attachmentType = attachmentTypes[a];
+
+	    final MimeBodyPart attachmentBodyPart = new MimeBodyPart();
+	    final DataSource source = new ByteArrayDataSource(attachment, attachmentType);
+	    attachmentBodyPart.setDataHandler(new DataHandler(source));
+	    attachmentBodyPart.setFileName(attachmentFilename);
+	    mimeMultipart.addBodyPart(attachmentBodyPart);
+	}
     }
 
     protected static void registerInvalidAddresses(final Collection<String> unsentAddresses, final SendFailedException e,
