@@ -4,12 +4,18 @@ import java.util.Collection;
 
 public class AndPredicate<T> extends ChainPredicate<T> {
 
+    public AndPredicate() {
+	super();
+    }
+
     public AndPredicate(Collection<Predicate<T>> predicates) {
 	super(predicates);
     }
 
-    public AndPredicate() {
+    public AndPredicate(Predicate<T> pred1, Predicate<T> pred2) {
 	super();
+	add(pred1);
+	add(pred2);
     }
 
     @Override
