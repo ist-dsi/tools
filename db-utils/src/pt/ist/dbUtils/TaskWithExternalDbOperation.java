@@ -24,6 +24,11 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
 	    return instance.getDbPropertyPrefix();
 	}
 
+	@Override
+	protected void handleSQLException(final SQLException e) {
+	    handle(e);
+	}
+
     }
 
     @Override
@@ -37,7 +42,7 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
 	}
     }
 
-    protected void executeQuery(final ExternalDbQuery externalDbQuery) throws SQLException {
+    protected void executeQuery(final ExternalDbQuery externalDbQuery) {
 	final DbTransaction dbTransaction = transaction.get();
 	if (dbTransaction == null) {
 	    throw new Error("error.not.inside.transaction");
@@ -45,7 +50,11 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
 	System.out.println("Executing query: ");
 	System.out.println(externalDbQuery.getQueryString());
 	System.out.println();
-	dbTransaction.executeQuery(externalDbQuery);
+	try {
+	    dbTransaction.executeQuery(externalDbQuery);
+	} catch (final SQLException e) {
+	    handle(e, externalDbQuery);
+	}
 	System.out.println();
 	System.out.println();
     }
@@ -53,5 +62,13 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
     protected abstract String getDbPropertyPrefix();
 
     protected abstract void doOperation() throws SQLException;
+
+    protected void handle(final SQLException e) {
+	throw new Error(e);
+    }
+
+    protected void handle(final SQLException e, final ExternalDbQuery externalDbQuery) {
+	handle(e);
+    }
 
 }

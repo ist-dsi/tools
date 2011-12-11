@@ -6,6 +6,10 @@ public abstract class ExternalDbOperation extends DbTransaction {
 
     protected abstract void doOperation() throws SQLException;
 
+    protected void handleSQLException(final SQLException e) {
+	throw new Error(e);
+    }
+
     public void execute() {
 	boolean successful = false;
 	try {
@@ -13,7 +17,7 @@ public abstract class ExternalDbOperation extends DbTransaction {
 	    commit();
 	    successful = true;
 	} catch (final SQLException e) {
-	    throw new Error(e);
+	    handleSQLException(e);
 	} finally {
 	    if (!successful) {
 		abort();
