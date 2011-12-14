@@ -15,6 +15,10 @@ public class PhoneUtil {
     private static final Collection<PhoneNumberType> FIXED_NUMBERS;
     private static final Collection<PhoneNumberType> MOBILE_NUMBERS;
 
+    private static final int ALAMEDA_PHONE = 218416000;
+    private static final int TAGUS_PHONE_000 = 214233200;
+    private static final int TAGUS_PHONE_100 = 214233500;
+
     static {
 	FIXED_NUMBERS = new ArrayList<PhoneNumberType>();
 	FIXED_NUMBERS.add(PhoneNumberType.VOIP);
@@ -27,14 +31,10 @@ public class PhoneUtil {
     private static final PhoneNumberUtil PHONE_UTIL = PhoneNumberUtil.getInstance();
     private static final String COUNTRY_CODE = "PT";
 
-    private static boolean isExtension(String numberText) {
-	return !StringUtils.isEmpty(numberText) && numberText.length() == 4 && StringUtils.isNumeric(numberText);
-    }
-
     public static PhoneNumber getPhoneNumber(String numberText) {
 	if (!StringUtils.isEmpty(numberText)) {
 
-	    if (numberText.startsWith("00") && !isExtension(numberText)) {
+	    if (numberText.startsWith("00")) {
 		numberText = numberText.replaceFirst("00", "+");
 	    }
 
@@ -56,11 +56,6 @@ public class PhoneUtil {
     }
 
     public static boolean isValidNumber(String numberText) {
-
-	if (isExtension(numberText)) {
-	    return true;
-	}
-
 	final PhoneNumber phoneNumber = getPhoneNumber(numberText);
 	return phoneNumber != null;
     }
@@ -77,10 +72,31 @@ public class PhoneUtil {
 	return isType(getPhoneNumberType(getPhoneNumber(numberText)), FIXED_NUMBERS);
     }
 
+    public static String getExternalNumberForExtension(String numberText) {
+	int extension;
+	try {
+	    extension = Integer.parseInt(numberText);
+	} catch (NumberFormatException nfe) {
+	    return null;
+	}
+	if (extension >= 1000 && extension <= 3999) {
+	    return new Long(ALAMEDA_PHONE + extension).toString();
+	} else {
+	    if (extension >= 5000 && extension <= 5099) {
+		extension -= 5000;
+		return new Long(TAGUS_PHONE_000 + extension).toString();
+	    } else if (extension >= 5100 && extension <= 5199) {
+		extension -= 5000;
+		return new Long(TAGUS_PHONE_100 + extension).toString();
+	    }
+	}
+	return null;
+    }
+
     public static String getInternacionalFormatNumber(String numberText) {
 
 	if (isExtension(numberText)) {
-	    return null; // TODO: convert to number
+	    numberText = getExternalNumberForExtension(numberText);
 	}
 
 	final PhoneNumber phoneNumber = getPhoneNumber(numberText);
@@ -89,5 +105,17 @@ public class PhoneUtil {
 	}
 
 	return null;
+    }
+
+    private static boolean isExtension(String numberText) {
+	return getExternalNumberForExtension(numberText) != null;
+    }
+
+    public static int getCountry(String numberText) {
+	final PhoneNumber phoneNumber = getPhoneNumber(numberText);
+	if (phoneNumber != null) {
+	    return phoneNumber.getCountryCode();
+	}
+	return -1;
     }
 }
