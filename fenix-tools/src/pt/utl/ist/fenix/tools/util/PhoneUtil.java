@@ -38,6 +38,10 @@ public class PhoneUtil {
 		numberText = numberText.replaceFirst("00", "+");
 	    }
 
+	    if (isExtension(numberText)) {
+		numberText = getExternalNumberForExtension(numberText);
+	    }
+
 	    try {
 		final PhoneNumber phoneNumber = PHONE_UTIL.parse(numberText, COUNTRY_CODE);
 		if (PHONE_UTIL.isValidNumber(phoneNumber)) {
@@ -68,6 +72,14 @@ public class PhoneUtil {
 	return isType(getPhoneNumberType(getPhoneNumber(numberText)), MOBILE_NUMBERS);
     }
 
+    public static boolean isPortugueseNumber(String numberText) {
+	final PhoneNumber phoneNumber = getPhoneNumber(numberText);
+	if (phoneNumber != null) {
+	    return phoneNumber.getCountryCode() == 351;
+	}
+	return false;
+    }
+
     public static boolean isFixedNumber(String numberText) {
 	return isType(getPhoneNumberType(getPhoneNumber(numberText)), FIXED_NUMBERS);
     }
@@ -80,14 +92,14 @@ public class PhoneUtil {
 	    return null;
 	}
 	if (extension >= 1000 && extension <= 3999) {
-	    return new Long(ALAMEDA_PHONE + extension).toString();
+	    return new Integer(ALAMEDA_PHONE + extension).toString();
 	} else {
 	    if (extension >= 5000 && extension <= 5099) {
 		extension -= 5000;
-		return new Long(TAGUS_PHONE_000 + extension).toString();
+		return new Integer(TAGUS_PHONE_000 + extension).toString();
 	    } else if (extension >= 5100 && extension <= 5199) {
-		extension -= 5000;
-		return new Long(TAGUS_PHONE_100 + extension).toString();
+		extension -= 5100;
+		return new Integer(TAGUS_PHONE_100 + extension).toString();
 	    }
 	}
 	return null;
