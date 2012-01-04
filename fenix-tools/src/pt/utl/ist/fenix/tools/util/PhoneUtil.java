@@ -113,7 +113,7 @@ public class PhoneUtil {
 
 	final PhoneNumber phoneNumber = getPhoneNumber(numberText);
 	if (phoneNumber != null) {
-	    return PHONE_UTIL.format(phoneNumber, PhoneNumberFormat.INTERNATIONAL);
+	    return PHONE_UTIL.format(phoneNumber, PhoneNumberFormat.E164);
 	}
 
 	return null;
