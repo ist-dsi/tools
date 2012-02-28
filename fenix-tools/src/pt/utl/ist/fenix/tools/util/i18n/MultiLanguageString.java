@@ -20,13 +20,54 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
     }
 
     public MultiLanguageString(final String content) {
-	this();
-	setContent(content);
+	final Language userLanguage = Language.getUserLanguage();
+	if (userLanguage == null) {
+	    throw new IllegalArgumentException("no user language is set");
+	}
+	Map<Language, String> contents = new HashMap<Language, String>();
+	contents.put(userLanguage, content == null ? StringUtils.EMPTY : content);
+	this.contentsMap = contents;
     }
 
     public MultiLanguageString(final Language language, final String content) {
-	this();
-	setContent(language, content);
+	if (language == null) {
+	    throw new IllegalArgumentException("language cannot be null");
+	}
+	Map<Language, String> contents = new HashMap<Language, String>();
+	contents.put(language, content == null ? StringUtils.EMPTY : content);
+	this.contentsMap = contents;
+    }
+
+    private MultiLanguageString(Map<Language, String> contentsMap) {
+	this.contentsMap = contentsMap;
+    }
+
+    public MultiLanguageString with(final Language language, final String content) {
+	if (language == null) {
+	    throw new IllegalArgumentException("language cannot be null");
+	}
+	Map<Language, String> contents = new HashMap<Language, String>();
+	contents.putAll(contentsMap);
+	contents.put(language, content == null ? StringUtils.EMPTY : content);
+	return new MultiLanguageString(contents);
+    }
+
+    public MultiLanguageString withDefault(final String content) {
+	final Language userLanguage = Language.getUserLanguage();
+	if (userLanguage == null) {
+	    throw new IllegalArgumentException("no user language is set");
+	}
+	return with(userLanguage, content);
+    }
+
+    public MultiLanguageString without(Language language) {
+	if (language != null) {
+	    Map<Language, String> contents = new HashMap<Language, String>();
+	    contents.putAll(contentsMap);
+	    contents.remove(language);
+	    return new MultiLanguageString(contents);
+	}
+	return this;
     }
 
     public Collection<String> getAllContents() {
@@ -56,6 +97,10 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 	return contentsMap.isEmpty() ? null : contentsMap.keySet().iterator().next();
     }
 
+    /**
+     * @deprecated use {@link MultiLanguageString#withDefault(String)} instead
+     */
+    @Deprecated
     public void setContent(String text) {
 	final Language userLanguage = Language.getUserLanguage();
 	if (userLanguage != null) {
@@ -65,6 +110,17 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 	if (userLanguage != systemLanguage && !hasLanguage(systemLanguage)) {
 	    setContent(systemLanguage, text);
 	}
+    }
+
+    /**
+     * @deprecated use {@link #with(Language, String)}
+     */
+    @Deprecated
+    public void setContent(Language language, String content) {
+	if (language == null) {
+	    throw new IllegalArgumentException("language cannot be null");
+	}
+	contentsMap.put(language, content == null ? "" : content);
     }
 
     public String getContent() {
@@ -79,13 +135,10 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 	return hasLanguage(Language.getDefaultLanguage()) ? getContent(Language.getDefaultLanguage()) : getContent();
     }
 
-    public void setContent(Language language, String content) {
-	if (language == null) {
-	    throw new IllegalArgumentException("language cannot be null");
-	}
-	contentsMap.put(language, content == null ? "" : content);
-    }
-
+    /**
+     * @deprecated use {@link #without(Language)}
+     */
+    @Deprecated
     public String removeContent(Language language) {
 	return contentsMap.remove(language);
     }
@@ -121,23 +174,23 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
     }
 
     public MultiLanguageString append(MultiLanguageString string) {
-	MultiLanguageString result = new MultiLanguageString();
+	Map<Language, String> contents = new HashMap<Language, String>();
 	Set<Language> allLanguages = new HashSet<Language>();
 	allLanguages.addAll(string.getAllLanguages());
 	allLanguages.addAll(getAllLanguages());
 	for (Language language : allLanguages) {
-	    result.setContent(language, StringUtils.defaultString(getContent(language))
-		    + StringUtils.defaultString(string.getContent(language)));
+	    contents.put(language,
+		    StringUtils.defaultString(getContent(language)) + StringUtils.defaultString(string.getContent(language)));
 	}
-	return result;
+	return new MultiLanguageString(contents);
     }
 
     public MultiLanguageString append(String string) {
-	MultiLanguageString result = new MultiLanguageString();
+	Map<Language, String> contents = new HashMap<Language, String>();
 	for (Language language : getAllLanguages()) {
-	    result.setContent(language, StringUtils.defaultString(getContent(language)));
+	    contents.put(language, StringUtils.defaultString(getContent(language)) + StringUtils.defaultString(string));
 	}
-	return result;
+	return new MultiLanguageString(contents);
     }
 
     /**
@@ -153,7 +206,7 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 	    return null;
 	}
 
-	MultiLanguageString mls = new MultiLanguageString();
+	Map<Language, String> contents = new HashMap<Language, String>();
 	String nullContent = StringUtils.EMPTY;
 
 	for (int i = 0; i < string.length();) {
@@ -169,18 +222,18 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 		length = Integer.parseInt(string.substring(i + 2, collonPosition));
 		String language = string.substring(i, i + 2);
 		String content = string.substring(collonPosition + 1, collonPosition + 1 + length);
-		mls.setContent(Language.valueOf(language), content);
+		contents.put(Language.valueOf(language), content);
 	    }
 
 	    i = collonPosition + 1 + length;
 	}
 
 	// HACK: MultiLanguageString should not allow null values as language
-	if (mls.getAllContents().isEmpty()) {
-	    mls.setContent(Language.getDefaultLanguage(), nullContent);
+	if (contents.isEmpty()) {
+	    contents.put(Language.getDefaultLanguage(), nullContent);
 	}
 
-	return mls;
+	return new MultiLanguageString(contents);
     }
 
     @Override
@@ -244,23 +297,12 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 	return false;
     }
 
-    public class I18N {
-	public I18N add(String language, String text) {
-	    MultiLanguageString.this.setContent(Language.valueOf(language), text);
-	    return this;
+    @Override
+    public int hashCode() {
+	int sum = 0;
+	for (String content : getAllContents()) {
+	    sum += content.hashCode();
 	}
-
-	public I18N nadd(String language, String text) {
-	    return text != null ? add(language, text) : this;
-	}
-
-	public MultiLanguageString finish() {
-	    return MultiLanguageString.this;
-	}
+	return sum;
     }
-
-    public static I18N i18n() {
-	return new MultiLanguageString().new I18N();
-    }
-
 }
