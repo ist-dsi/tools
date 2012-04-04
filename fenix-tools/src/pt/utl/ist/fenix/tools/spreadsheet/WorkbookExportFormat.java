@@ -6,7 +6,7 @@ package pt.utl.ist.fenix.tools.spreadsheet;
  * @author Pedro Santos (pedro.miguel.santos@ist.utl.pt)
  */
 public enum WorkbookExportFormat {
-    EXCEL, CSV(","), TSV("\t");
+    EXCEL, CSV(","), TSV("\t"), DOCX;
 
     private String separator;
 

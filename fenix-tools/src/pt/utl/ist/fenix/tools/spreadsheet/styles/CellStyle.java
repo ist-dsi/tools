@@ -4,7 +4,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-public abstract class CellStyle {
+public abstract class CellStyle implements ICellStyle {
     public HSSFCellStyle getStyle(HSSFWorkbook book) {
 	HSSFCellStyle style = book.createCellStyle();
 	appendToStyle(book, style, null);

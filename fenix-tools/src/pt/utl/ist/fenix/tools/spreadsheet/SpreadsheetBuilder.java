@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 
 import pt.utl.ist.fenix.tools.spreadsheet.converters.CellConverter;
 import pt.utl.ist.fenix.tools.spreadsheet.styles.CellStyle;
+import pt.utl.ist.fenix.tools.spreadsheet.styles.ICellStyle;
+import pt.utl.ist.fenix.tools.spreadsheet.styles.xssf.XCellStyle;
 
 /**
  * Builder for all kinds of Spreadsheets (currently supports excel, csv, and
@@ -30,10 +32,10 @@ import pt.utl.ist.fenix.tools.spreadsheet.styles.CellStyle;
 public class SpreadsheetBuilder {
     private Map<String, SheetData<?>> sheets = new HashMap<String, SheetData<?>>();
     private final Map<Class<?>, CellConverter> converters = new HashMap<Class<?>, CellConverter>();
-    private CellStyle headerStyle = null;
-    private CellStyle mergeHeaderStyle = null;
-    private final Map<Class<?>, CellStyle> typeStyles = new HashMap<Class<?>, CellStyle>();
-    private List<CellStyle> rowStyles = new ArrayList<CellStyle>();
+    private ICellStyle headerStyle = null;
+    private ICellStyle mergeHeaderStyle = null;
+    private final Map<Class<?>, ICellStyle> typeStyles = new HashMap<Class<?>, ICellStyle>();
+    private List<ICellStyle> rowStyles = new ArrayList<ICellStyle>();
 
     public SpreadsheetBuilder() {
     }
@@ -86,7 +88,7 @@ public class SpreadsheetBuilder {
      *            The style specification
      * @return this.
      */
-    protected SpreadsheetBuilder appendHeaderStyle(CellStyle style) {
+    protected SpreadsheetBuilder appendHeaderStyle(ICellStyle style) {
 	mergeHeaderStyle = style;
 	return this;
     }
@@ -101,7 +103,7 @@ public class SpreadsheetBuilder {
      *            The style specification
      * @return this.
      */
-    protected SpreadsheetBuilder addTypeStyle(Class<?> type, CellStyle style) {
+    protected SpreadsheetBuilder addTypeStyle(Class<?> type, ICellStyle style) {
 	typeStyles.put(type, style);
 	return this;
     }
@@ -115,7 +117,7 @@ public class SpreadsheetBuilder {
      *            A set of style specifications
      * @return this.
      */
-    protected SpreadsheetBuilder setRowStyle(CellStyle... styles) {
+    protected SpreadsheetBuilder setRowStyle(ICellStyle... styles) {
 	rowStyles = Arrays.asList(styles);
 	return this;
     }
@@ -166,13 +168,13 @@ public class SpreadsheetBuilder {
 		builder.addConverter(entry.getKey(), entry.getValue());
 	    }
 	    if (headerStyle != null) {
-		builder.setHeaderStyle(headerStyle);
+		builder.setHeaderStyle((CellStyle) headerStyle);
 	    }
 	    if (mergeHeaderStyle != null) {
-		builder.appendHeaderStyle(mergeHeaderStyle);
+		builder.appendHeaderStyle((CellStyle) mergeHeaderStyle);
 	    }
-	    for (Entry<Class<?>, CellStyle> entry : typeStyles.entrySet()) {
-		builder.addTypeStyle(entry.getKey(), entry.getValue());
+	    for (Entry<Class<?>, ICellStyle> entry : typeStyles.entrySet()) {
+		builder.addTypeStyle(entry.getKey(), (CellStyle) entry.getValue());
 	    }
 	    builder.setRowStyle(rowStyles.toArray(new CellStyle[0]));
 	    builder.build(sheets, output);
@@ -187,6 +189,24 @@ public class SpreadsheetBuilder {
 	    builder.build(sheets, output, format.getSeparator());
 	    break;
 	}
+	case DOCX:
+	    DocxBuilder builder = new DocxBuilder();
+	    for (Entry<Class<?>, CellConverter> entry : converters.entrySet()) {
+		builder.addConverter(entry.getKey(), entry.getValue());
+	    }
+	    if (headerStyle != null) {
+		builder.setHeaderStyle((XCellStyle) headerStyle);
+	    }
+	    if (mergeHeaderStyle != null) {
+		builder.appendHeaderStyle((XCellStyle) mergeHeaderStyle);
+	    }
+	    for (Entry<Class<?>, ICellStyle> entry : typeStyles.entrySet()) {
+		builder.addTypeStyle(entry.getKey(), (XCellStyle) entry.getValue());
+	    }
+	    builder.setRowStyle(rowStyles.toArray(new XCellStyle[0]));
+	    builder.build(sheets, output);
+	    break;
+
 	default:
 	    break;
 	}

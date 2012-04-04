@@ -27,7 +27,7 @@
 	<path id="xmlbean.classpath">
 		<fileset dir="${lib}">
 			<include name="**/jsr173_1.0_api.jar"/>
-			<include name="**/xbean.jar"/>
+			<include name="**/xmlbeans-2.3.0.jar"/>
 		</fileset>
 	</path>
 	
