@@ -42,6 +42,16 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 	this.contentsMap = contentsMap;
     }
 
+    /**
+     * 
+     * @param language
+     *            the language of the content
+     * @param content
+     *            the String with the content in the specified language
+     * @return a <b>new</b> {@link MultiLanguageString} with the given content
+     *         in the given language added to the already existing content NOTE:
+     *         it does not change the content of this instance
+     */
     public MultiLanguageString with(final Language language, final String content) {
 	if (language == null) {
 	    throw new IllegalArgumentException("language cannot be null");
@@ -52,6 +62,11 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 	return new MultiLanguageString(contents);
     }
 
+    /**
+     * @see MultiLanguageString#with(Language, String)
+     * @param content
+     * @return
+     */
     public MultiLanguageString withDefault(final String content) {
 	final Language userLanguage = Language.getUserLanguage();
 	if (userLanguage == null) {
@@ -242,6 +257,7 @@ public class MultiLanguageString implements Serializable, Comparable<MultiLangua
 	return content == null ? StringUtils.EMPTY : content;
     }
 
+    @Override
     public int compareTo(MultiLanguageString languageString) {
 	if (!hasContent() && !languageString.hasContent()) {
 	    return 0;
