@@ -2,7 +2,7 @@ package pt.ist.dbUtils;
 
 import java.sql.SQLException;
 
-import myorg.domain.scheduler.WriteCustomTask;
+import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
 public abstract class WriteCustomTaskWithExternalDbOperation extends WriteCustomTask {
 

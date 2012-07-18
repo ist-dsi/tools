@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import myorg._development.PropertiesManager;
+import pt.ist.bennu.core._development.PropertiesManager;
 
 public abstract class DbTransaction {
 

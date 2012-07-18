@@ -1,2 +1,0 @@
-name=db-utils
-depends=core, scheduler
