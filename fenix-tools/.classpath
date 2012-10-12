@@ -18,21 +18,24 @@
 	<classpathentry kind="lib" path="lib/joda-time-1.5.2.jar"/>
 	<classpathentry kind="lib" path="lib/jsr173_1.0_api.jar"/>
 	<classpathentry kind="lib" path="lib/mail.jar"/>
-	<classpathentry kind="lib" path="lib/xbean.jar"/>
 	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jline-0.9.9.jar"/>
-	<classpathentry kind="lib" path="lib/poi-3.5-beta5-20090219.jar"/>
-	<classpathentry kind="lib" path="lib/poi-contrib-3.5-beta5-20090219.jar"/>
-	<classpathentry kind="lib" path="lib/poi-ooxml-3.5-beta5-20090219.jar"/>
-	<classpathentry kind="lib" path="lib/poi-scratchpad-3.5-beta5-20090219.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-bean-collections-1.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-core-1.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="lib/dml-20091101.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/libphonenumber-4.3.jar"/>
+	<classpathentry kind="lib" path="lib/dml-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/dml-fenix-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/fenix-framework-core-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/ooxml-schemas-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/poi-3.5-FINAL-20090928.jar"/>
+	<classpathentry kind="lib" path="lib/poi-contrib-3.5-FINAL-20090928.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-3.5-FINAL-20090928.jar"/>
+	<classpathentry kind="lib" path="lib/poi-scratchpad-3.5-FINAL-20090928.jar"/>
+	<classpathentry kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>
