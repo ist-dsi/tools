@@ -4,25 +4,29 @@ import java.io.Serializable;
 
 /**
  * 
- * @author  Nuno Diegues
- * @author  Anil Kassamali
- * @author  Luis Cruz
+ * @author Nuno Diegues
+ * @author Anil Kassamali
+ * @author Luis Cruz
  * 
-*/
+ */
+@SuppressWarnings("serial")
 public class ByteArray implements Serializable {
 
     private byte[] bytes;
 
-    public ByteArray(byte[] value) {        
-        this.bytes = value;
+    public ByteArray() {
+    }
+
+    public ByteArray(byte[] value) {
+	this.bytes = value;
     }
 
     public byte[] getBytes() {
-        return bytes;
+	return bytes;
     }
 
     public void setBytes(byte[] bytes) {
-        this.bytes = bytes;
+	this.bytes = bytes;
     }
 
 }
