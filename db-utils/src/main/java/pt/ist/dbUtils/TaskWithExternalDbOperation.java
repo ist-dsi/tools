@@ -47,16 +47,11 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
 	if (dbTransaction == null) {
 	    throw new Error("error.not.inside.transaction");
 	}
-	System.out.println("Executing query: ");
-	System.out.println(externalDbQuery.getQueryString());
-	System.out.println();
 	try {
 	    dbTransaction.executeQuery(externalDbQuery);
 	} catch (final SQLException e) {
 	    handle(e, externalDbQuery);
 	}
-	System.out.println();
-	System.out.println();
     }
 
     protected abstract String getDbPropertyPrefix();
