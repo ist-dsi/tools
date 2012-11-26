@@ -32,33 +32,39 @@ public class Spreadsheet {
 	protected Row() {
 	}
 
-	public void setCell(final int columnIndex, final String cellValue) {
+	public Row setCell(final int columnIndex, final String cellValue) {
 	    for (int i = cells.size(); i < (columnIndex + 1); i++) {
 		cells.add("");
 	    }
 	    cells.set(columnIndex, cellValue);
+	    return this;
 	}
 
-	public void setCell(final String cellValue) {
+	public Row setCell(final String cellValue) {
 	    cells.add(cellValue);
+	    return this;
 	}
 
-	public void setCell(final Integer cellValue) {
+	public Row setCell(final Integer cellValue) {
 	    cells.add((cellValue != null) ? cellValue.toString() : "");
+	    return this;
 	}
 
-	public void setCell(final Double cellValue) {
+	public Row setCell(final Double cellValue) {
 	    cells.add((cellValue != null) ? cellValue.toString() : "");
+	    return this;
 	}
 
-	public void setCell(final BigDecimal cellValue) {
+	public Row setCell(final BigDecimal cellValue) {
 	    cells.add((cellValue != null) ? cellValue.toPlainString() : "");
+	    return this;
 	}
 
-	public void setValues(final String[] values) {
+	public Row setValues(final String[] values) {
 	    for (int i = 0; i < values.length; i++) {
 		setCell(i, values[i]);
 	    }
+	    return this;
 	}
 
 	public List<Object> getCells() {
@@ -93,21 +99,24 @@ public class Spreadsheet {
 	return header;
     }
 
-    public void setHeader(final int columnNumber, final String columnHeader) {
+    public Spreadsheet setHeader(final int columnNumber, final String columnHeader) {
 	for (int i = header.size(); i < columnNumber; i++) {
 	    header.add("");
 	}
 	header.add(columnNumber, columnHeader);
+	return this;
     }
 
-    public void setHeader(final String columnHeader) {
+    public Spreadsheet setHeader(final String columnHeader) {
 	header.add(columnHeader);
+	return this;
     }
 
-    public void setHeaders(final String[] headers) {
+    public Spreadsheet setHeaders(final String[] headers) {
 	for (int i = 0; i < headers.length; i++) {
 	    setHeader(i, headers[i]);
 	}
+	return this;
     }
 
     public Row addRow(final int rowNumber) {
