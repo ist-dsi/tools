@@ -4,66 +4,66 @@ import java.sql.SQLException;
 
 public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOperation_Base {
 
-    private static ThreadLocal<DbTransaction> transaction = new InheritableThreadLocal<DbTransaction>();
+	private static ThreadLocal<DbTransaction> transaction = new InheritableThreadLocal<DbTransaction>();
 
-    private class EmbededExternalDbOperation extends ExternalDbOperation {
+	private class EmbededExternalDbOperation extends ExternalDbOperation {
 
-	private final TaskWithExternalDbOperation instance;
+		private final TaskWithExternalDbOperation instance;
 
-	public EmbededExternalDbOperation(final TaskWithExternalDbOperation instance) {
-	    this.instance = instance;
+		public EmbededExternalDbOperation(final TaskWithExternalDbOperation instance) {
+			this.instance = instance;
+		}
+
+		@Override
+		protected void doOperation() throws SQLException {
+			instance.doOperation();
+		}
+
+		@Override
+		protected String getDbPropertyPrefix() {
+			return instance.getDbPropertyPrefix();
+		}
+
+		@Override
+		protected void handleSQLException(final SQLException e) {
+			handle(e);
+		}
+
 	}
 
 	@Override
-	protected void doOperation() throws SQLException {
-	    instance.doOperation();
+	public void executeTask() {
+		try {
+			final EmbededExternalDbOperation embededExternalDbOperation = new EmbededExternalDbOperation(this);
+			transaction.set(embededExternalDbOperation);
+			embededExternalDbOperation.execute();
+		} finally {
+			transaction.remove();
+		}
 	}
 
-	@Override
-	protected String getDbPropertyPrefix() {
-	    return instance.getDbPropertyPrefix();
+	protected void executeQuery(final ExternalDbQuery externalDbQuery) {
+		final DbTransaction dbTransaction = transaction.get();
+		if (dbTransaction == null) {
+			throw new Error("error.not.inside.transaction");
+		}
+		try {
+			dbTransaction.executeQuery(externalDbQuery);
+		} catch (final SQLException e) {
+			handle(e, externalDbQuery);
+		}
 	}
 
-	@Override
-	protected void handleSQLException(final SQLException e) {
-	    handle(e);
+	protected abstract String getDbPropertyPrefix();
+
+	protected abstract void doOperation() throws SQLException;
+
+	protected void handle(final SQLException e) {
+		throw new Error(e);
 	}
 
-    }
-
-    @Override
-    public void executeTask() {
-	try {
-	    final EmbededExternalDbOperation embededExternalDbOperation = new EmbededExternalDbOperation(this);
-	    transaction.set(embededExternalDbOperation);
-	    embededExternalDbOperation.execute();
-	} finally {
-	    transaction.remove();
+	protected void handle(final SQLException e, final ExternalDbQuery externalDbQuery) {
+		handle(e);
 	}
-    }
-
-    protected void executeQuery(final ExternalDbQuery externalDbQuery) {
-	final DbTransaction dbTransaction = transaction.get();
-	if (dbTransaction == null) {
-	    throw new Error("error.not.inside.transaction");
-	}
-	try {
-	    dbTransaction.executeQuery(externalDbQuery);
-	} catch (final SQLException e) {
-	    handle(e, externalDbQuery);
-	}
-    }
-
-    protected abstract String getDbPropertyPrefix();
-
-    protected abstract void doOperation() throws SQLException;
-
-    protected void handle(final SQLException e) {
-	throw new Error(e);
-    }
-
-    protected void handle(final SQLException e, final ExternalDbQuery externalDbQuery) {
-	handle(e);
-    }
 
 }

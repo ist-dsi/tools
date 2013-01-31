@@ -6,34 +6,34 @@ import pt.ist.bennu.core.domain.scheduler.WriteCustomTask;
 
 public abstract class WriteCustomTaskWithExternalDbOperation extends WriteCustomTask {
 
-    private class EmbededExternalDbOperation extends ExternalDbOperation {
+	private class EmbededExternalDbOperation extends ExternalDbOperation {
 
-	private final WriteCustomTaskWithExternalDbOperation instance;
+		private final WriteCustomTaskWithExternalDbOperation instance;
 
-	public EmbededExternalDbOperation(final WriteCustomTaskWithExternalDbOperation instance) {
-	    this.instance = instance;
+		public EmbededExternalDbOperation(final WriteCustomTaskWithExternalDbOperation instance) {
+			this.instance = instance;
+		}
+
+		@Override
+		protected void doOperation() throws SQLException {
+			instance.doOperation();
+		}
+
+		@Override
+		protected String getDbPropertyPrefix() {
+			return instance.getDbPropertyPrefix();
+		}
+
 	}
 
 	@Override
-	protected void doOperation() throws SQLException {
-	    instance.doOperation();
+	protected final void doService() {
+		final EmbededExternalDbOperation embededExternalDbOperation = new EmbededExternalDbOperation(this);
+		embededExternalDbOperation.execute();
 	}
 
-	@Override
-	protected String getDbPropertyPrefix() {
-	    return instance.getDbPropertyPrefix();
-	}
-	
-    }
+	protected abstract String getDbPropertyPrefix();
 
-    @Override
-    protected final void doService() {
-	final EmbededExternalDbOperation embededExternalDbOperation = new EmbededExternalDbOperation(this);
-	embededExternalDbOperation.execute();
-    }
-
-    protected abstract String getDbPropertyPrefix();
-
-    protected abstract void doOperation() throws SQLException;
+	protected abstract void doOperation() throws SQLException;
 
 }
