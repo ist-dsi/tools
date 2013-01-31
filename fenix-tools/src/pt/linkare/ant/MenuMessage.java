@@ -7,7 +7,7 @@ public class MenuMessage {
 	private String message;
 	private List<String> options;
 	private List<String> optionValues;
-	
+
 	public MenuMessage(String message, List<String> options, List<String> optionValues) {
 		super();
 		// TODO Auto-generated constructor stub

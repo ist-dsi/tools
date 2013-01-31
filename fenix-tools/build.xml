@@ -30,7 +30,8 @@
 				optimize="${compile.optimize}"
 				deprecation="${compile.deprecation}"
 				encoding="${encoding}"
-                                target="1.5"
+				target="1.5"
+				source="1.5"	
 				nowarn="true">
 			<src path="${src}"/>
 			<src path="${scorm.gen.dir}"/>

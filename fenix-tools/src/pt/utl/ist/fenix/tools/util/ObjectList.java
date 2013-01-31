@@ -8,16 +8,16 @@ import java.util.Collections;
 
 public abstract class ObjectList<E> extends ArrayList<E> implements Serializable {
 
-    public ObjectList(Collection<E> objectCollection) {
-	super(objectCollection);
-    }
+	public ObjectList(Collection<E> objectCollection) {
+		super(objectCollection);
+	}
 
-    public ObjectList(E[] objectArray) {
-	this(Arrays.asList(objectArray));
-    }
+	public ObjectList(E[] objectArray) {
+		this(Arrays.asList(objectArray));
+	}
 
-    public ObjectList(E string) {
-	this(Collections.singleton(string));
-    }
+	public ObjectList(E string) {
+		this(Collections.singleton(string));
+	}
 
 }

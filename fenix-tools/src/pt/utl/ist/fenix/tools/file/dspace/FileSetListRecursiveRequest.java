@@ -10,55 +10,55 @@ import org.dom4j.tree.BaseElement;
 import pt.utl.ist.fenix.tools.file.FileSetDescriptor;
 import pt.utl.ist.fenix.tools.file.XMLSerializable;
 
-public class FileSetListRecursiveRequest implements Serializable,XMLSerializable{
+public class FileSetListRecursiveRequest implements Serializable, XMLSerializable {
 
-    //(<handle authority prefix>/<item handle>/<bitstream sequence id>)
-    private FileSetDescriptor fsDescriptor;
+	//(<handle authority prefix>/<item handle>/<bitstream sequence id>)
+	private FileSetDescriptor fsDescriptor;
 
-    //Serialization support
-    public FileSetListRecursiveRequest() {
-        
-    }
-    public FileSetListRecursiveRequest(FileSetDescriptor fsDescriptor) {
-        this.fsDescriptor = fsDescriptor;
-    }
+	//Serialization support
+	public FileSetListRecursiveRequest() {
 
-    public FileSetDescriptor getFileSetDescriptor() {
-        return this.fsDescriptor;
-    }
+	}
 
-    public String toXMLString() {
-    	return toXML().asXML();
-    }
-    
-    public Element toXML()
-    {
-        Element fileSetDeleteElement = new BaseElement("filesetlistrecursiverequest");
+	public FileSetListRecursiveRequest(FileSetDescriptor fsDescriptor) {
+		this.fsDescriptor = fsDescriptor;
+	}
 
-        fileSetDeleteElement.add(fsDescriptor.toXML());
+	public FileSetDescriptor getFileSetDescriptor() {
+		return this.fsDescriptor;
+	}
 
-        return fileSetDeleteElement;
-    	
-    }
+	@Override
+	public String toXMLString() {
+		return toXML().asXML();
+	}
 
-    public static FileSetListRecursiveRequest createFromXml(String xml) {
-        FileSetListRecursiveRequest retVal=new FileSetListRecursiveRequest();
-        retVal.fromXMLString(xml);
-        return retVal;
-    }
+	public Element toXML() {
+		Element fileSetDeleteElement = new BaseElement("filesetlistrecursiverequest");
 
-    
-    public void fromXMLString(String xml) {
-        try {
-            fromXML(DocumentHelper.parseText(xml).getRootElement());
-        } catch (DocumentException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    public void fromXML(Element xmlElement)
-    {
-    	this.fsDescriptor=new FileSetDescriptor();
-    	fsDescriptor.fromXML(xmlElement.element("filesetdescriptor"));
-    }
+		fileSetDeleteElement.add(fsDescriptor.toXML());
+
+		return fileSetDeleteElement;
+
+	}
+
+	public static FileSetListRecursiveRequest createFromXml(String xml) {
+		FileSetListRecursiveRequest retVal = new FileSetListRecursiveRequest();
+		retVal.fromXMLString(xml);
+		return retVal;
+	}
+
+	@Override
+	public void fromXMLString(String xml) {
+		try {
+			fromXML(DocumentHelper.parseText(xml).getRootElement());
+		} catch (DocumentException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void fromXML(Element xmlElement) {
+		this.fsDescriptor = new FileSetDescriptor();
+		fsDescriptor.fromXML(xmlElement.element("filesetdescriptor"));
+	}
 }

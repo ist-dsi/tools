@@ -18,12 +18,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -55,10 +54,10 @@ public class InstallerPropertiesReader {
 
 	private static InstallerPropertiesReader instance = null;
 
-	private InputPropertyMap allProperties=new InputPropertyMap();
+	private InputPropertyMap allProperties = new InputPropertyMap();
 
 	private String encoding;
-	
+
 	/**
 	 * Helper constructer
 	 * 
@@ -66,20 +65,21 @@ public class InstallerPropertiesReader {
 	 *            The input file to read the properties spec
 	 * @param propFileOutput
 	 *            The generated output properties file
-	 * @param encoding 
-	 * @throws UnsupportedEncodingException 
+	 * @param encoding
+	 * @throws UnsupportedEncodingException
 	 */
-	private InstallerPropertiesReader(File propFileInput, File propFileOutput, boolean debug, String encoding) throws UnsupportedEncodingException {
+	private InstallerPropertiesReader(File propFileInput, File propFileOutput, boolean debug, String encoding)
+			throws UnsupportedEncodingException {
 		super();
-		this.debug=debug;
+		this.debug = debug;
 		this.setEncoding(encoding);
 		this.setPropFileInput(propFileInput);
 		this.setPropFileOutput(propFileOutput);
 	}
 
 	private void setEncoding(String encoding) {
-		this.encoding=encoding;
-		debug("Encoding is set to "+encoding);
+		this.encoding = encoding;
+		debug("Encoding is set to " + encoding);
 	}
 
 	/**
@@ -90,13 +90,16 @@ public class InstallerPropertiesReader {
 	}
 
 	public synchronized static InstallerPropertiesReader getInstance() {
-		if (instance == null) instance = new InstallerPropertiesReader();
+		if (instance == null) {
+			instance = new InstallerPropertiesReader();
+		}
 
 		return instance;
 
 	}
 
-	public synchronized static InstallerPropertiesReader getInstance(File inputFile, File outputFile, boolean debug, String encoding) throws UnsupportedEncodingException {
+	public synchronized static InstallerPropertiesReader getInstance(File inputFile, File outputFile, boolean debug,
+			String encoding) throws UnsupportedEncodingException {
 		instance = new InstallerPropertiesReader(inputFile, outputFile, debug, encoding);
 		return instance;
 	}
@@ -130,7 +133,7 @@ public class InstallerPropertiesReader {
 	/**
 	 * @param propFileOutput
 	 *            The propFileOutput to set.
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	public void setPropFileOutput(File propFileOutput) throws UnsupportedEncodingException {
 		this.propFileOutput = propFileOutput;
@@ -138,11 +141,10 @@ public class InstallerPropertiesReader {
 		defaultInLastPropertiesFile = readLastPropertiesFile();
 	}
 
-	public static Properties readProperties(File fInput, File fOutput, boolean debug,String encoding) throws IOException,
+	public static Properties readProperties(File fInput, File fOutput, boolean debug, String encoding) throws IOException,
 			InvalidPropertySpecException, NoPropertyReaderException {
 
-		
-		InstallerPropertiesReader propReader = InstallerPropertiesReader.getInstance(fInput, fOutput, debug,encoding);
+		InstallerPropertiesReader propReader = InstallerPropertiesReader.getInstance(fInput, fOutput, debug, encoding);
 
 		propReader.parse();
 
@@ -151,28 +153,27 @@ public class InstallerPropertiesReader {
 		for (InputProperty prop : propReader.allProperties) {
 			Collection<InputProperty> retVal = prop.readNow(propReader.defaultInLastPropertiesFile);
 			if (retVal != null) {
-				propReader.debug("While reading property "+prop.getPropertyName()+" additional "+retVal.size()+" generated properties were returned!");
+				propReader.debug("While reading property " + prop.getPropertyName() + " additional " + retVal.size()
+						+ " generated properties were returned!");
 				generatedProperties.addAll(retVal);
 			}
 		}
 
 		try {
-			for (InputProperty prop : generatedProperties)
-			{
-				propReader.debug("now reading generated property "+prop.getPropertyName());
+			for (InputProperty prop : generatedProperties) {
+				propReader.debug("now reading generated property " + prop.getPropertyName());
 				prop.readNow(propReader.defaultInLastPropertiesFile);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		propReader.allProperties.putAll(generatedProperties);
 		return PropertiesSerializer.outputPropertiesFile(propReader.getPropFileOutput(), propReader.allProperties,
-				propReader.defaultInLastPropertiesFile,encoding);
+				propReader.defaultInLastPropertiesFile, encoding);
 	}
 
 	public void parse() throws IOException {
-		
+
 		debug("Trying to read from file " + getPropFileInput().getName());
 		BufferedReader br = new BufferedReader(new FileReader(getPropFileInput()));
 		StringBuilder propMetaInfo = new StringBuilder();
@@ -187,22 +188,23 @@ public class InstallerPropertiesReader {
 			}
 			if (line.trim().startsWith("#")) {
 				debug("Comment line found! Appendding to property metainfo!");
-				if (propMetaInfo.length() != 0) propMetaInfo.append(CRLF);
+				if (propMetaInfo.length() != 0) {
+					propMetaInfo.append(CRLF);
+				}
 				propMetaInfo.append(line.substring(1));
-			}
-			else {// line is not empty and does not start with a comment... it is a property def
+			} else {// line is not empty and does not start with a comment... it is a property def
 				debug("Line is not empty and it does not start with a comment... It is a property then!");
 				int positionEquals = line.indexOf('=');
 				debug("Found an equals (=) sign at position " + positionEquals + " in line!");
 				if (positionEquals > -1) {
 					propName = line.substring(0, positionEquals);
 					propDefaultValue = line.substring(positionEquals + 1);
+				} else {
+					propName = line;
 				}
-				else propName = line;
 
 				debug("Read property name " + propName + " and property default value " + propDefaultValue);
-				allProperties.put(parseInputPropertyMetaInfo(allProperties, propName, propMetaInfo.toString(),
-						propDefaultValue));
+				allProperties.put(parseInputPropertyMetaInfo(allProperties, propName, propMetaInfo.toString(), propDefaultValue));
 				propMetaInfo = new StringBuilder();
 				propName = null;
 				propDefaultValue = null;
@@ -217,11 +219,10 @@ public class InstallerPropertiesReader {
 				InputProperty parentProperty = allProperties.get(propDep.getParentPropertyName());
 
 				if (parentProperty == null) {
-					debug("Dependency parent property " + propDep.getParentPropertyName()
-							+ " was not found for property " + prop.getPropertyName() + "! Removing dependency!");
+					debug("Dependency parent property " + propDep.getParentPropertyName() + " was not found for property "
+							+ prop.getPropertyName() + "! Removing dependency!");
 					dependencyRemove.add(propDep);
-				}
-				else {
+				} else {
 					debug("Found dependency parent property " + propDep.getParentPropertyName() + " for property "
 							+ prop.getPropertyName());
 					propDep.setParentProperty(parentProperty);
@@ -232,10 +233,10 @@ public class InstallerPropertiesReader {
 
 	}
 
-	public InputProperty parseInputPropertyMetaInfo(InputPropertyMap map, java.lang.String propName,
-			java.lang.String metadata, java.lang.String defaultPropValue) {
+	public InputProperty parseInputPropertyMetaInfo(InputPropertyMap map, java.lang.String propName, java.lang.String metadata,
+			java.lang.String defaultPropValue) {
 		debug("Parsing metainfo for property " + propName);
-		InputProperty retVal = new InputProperty(map,getEncoding());
+		InputProperty retVal = new InputProperty(map, getEncoding());
 
 		retVal.setPropertyName(propName);
 
@@ -272,11 +273,9 @@ public class InstallerPropertiesReader {
 				if (line.startsWith("@")) {
 					if (previousKey != null) {
 						if (previousKey.equalsIgnoreCase("dependency")) {
-							debug("Property " + propName + " metainfo tag is a dependency on :"
-									+ contentPreviousKey.toString());
+							debug("Property " + propName + " metainfo tag is a dependency on :" + contentPreviousKey.toString());
 							dependencies.add(new PropertyDependency(contentPreviousKey.toString()));
-						}
-						else {
+						} else {
 							debug("Property " + propName + " metainfo tag is a " + previousKey + " value :"
 									+ contentPreviousKey.toString());
 							metadatas.put(previousKey, contentPreviousKey.toString());
@@ -285,12 +284,10 @@ public class InstallerPropertiesReader {
 					previousKey = line.substring(line.indexOf('@') + 1, line.indexOf('=')).trim();
 					contentPreviousKey = new StringBuilder(line.substring(line.indexOf('=') + 1).trim());
 					debug("Property " + propName + " metainfo tag was started " + previousKey);
-				}
-				else if (line.startsWith("#")) {
+				} else if (line.startsWith("#")) {
 					debug("Line is a comment inside comment... ignoring...");
 					continue;
-				}
-				else {
+				} else {
 					debug("Line is a continuation of the previous metainfo tag! Appending value!");
 					contentPreviousKey.append(CRLF).append(line.trim());
 				}
@@ -299,14 +296,11 @@ public class InstallerPropertiesReader {
 			if (previousKey.equalsIgnoreCase("dependency")) {
 				debug("Property " + propName + " metainfo tag is a dependency on :" + contentPreviousKey.toString());
 				dependencies.add(new PropertyDependency(contentPreviousKey.toString()));
-			}
-			else {
-				debug("Property " + propName + " metainfo tag is a " + previousKey + " value :"
-						+ contentPreviousKey.toString());
+			} else {
+				debug("Property " + propName + " metainfo tag is a " + previousKey + " value :" + contentPreviousKey.toString());
 				metadatas.put(previousKey, contentPreviousKey.toString());
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
@@ -317,39 +311,43 @@ public class InstallerPropertiesReader {
 		retVal.setPropertyPersist(parseBoolean(metadatas.remove("persist"), true));
 		retVal.setPropertyPersistNull(parseBoolean(metadatas.remove("persistNull"), true));
 
-		for (Entry<java.lang.String, java.lang.String> entry : metadatas.entrySet())
+		for (Entry<java.lang.String, java.lang.String> entry : metadatas.entrySet()) {
 			retVal.setMetaData(entry.getKey(), entry.getValue());
+		}
 
 		debug("Returning input property " + retVal);
 
 		debug("Cycling dependencies to find (and remove) dependencies on not specified properties or to find the parent properties reference based on name!");
-		List<PropertyDependency> dependencyRemove=new ArrayList<PropertyDependency>();
+		List<PropertyDependency> dependencyRemove = new ArrayList<PropertyDependency>();
 		for (PropertyDependency propDep : dependencies) {
 			InputProperty parentProperty = allProperties.get(propDep.getParentPropertyName());
 
 			if (parentProperty == null) {
-				debug("Dependency parent property " + propDep.getParentPropertyName()
-						+ " was not found for property " + retVal.getPropertyName() + "! Removing dependency!");
+				debug("Dependency parent property " + propDep.getParentPropertyName() + " was not found for property "
+						+ retVal.getPropertyName() + "! Removing dependency!");
 				dependencyRemove.add(propDep);
-			}
-			else {
+			} else {
 				debug("Found dependency parent property " + propDep.getParentPropertyName() + " for property "
 						+ retVal.getPropertyName());
 				propDep.setParentProperty(parentProperty);
 			}
 		}
 		retVal.getDependencies().removeAll(dependencyRemove);
-		
+
 		return retVal;
 	}
 
 	private boolean parseBoolean(java.lang.String requiredStr, boolean b) {
-		if (requiredStr == null) return b;
+		if (requiredStr == null) {
+			return b;
+		}
 
-		if (requiredStr.equalsIgnoreCase("yes") || requiredStr.equalsIgnoreCase("y")
-				|| requiredStr.equalsIgnoreCase("1") || requiredStr.equalsIgnoreCase("true")
-				|| requiredStr.equalsIgnoreCase("on")) return true;
-		else return false;
+		if (requiredStr.equalsIgnoreCase("yes") || requiredStr.equalsIgnoreCase("y") || requiredStr.equalsIgnoreCase("1")
+				|| requiredStr.equalsIgnoreCase("true") || requiredStr.equalsIgnoreCase("on")) {
+			return true;
+		} else {
+			return false;
+		}
 
 	}
 
@@ -363,10 +361,8 @@ public class InstallerPropertiesReader {
 			try {
 
 				outputPropertiesValues.load(new FileInputStream(getPropFileOutput()));
-			}
-			catch (FileNotFoundException e) {
-			}
-			catch (IOException e) {
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 			}
 		}
 	}
@@ -374,23 +370,30 @@ public class InstallerPropertiesReader {
 	private Properties lastPropertiesValues = new Properties();
 
 	private boolean readLastPropertiesFile() throws UnsupportedEncodingException {
-		if (getPropFileOutput() == null) return false;
+		if (getPropFileOutput() == null) {
+			return false;
+		}
 		File f = buildLastPropertiesFile(getPropFileOutput());
 
 		if (f != null && f.exists() && f.isFile() && f.canRead()) {
 
-			String passCrypt=PropertyReaderManager.getInstance(getEncoding()).getPropertyCryptPassword();
-			boolean automateBatch=passCrypt!=null && passCrypt.length()!=0;
-			
+			String passCrypt = PropertyReaderManager.getInstance(getEncoding()).getPropertyCryptPassword();
+			boolean automateBatch = passCrypt != null && passCrypt.length() != 0;
+
 			// Ask the user for a password to open the encrypted file...
-			if (automateBatch || StdIn.getInstance(getEncoding()).readBooleanOption(
-					"Found a configuration file from a previous run of the configuration... Do you want to use it?",
-					"y", "n")) {
-				if(!automateBatch)
-					passCrypt = StdIn.getInstance(getEncoding()).readString("Please enter the password to open the configuration file found!", 1);
+			if (automateBatch
+					|| StdIn.getInstance(getEncoding()).readBooleanOption(
+							"Found a configuration file from a previous run of the configuration... Do you want to use it?", "y",
+							"n")) {
+				if (!automateBatch) {
+					passCrypt =
+							StdIn.getInstance(getEncoding()).readString(
+									"Please enter the password to open the configuration file found!", 1);
+				}
 				try {
-					final byte[] salt = { (byte) 0xaa, (byte) 0xbb, (byte) 0xcc, (byte) 0xdd, (byte) 0x22, (byte) 0x44,
-							(byte) 0xab, (byte) 0x12 };
+					final byte[] salt =
+							{ (byte) 0xaa, (byte) 0xbb, (byte) 0xcc, (byte) 0xdd, (byte) 0x22, (byte) 0x44, (byte) 0xab,
+									(byte) 0x12 };
 					final int iterations = 10;
 					final String cipherName = "PBEWithMD5AndDES";
 
@@ -403,8 +406,9 @@ public class InstallerPropertiesReader {
 
 					CipherInputStream cis = new CipherInputStream(new FileInputStream(f), cipher);
 					BufferedReader br = new BufferedReader(new InputStreamReader(cis));
-					if (!("##" + passCrypt + "##").equals(br.readLine()))
+					if (!("##" + passCrypt + "##").equals(br.readLine())) {
 						throw new InvalidKeyException("password does not match...");
+					}
 
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -420,38 +424,27 @@ public class InstallerPropertiesReader {
 					bis.close();
 					cis.close();
 
-					
-					if(automateBatch)
+					if (automateBatch) {
 						return true;
-					
-					return StdIn.getInstance(getEncoding())
-							.readBooleanOption(
-									"Do you want to use the defaults in this file as defaults to all the properties?",
-									"y", "n");
+					}
 
-				}
-				catch (InvalidKeyException e) {
+					return StdIn.getInstance(getEncoding()).readBooleanOption(
+							"Do you want to use the defaults in this file as defaults to all the properties?", "y", "n");
+
+				} catch (InvalidKeyException e) {
 					System.out.println("Unable to open encrypted configuration file... password is invalid!");
-				}
-				catch (InvalidKeySpecException e) {
-					System.out
-							.println("Unable to open encrypted configuration file... password algorithm is not available!");
-				}
-				catch (NoSuchAlgorithmException e) {
-					System.out
-							.println("Unable to open encrypted configuration file... password algorithm is not available!");
-				}
-				catch (FileNotFoundException e) {
+				} catch (InvalidKeySpecException e) {
+					System.out.println("Unable to open encrypted configuration file... password algorithm is not available!");
+				} catch (NoSuchAlgorithmException e) {
+					System.out.println("Unable to open encrypted configuration file... password algorithm is not available!");
+				} catch (FileNotFoundException e) {
 					System.out.println("Unable to open encrypted configuration file... file not found!");
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					System.out.println("Unable to open encrypted configuration file... generic I/O error!");
-				}
-				catch (NoSuchPaddingException e) {
+				} catch (NoSuchPaddingException e) {
 					System.out
 							.println("Unable to open encrypted configuration file... password algorithm padding is not available!");
-				}
-				catch (InvalidAlgorithmParameterException e) {
+				} catch (InvalidAlgorithmParameterException e) {
 					System.out.println("Unable to open encrypted configuration file... invalid algorithm parameter !");
 				}
 			}
@@ -468,15 +461,19 @@ public class InstallerPropertiesReader {
 	}
 
 	public String getDefaultValue(String propertyName, String defaultValue) {
-		if (outputPropertiesValues != null && outputPropertiesValues.containsKey(propertyName)) return outputPropertiesValues
-				.getProperty(propertyName);
-		else if (lastPropertiesValues != null && lastPropertiesValues.containsKey(propertyName)) return lastPropertiesValues
-				.getProperty(propertyName);
-		else return defaultValue;
+		if (outputPropertiesValues != null && outputPropertiesValues.containsKey(propertyName)) {
+			return outputPropertiesValues.getProperty(propertyName);
+		} else if (lastPropertiesValues != null && lastPropertiesValues.containsKey(propertyName)) {
+			return lastPropertiesValues.getProperty(propertyName);
+		} else {
+			return defaultValue;
+		}
 	}
 
 	public void debug(String message) {
-		if (debug) System.out.println(getClass().getName() + ":" + message);
+		if (debug) {
+			System.out.println(getClass().getName() + ":" + message);
+		}
 	}
 
 	public String getEncoding() {

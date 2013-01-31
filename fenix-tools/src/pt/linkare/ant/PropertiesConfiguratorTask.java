@@ -13,14 +13,13 @@ import pt.linkare.ant.propreaders.PropertyReaderManager;
 
 public class PropertiesConfiguratorTask extends Property implements TaskContainer {
 
-	private boolean debug=false;
-	private File specFile=null;
-	private File file=null;
-	private String additionalPackageForPropertyReaders=null;
-	private String encoding="ISO-8859-1";
-	private String propertyCryptPassword=null;
-	
-	
+	private boolean debug = false;
+	private File specFile = null;
+	private File file = null;
+	private String additionalPackageForPropertyReaders = null;
+	private String encoding = "ISO-8859-1";
+	private String propertyCryptPassword = null;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -28,43 +27,44 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 	 */
 	@Override
 	public void execute() throws BuildException {
-		
-		debug("Project is null? "+getProject()==null?" yes":" no");
-		if(getProject()==null)
+
+		debug("Project is null? " + getProject() == null ? " yes" : " no");
+		if (getProject() == null) {
 			throw new BuildException("The project is not yet specified... This task requires the project to be set...");
-		
+		}
+
 		//initialize stdin in ant way
 		debug("Creating standard input wrapper on project");
-		StdIn.getInstance(getProject(),getEncoding());
-		debug("Setting additional package for property readers to "+getAdditionalPackageForPropertyReaders());
-		PropertyReaderManager manager=PropertyReaderManager.getInstance(this.isDebug(),this.getEncoding());
+		StdIn.getInstance(getProject(), getEncoding());
+		debug("Setting additional package for property readers to " + getAdditionalPackageForPropertyReaders());
+		PropertyReaderManager manager = PropertyReaderManager.getInstance(this.isDebug(), this.getEncoding());
 		manager.setAdditionalPackageForPropertyReaders(getAdditionalPackageForPropertyReaders());
 		manager.setPropertyCryptPassword(getPropertyCryptPassword());
-		try
-		{
-			debug("Reading properties spec from file "+getSpecFile().getName()+" and current properties from "+getFile().getName());
-			Properties props=InstallerPropertiesReader.readProperties(getSpecFile(),getFile(),this.isDebug(),this.getEncoding());
+		try {
+			debug("Reading properties spec from file " + getSpecFile().getName() + " and current properties from "
+					+ getFile().getName());
+			Properties props =
+					InstallerPropertiesReader.readProperties(getSpecFile(), getFile(), this.isDebug(), this.getEncoding());
 			//Use addProperties of the base PropertyTask as it resolves and replaces values
 			debug("Add the properties to the project...");
 			addProperties(props);
-			
-			for(Task t:subTasks)
-			{
-				debug("Performing subtask "+t.getTaskName()+(getDescription()!=null?" with description "+getDescription():""));
+
+			for (Task t : subTasks) {
+				debug("Performing subtask " + t.getTaskName()
+						+ (getDescription() != null ? " with description " + getDescription() : ""));
 				t.perform();
 			}
-		}
-		catch(Throwable e)
-		{
-			if(isDebug())
+		} catch (Throwable e) {
+			if (isDebug()) {
 				e.printStackTrace();
+			}
 			throw new BuildException(e);
 		}
 	}
 
+	private ArrayList<Task> subTasks = new ArrayList<Task>();
 
-	private ArrayList<Task> subTasks=new ArrayList<Task>();
-	
+	@Override
 	public void addTask(Task subTask) {
 		subTasks.add(subTask);
 	}
@@ -72,6 +72,7 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 	/**
 	 * @return Returns the file.
 	 */
+	@Override
 	public File getFile() {
 		return file;
 	}
@@ -79,6 +80,7 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 	/**
 	 * @param file The file to set.
 	 */
+	@Override
 	public void setFile(File file) {
 		this.file = file;
 	}
@@ -125,10 +127,10 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 		this.debug = debug;
 	}
 
-	public void debug(String message)
-	{
-		if(debug)
-			System.out.println(getClass().getName()+":"+message);
+	public void debug(String message) {
+		if (debug) {
+			System.out.println(getClass().getName() + ":" + message);
+		}
 
 	}
 
@@ -139,17 +141,17 @@ public class PropertiesConfiguratorTask extends Property implements TaskContaine
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}
-	
+
 	public String getPropertyCryptPassword() {
 		return propertyCryptPassword;
 	}
 
 	public void setPropertyCryptPassword(String propertyCryptPassword) {
-		if(propertyCryptPassword!=null && propertyCryptPassword.length()>0)
+		if (propertyCryptPassword != null && propertyCryptPassword.length() > 0) {
 			this.propertyCryptPassword = propertyCryptPassword;
-		else
+		} else {
 			this.propertyCryptPassword = null;
+		}
 	}
-
 
 }

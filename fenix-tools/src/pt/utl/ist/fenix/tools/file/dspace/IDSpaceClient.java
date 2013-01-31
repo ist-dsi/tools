@@ -22,16 +22,16 @@ import pt.utl.ist.fenix.tools.file.VirtualPath;
  * 
  */
 
-
 public interface IDSpaceClient {
 
 	/**
 	 * This method is called before any other method to enable
 	 * the IDSpaceClient access to its context
+	 * 
 	 * @param ctx The IDSpaceContext access reference
 	 */
 	public void init(DSpaceFileManager filemanager);
-	
+
 	/**
 	 * This method should implement the upload of a file to the server
 	 * 
@@ -40,21 +40,22 @@ public interface IDSpaceClient {
 	 * @return a UploadedFileDescriptor the process on the client
 	 * @throws DSpaceClientException if any error occurs during the upload process
 	 */
-	public FileSetDescriptor uploadFileSet(VirtualPath path,String originalFilename,FileSet fs,boolean privateFile) throws DSpaceClientException;
+	public FileSetDescriptor uploadFileSet(VirtualPath path, String originalFilename, FileSet fs, boolean privateFile)
+			throws DSpaceClientException;
 
 	/**
 	 * This method implements the upload of a file to an existing item
 	 * 
 	 * 
 	 */
-	public FileSetDescriptor addFileToItem(VirtualPath path, String name, String itemHandle, FileSet fileSet, boolean privateFile) throws DSpaceClientException;
-	
-	
+	public FileSetDescriptor addFileToItem(VirtualPath path, String name, String itemHandle, FileSet fileSet, boolean privateFile)
+			throws DSpaceClientException;
+
 	/**
-	 * Removes a bitstream from the associated item 
+	 * Removes a bitstream from the associated item
 	 */
 	public void removeFileFromItem(String uniqueId) throws DSpaceClientException;
-	
+
 	/**
 	 * This method enables deletion of a previously uploaded file in
 	 * case of an error or if it is deleted from the client space
@@ -63,16 +64,16 @@ public interface IDSpaceClient {
 	 * @throws DSpaceClientException if any error occurs during the delete process
 	 */
 	public void deleteFileSet(FileSetDescriptor descriptor) throws DSpaceClientException;
-	
-	
+
 	/**
-	 * Changes the metaData of a given file. 
+	 * Changes the metaData of a given file.
 	 */
-	
+
 	public void changeItemMetaData(String itemHandler, Collection<FileSetMetaData> metaData) throws DSpaceClientException;
-	
+
 	/**
 	 * This method permits changing the permissions on a previously uploaded file
+	 * 
 	 * @param bitstreamIdentification The bitStreamIdentification to change permissions on
 	 * @param privateFile Wether this file should be made private or public(private=false)
 	 */
@@ -81,14 +82,16 @@ public interface IDSpaceClient {
 	public FileSet retrieveFileSet(FileSetDescriptor descriptor) throws DSpaceClientException;
 
 	public InputStream retrieveStreamForFile(String uniqueIdentifier) throws DSpaceClientException;
-	
+
 	public FileSetDescriptor listAllDescriptorsFromRoot(FileSetDescriptor rootFileSetDescriptor) throws DSpaceClientException;
 
 	public FileSetDescriptor getRootDescriptor(FileSetDescriptor innerChildDescriptor) throws DSpaceClientException;
 
-	public FileSetQueryResults searchFileSets(FilesetMetadataQuery query, VirtualPath optionalPathToRestrictSearch) throws DSpaceClientException;
-	
-	public FileSearchResult searchFiles(FileSearchCriteria field,  VirtualPath optionalPathToRestrictSearch) throws DSpaceClientException;
-	
+	public FileSetQueryResults searchFileSets(FilesetMetadataQuery query, VirtualPath optionalPathToRestrictSearch)
+			throws DSpaceClientException;
+
+	public FileSearchResult searchFiles(FileSearchCriteria field, VirtualPath optionalPathToRestrictSearch)
+			throws DSpaceClientException;
+
 	public FileSearchResult searchFiles(FileSearchCriteria field) throws DSpaceClientException;
 }

@@ -17,6 +17,6 @@ package pt.utl.ist.fenix.tools.util;
  */
 public interface Transformer<T, V> {
 
-    public V transform(T input);
+	public V transform(T input);
 
 }

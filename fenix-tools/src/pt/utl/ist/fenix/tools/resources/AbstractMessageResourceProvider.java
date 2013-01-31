@@ -7,39 +7,39 @@ import org.apache.commons.lang.StringUtils;
 
 public abstract class AbstractMessageResourceProvider implements IMessageResourceProvider {
 
-    private Properties bundleMapping;
+	private Properties bundleMapping;
 
-    public AbstractMessageResourceProvider() {
-	this.bundleMapping = new Properties();
-    }
-
-    public AbstractMessageResourceProvider(Properties mappings) {
-	this.bundleMapping = mappings;
-    }
-
-    public void addMapping(String bundleName, String bundleMapping) {
-	this.bundleMapping.put(bundleName, bundleMapping);
-    }
-
-    public String getBundleMapping(String bundleName) {
-	return this.bundleMapping.getProperty(bundleName);
-    }
-
-    public boolean containsMapping(String bundleName) {
-	return this.bundleMapping.containsKey(bundleName);
-    }
-
-    protected String format(final String value, final String[] args) {
-	if (StringUtils.isEmpty(value)) {
-	    return value;
+	public AbstractMessageResourceProvider() {
+		this.bundleMapping = new Properties();
 	}
 
-	if (args == null || args.length == 0) {
-	    return value;
+	public AbstractMessageResourceProvider(Properties mappings) {
+		this.bundleMapping = mappings;
 	}
 
-	return MessageFormat.format(value, (Object[]) args);
+	public void addMapping(String bundleName, String bundleMapping) {
+		this.bundleMapping.put(bundleName, bundleMapping);
+	}
 
-    }
+	public String getBundleMapping(String bundleName) {
+		return this.bundleMapping.getProperty(bundleName);
+	}
+
+	public boolean containsMapping(String bundleName) {
+		return this.bundleMapping.containsKey(bundleName);
+	}
+
+	protected String format(final String value, final String[] args) {
+		if (StringUtils.isEmpty(value)) {
+			return value;
+		}
+
+		if (args == null || args.length == 0) {
+			return value;
+		}
+
+		return MessageFormat.format(value, (Object[]) args);
+
+	}
 
 }

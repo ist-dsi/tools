@@ -2,11 +2,11 @@ package pt.linkare.ant;
 
 public class PropertyDependency {
 
-	private InputProperty parentProperty=null;
-	private String value="*";
-	private String parentPropertyName=null;
-	
-	public PropertyDependency(String parentPropertyName,String value) {
+	private InputProperty parentProperty = null;
+	private String value = "*";
+	private String parentPropertyName = null;
+
+	public PropertyDependency(String parentPropertyName, String value) {
 		super();
 		// TODO Auto-generated constructor stub
 		this.value = value;
@@ -22,17 +22,16 @@ public class PropertyDependency {
 
 	public PropertyDependency(String propSpec) {
 		super();
-		String propName=propSpec;
-		String value="*";  
-		if(propSpec.indexOf("=")!=-1)
-		{
-			propName=propSpec.substring(0,propSpec.indexOf("=")).trim();
-			value=propSpec.substring(propSpec.indexOf("=")+1).trim();
+		String propName = propSpec;
+		String value = "*";
+		if (propSpec.indexOf("=") != -1) {
+			propName = propSpec.substring(0, propSpec.indexOf("=")).trim();
+			value = propSpec.substring(propSpec.indexOf("=") + 1).trim();
 		}
 		this.value = value;
 		this.parentPropertyName = propName;
 	}
-	
+
 	public PropertyDependency() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -65,17 +64,15 @@ public class PropertyDependency {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
 
-	public boolean validateDependency()
-	{
-		if(getValue().equalsIgnoreCase("*"))
-			return getParentProperty().getPropertyValue()!=null;
-		else
-		{
-			if(getParentProperty()==null || getParentProperty().getPropertyValue()==null)
+	public boolean validateDependency() {
+		if (getValue().equalsIgnoreCase("*")) {
+			return getParentProperty().getPropertyValue() != null;
+		} else {
+			if (getParentProperty() == null || getParentProperty().getPropertyValue() == null) {
 				return false;
-			
+			}
+
 			return getParentProperty().getPropertyValue().equals(getValue());
 		}
 	}

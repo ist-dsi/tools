@@ -6,6 +6,6 @@ package pt.utl.ist.fenix.tools.util;
  */
 public interface Predicate<T> {
 
-    public boolean evaluate(T element);
+	public boolean evaluate(T element);
 
 }

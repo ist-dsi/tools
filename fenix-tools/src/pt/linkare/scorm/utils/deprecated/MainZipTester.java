@@ -3,7 +3,6 @@
  */
 package pt.linkare.scorm.utils.deprecated;
 
-
 ;
 
 /**
@@ -292,7 +291,7 @@ public class MainZipTester {
             throw e;
         }
     }*/
-    
+
 /*
     //XXX Versão Óscar Ferreira
 //  Dando o endereço do ficheiro .zip e o nome da Directoria onde o seu conteudo será
@@ -390,147 +389,147 @@ public class MainZipTester {
         return col;
     }
     */
-    /**
-     * @param args
-     */
-    /*
-    public static void main(String[] args) {
-        try
-        {  
-           Collection<File> fileCol=null;
-           File zipDirectory=extractZipFile(new File(args[0]));           
-           //fileArray=zipDirectory.listFiles(new MyFileFilter(".xml"));
-           //fileArray=zipDirectory.listFiles(new MyFileFilter(".pdf"));
-           System.out.println(zipDirectory.getAbsolutePath());
-           fileCol = MainZipTester.colAllFilteredFiles(zipDirectory,"imsmanifest.xml");
-           for(File f:fileCol)
-           {
-               System.out.println("A XML Files: "+f.getAbsolutePath());
-           }
-           if(fileCol==null || fileCol.size()<=0)
-               throw new ScormException("Didn't find a imsmanifest.xml FILE!");
-           ImsManifestReader_1_2 imsMR=new ImsManifestReader_1_2(zipDirectory);
-           Collection<ScormMetaData> imCol=imsMR.readManifestData(fileCol.iterator().next(),null);
-           for(ScormMetaData im:imCol)
-           {
-               System.out.println("Element: "+im.getElement());
-               System.out.println("Qualifier: "+im.getQualifier());
-               System.out.println("Language: "+im.getLang());
-               if(im.getValues()!=null)
-               {                   
-                   for(String str:im.getValues())
-                   {
-                       System.out.println("   Values: "+str);
-                   }
-               }
-               else
-                   System.out.println("   Values: "+im.getValues());
-           }
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-    
+/**
+ * @param args
+ */
 /*
-    public static void zipDir(File dir2zip, ZipOutputStream zos,String tempDir) 
-    { 
-        try 
-           { 
-                //create a new File object based on the directory we have to zip 
-                //get a listing of the directory content                
-                String[] dirList = dir2zip.list(); 
-                byte[] readBuffer = new byte[2156]; 
-                int bytesIn = 0; 
-                //loop through dirList, and zip the files 
-                for(int i=0; i<dirList.length; i++) 
+public static void main(String[] args) {
+    try
+    {  
+       Collection<File> fileCol=null;
+       File zipDirectory=extractZipFile(new File(args[0]));           
+       //fileArray=zipDirectory.listFiles(new MyFileFilter(".xml"));
+       //fileArray=zipDirectory.listFiles(new MyFileFilter(".pdf"));
+       System.out.println(zipDirectory.getAbsolutePath());
+       fileCol = MainZipTester.colAllFilteredFiles(zipDirectory,"imsmanifest.xml");
+       for(File f:fileCol)
+       {
+           System.out.println("A XML Files: "+f.getAbsolutePath());
+       }
+       if(fileCol==null || fileCol.size()<=0)
+           throw new ScormException("Didn't find a imsmanifest.xml FILE!");
+       ImsManifestReader_1_2 imsMR=new ImsManifestReader_1_2(zipDirectory);
+       Collection<ScormMetaData> imCol=imsMR.readManifestData(fileCol.iterator().next(),null);
+       for(ScormMetaData im:imCol)
+       {
+           System.out.println("Element: "+im.getElement());
+           System.out.println("Qualifier: "+im.getQualifier());
+           System.out.println("Language: "+im.getLang());
+           if(im.getValues()!=null)
+           {                   
+               for(String str:im.getValues())
+               {
+                   System.out.println("   Values: "+str);
+               }
+           }
+           else
+               System.out.println("   Values: "+im.getValues());
+       }
+    }catch(Exception e)
+    {
+        e.printStackTrace();
+    }
+}
+
+/*
+public static void zipDir(File dir2zip, ZipOutputStream zos,String tempDir) 
+{ 
+    try 
+       { 
+            //create a new File object based on the directory we have to zip 
+            //get a listing of the directory content                
+            String[] dirList = dir2zip.list(); 
+            byte[] readBuffer = new byte[2156]; 
+            int bytesIn = 0; 
+            //loop through dirList, and zip the files 
+            for(int i=0; i<dirList.length; i++) 
+            { 
+                File f = new File(dir2zip, dirList[i]); 
+                if(f.isDirectory()) 
                 { 
-                    File f = new File(dir2zip, dirList[i]); 
-                    if(f.isDirectory()) 
-                    { 
-                            //if the File object is a directory, call this 
-                            //function again to add its content recursively
-                        tempDir=tempDir.concat("/").concat(f.getName());
-                        ZipEntry anEntry = new ZipEntry(tempDir);
-                        zos.putNextEntry(anEntry);
-                        zipDir(f, zos,""); 
-                            //loop again 
-                        continue; 
-                    } 
-                    //if we reached here, the File object f was not a directory 
-                    //create a FileInputStream on top of f 
-                    FileInputStream fis = new FileInputStream(f); 
-                    //create a new zip entry //XXX era getPath() antes
-                    ZipEntry anEntry = new ZipEntry(tempDir+"/"+dir2zip.getName()+"/"+f.getName()); 
-                    //place the zip entry in the ZipOutputStream object 
-                    zos.putNextEntry(anEntry); 
-                    //now write the content of the file to the ZipOutputStream 
-                    while((bytesIn = fis.read(readBuffer)) != -1) 
-                    { 
-                        zos.write(readBuffer, 0, bytesIn); 
-                    } 
-                   //close the Stream 
-                   fis.close(); 
-            } 
+                        //if the File object is a directory, call this 
+                        //function again to add its content recursively
+                    tempDir=tempDir.concat("/").concat(f.getName());
+                    ZipEntry anEntry = new ZipEntry(tempDir);
+                    zos.putNextEntry(anEntry);
+                    zipDir(f, zos,""); 
+                        //loop again 
+                    continue; 
+                } 
+                //if we reached here, the File object f was not a directory 
+                //create a FileInputStream on top of f 
+                FileInputStream fis = new FileInputStream(f); 
+                //create a new zip entry //XXX era getPath() antes
+                ZipEntry anEntry = new ZipEntry(tempDir+"/"+dir2zip.getName()+"/"+f.getName()); 
+                //place the zip entry in the ZipOutputStream object 
+                zos.putNextEntry(anEntry); 
+                //now write the content of the file to the ZipOutputStream 
+                while((bytesIn = fis.read(readBuffer)) != -1) 
+                { 
+                    zos.write(readBuffer, 0, bytesIn); 
+                } 
+               //close the Stream 
+               fis.close(); 
         } 
-        catch(Exception e) 
-        { 
-            //handle exception 
-        } 
-    }
-    
-    @SuppressWarnings("unused")
-    public static void zipDir(File dir2zip, ZipOutputStream zos) 
+    } 
+    catch(Exception e) 
     { 
-        try 
-           { 
-                //create a new File object based on the directory we have to zip 
-                //get a listing of the directory content                
-                String[] dirList = dir2zip.list(); 
-                byte[] readBuffer = new byte[2156]; 
-                int bytesIn = 0; 
-                //loop through dirList, and zip the files 
-                for(int i=0; i<dirList.length; i++) 
-                { //XXX added!
-                    //System.out.println("dirList pos-> "+i+" value: "+dirList[i]);
-                    File f = new File(dir2zip, dirList[i]); 
-                    if(f.isDirectory()) 
-                    { 
-                            //if the File object is a directory, call this 
-                            //function again to add its content recursively
-                        String tempDir=dir2zip.getName();
-                        //XXX add this here
-                        ZipEntry anEntry = new ZipEntry(f.getName()+"/");
-                        zos.putNextEntry(anEntry);
-                        //XXX end
-                        //zipDir(f, zos,"");
-                        zipDir(f, zos,"");
-                            //loop again 
-                        continue; 
-                    } 
-                    //if we reached here, the File object f was not a directory 
-                    //create a FileInputStream on top of f 
-                    FileInputStream fis = new FileInputStream(f); 
-                    //create a new zip entry //XXX era getPath() antes
-                    //ZipEntry anEntry = new ZipEntry(dir2zip.getName()+"/"+f.getName());
-                    ZipEntry anEntry = new ZipEntry(f.getName());
-                    //place the zip entry in the ZipOutputStream object 
-                    zos.putNextEntry(anEntry); 
-                    //now write the content of the file to the ZipOutputStream 
-                    while((bytesIn = fis.read(readBuffer)) != -1) 
-                    { 
-                        zos.write(readBuffer, 0, bytesIn); 
-                    } 
-                   //close the Stream 
-                   fis.close(); 
-            } 
+        //handle exception 
+    } 
+}
+
+@SuppressWarnings("unused")
+public static void zipDir(File dir2zip, ZipOutputStream zos) 
+{ 
+    try 
+       { 
+            //create a new File object based on the directory we have to zip 
+            //get a listing of the directory content                
+            String[] dirList = dir2zip.list(); 
+            byte[] readBuffer = new byte[2156]; 
+            int bytesIn = 0; 
+            //loop through dirList, and zip the files 
+            for(int i=0; i<dirList.length; i++) 
+            { //XXX added!
+                //System.out.println("dirList pos-> "+i+" value: "+dirList[i]);
+                File f = new File(dir2zip, dirList[i]); 
+                if(f.isDirectory()) 
+                { 
+                        //if the File object is a directory, call this 
+                        //function again to add its content recursively
+                    String tempDir=dir2zip.getName();
+                    //XXX add this here
+                    ZipEntry anEntry = new ZipEntry(f.getName()+"/");
+                    zos.putNextEntry(anEntry);
+                    //XXX end
+                    //zipDir(f, zos,"");
+                    zipDir(f, zos,"");
+                        //loop again 
+                    continue; 
+                } 
+                //if we reached here, the File object f was not a directory 
+                //create a FileInputStream on top of f 
+                FileInputStream fis = new FileInputStream(f); 
+                //create a new zip entry //XXX era getPath() antes
+                //ZipEntry anEntry = new ZipEntry(dir2zip.getName()+"/"+f.getName());
+                ZipEntry anEntry = new ZipEntry(f.getName());
+                //place the zip entry in the ZipOutputStream object 
+                zos.putNextEntry(anEntry); 
+                //now write the content of the file to the ZipOutputStream 
+                while((bytesIn = fis.read(readBuffer)) != -1) 
+                { 
+                    zos.write(readBuffer, 0, bytesIn); 
+                } 
+               //close the Stream 
+               fis.close(); 
         } 
-        catch(Exception e) 
-        { 
-            //handle exception 
-        } 
-    }
+    } 
+    catch(Exception e) 
+    { 
+        //handle exception 
+    } 
+}
 */
-    /*
+/*
 }
 */

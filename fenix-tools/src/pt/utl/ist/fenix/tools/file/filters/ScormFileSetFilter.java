@@ -15,6 +15,7 @@ public class ScormFileSetFilter implements FileSetFilter {
 		super();
 	}
 
+	@Override
 	public void handleFileSet(FileSet fs) throws FileSetFilterException {
 
 		parseMetaInfo(fs, true);
@@ -28,8 +29,7 @@ public class ScormFileSetFilter implements FileSetFilter {
 				ScormData scormData = ScormHandlerFactory.getScormHandler().parseScormPifFile(pifFile);
 
 				if (preserveMetaInfo) {
-					Collection<FileSetMetaData> previousData = new ArrayList<FileSetMetaData>(fs
-							.getMetaInfo());
+					Collection<FileSetMetaData> previousData = new ArrayList<FileSetMetaData>(fs.getMetaInfo());
 					fs.doCleanCopyFromFileSet(FileSet.createFileSetFromScormData(scormData));
 					fs.addMetaInfo(previousData);
 				} else {

@@ -17,20 +17,20 @@ public class InputPropertyMap extends ArrayList<InputProperty> {
 		super.add(value);
 	}
 
-	public InputProperty get(String propertyName)
-	{
-		for(InputProperty p:this)
-		{
-			if(p.getPropertyName().equals(propertyName))
+	public InputProperty get(String propertyName) {
+		for (InputProperty p : this) {
+			if (p.getPropertyName().equals(propertyName)) {
 				return p;
+			}
 		}
-		
+
 		return null;
 	}
 
 	public void putAll(Collection<InputProperty> propertiesList) {
-		for(InputProperty prop:propertiesList)
+		for (InputProperty prop : propertiesList) {
 			put(prop);
+		}
 	}
 
 }

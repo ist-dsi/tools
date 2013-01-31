@@ -2,6 +2,7 @@ package pt.utl.ist.fenix.tools.html;
 
 public class PropertiesBeutifier extends PropertiesConverter {
 
+	@Override
 	public String convert(final String string) {
 		final StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < string.length(); i++) {

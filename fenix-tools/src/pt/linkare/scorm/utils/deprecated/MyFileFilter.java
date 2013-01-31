@@ -3,9 +3,6 @@
  */
 package pt.linkare.scorm.utils.deprecated;
 
-import java.io.File;
-import java.io.FileFilter;
-
 
 /**
  * @author oferreira

@@ -18,10 +18,14 @@ public class SslRmiClientSocketFactory implements RMIClientSocketFactory, Serial
 	public SslRmiClientSocketFactory() {
 	}
 
+	@Override
 	public Socket createSocket(String host, int port) throws IOException {
 		initDelegate();
-		if (delegate != null) return delegate.createSocket(host, port);
-		else return defaultDispatch.createSocket(host, port);
+		if (delegate != null) {
+			return delegate.createSocket(host, port);
+		} else {
+			return defaultDispatch.createSocket(host, port);
+		}
 	}
 
 	private void initDelegate() {
@@ -31,12 +35,12 @@ public class SslRmiClientSocketFactory implements RMIClientSocketFactory, Serial
 				String sslTrustStorePass = RMIConfig.getInstance().getSslTrustStorePass();
 				try {
 					delegate = RMIConfig.loadClientSSLSocketFactory(sslTrustStoreLocation, sslTrustStorePass);
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					defaultDispatch = new SslRMIClientSocketFactory();
 				}
+			} else {
+				defaultDispatch = new SslRMIClientSocketFactory();
 			}
-			else defaultDispatch = new SslRMIClientSocketFactory();
 		}
 
 	}

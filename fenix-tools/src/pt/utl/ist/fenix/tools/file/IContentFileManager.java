@@ -11,14 +11,16 @@ public interface IContentFileManager {
 	 */
 	public void changeItemMetaData(String itemHandler, Collection<FileSetMetaData> metaData);
 
-	public FileDescriptor createItemWithFile(VirtualPath path, String name, boolean privateFile, Collection<FileSetMetaData> metaData, InputStream inputStream);
+	public FileDescriptor createItemWithFile(VirtualPath path, String name, boolean privateFile,
+			Collection<FileSetMetaData> metaData, InputStream inputStream);
 
-	public FileDescriptor createItemWithFile(VirtualPath path, String name, boolean privateFile, String author, String title, InputStream inputStream);
-	
+	public FileDescriptor createItemWithFile(VirtualPath path, String name, boolean privateFile, String author, String title,
+			InputStream inputStream);
+
 	public FileDescriptor addFileToItem(VirtualPath path, String name, String itemId, boolean privateFile, InputStream inputStream);
-	
+
 	public void removeFileFromItem(String uniqueId);
-	
+
 	/**
 	 * Deletes an existing file
 	 * 
@@ -36,7 +38,7 @@ public interface IContentFileManager {
 	 * @param privateFile
 	 */
 	public void changeFilePermissions(String uniqueId, Boolean privateFile);
-	
+
 	/**
 	 * Returns the format of the download url. The format should receive only a
 	 * parameter with file unique Id. Example:
@@ -52,7 +54,7 @@ public interface IContentFileManager {
 	 * 
 	 * @return the file InputStream for the File
 	 */
-	
+
 	public InputStream retrieveFile(String uniqueId);
 
 	public FileSearchResult searchFiles(FileSearchCriteria critera);

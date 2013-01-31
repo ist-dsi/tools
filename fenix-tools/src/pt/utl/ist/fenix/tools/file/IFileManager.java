@@ -12,8 +12,8 @@ public interface IFileManager {
 	 * @return A FileDescriptor instance that enables access to the saved file
 	 * @throws FileManagerException
 	 */
-	public FileDescriptor saveFile(VirtualPath filePath, String originalFilename, boolean privateFile,
-			String author, String title, File fileToSave);
+	public FileDescriptor saveFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+			String title, File fileToSave);
 
 	/**
 	 * Saves the file and returns the descriptor
@@ -21,8 +21,8 @@ public interface IFileManager {
 	 * @return A FileDescriptor instance that enables access to the saved file
 	 * @throws FileManagerException
 	 */
-	public FileDescriptor saveFile(VirtualPath filePath, String originalFilename, boolean privateFile,
-			String author, String title, InputStream fileInputStream);
+	public FileDescriptor saveFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+			String title, InputStream fileInputStream);
 
 	/**
 	 * Saves the file and returns the descriptor
@@ -59,7 +59,7 @@ public interface IFileManager {
 	 * @param privateFile
 	 */
 	public void changeFilePermissions(String uniqueId, Boolean privateFile);
-	
+
 	/**
 	 * Returns the format of the download url. The format should receive only a
 	 * parameter with file unique Id. Example:
@@ -75,9 +75,9 @@ public interface IFileManager {
 	 * 
 	 * @return the file InputStream for the File
 	 */
-	
+
 	public InputStream retrieveFile(String uniqueId);
-	
+
 	public FileSearchResult searchFiles(FileSearchCriteria critera);
 
 	public FileSearchResult searchFiles(FileSearchCriteria critera, VirtualPath optionalPathToRestrictSearch);

@@ -5,7 +5,7 @@ package pt.utl.ist.fenix.tools.file.filters;
 
 /**
  * @author jpereira
- *
+ * 
  */
 public class RecursiveFileSetFilterException extends FileSetFilterException {
 

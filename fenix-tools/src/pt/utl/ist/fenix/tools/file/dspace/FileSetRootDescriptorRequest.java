@@ -10,54 +10,54 @@ import org.dom4j.tree.BaseElement;
 import pt.utl.ist.fenix.tools.file.FileSetDescriptor;
 import pt.utl.ist.fenix.tools.file.XMLSerializable;
 
-public class FileSetRootDescriptorRequest implements Serializable,XMLSerializable{
+public class FileSetRootDescriptorRequest implements Serializable, XMLSerializable {
 
 	private FileSetDescriptor fsDescriptor;
 
-    //Serialization support
-    public FileSetRootDescriptorRequest() {
-        
-    }
-    public FileSetRootDescriptorRequest(FileSetDescriptor fsDescriptor) {
-        this.fsDescriptor = fsDescriptor;
-    }
+	//Serialization support
+	public FileSetRootDescriptorRequest() {
 
-    public FileSetDescriptor getFileSetDescriptor() {
-        return this.fsDescriptor;
-    }
+	}
 
-    public String toXMLString() {
-    	return toXML().asXML();
-    }
-    
-    public Element toXML()
-    {
-        Element fileSetDeleteElement = new BaseElement("filesetrootdescriptorrequest");
+	public FileSetRootDescriptorRequest(FileSetDescriptor fsDescriptor) {
+		this.fsDescriptor = fsDescriptor;
+	}
 
-        fileSetDeleteElement.add(fsDescriptor.toXML());
+	public FileSetDescriptor getFileSetDescriptor() {
+		return this.fsDescriptor;
+	}
 
-        return fileSetDeleteElement;
-    	
-    }
+	@Override
+	public String toXMLString() {
+		return toXML().asXML();
+	}
 
-    public static FileSetRootDescriptorRequest createFromXml(String xml) {
-        FileSetRootDescriptorRequest retVal=new FileSetRootDescriptorRequest();
-        retVal.fromXMLString(xml);
-        return retVal;
-    }
+	public Element toXML() {
+		Element fileSetDeleteElement = new BaseElement("filesetrootdescriptorrequest");
 
-    
-    public void fromXMLString(String xml) {
-        try {
-            fromXML(DocumentHelper.parseText(xml).getRootElement());
-        } catch (DocumentException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    public void fromXML(Element xmlElement)
-    {
-    	this.fsDescriptor=new FileSetDescriptor();
-    	fsDescriptor.fromXML(xmlElement.element("filesetdescriptor"));
-    }
+		fileSetDeleteElement.add(fsDescriptor.toXML());
+
+		return fileSetDeleteElement;
+
+	}
+
+	public static FileSetRootDescriptorRequest createFromXml(String xml) {
+		FileSetRootDescriptorRequest retVal = new FileSetRootDescriptorRequest();
+		retVal.fromXMLString(xml);
+		return retVal;
+	}
+
+	@Override
+	public void fromXMLString(String xml) {
+		try {
+			fromXML(DocumentHelper.parseText(xml).getRootElement());
+		} catch (DocumentException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void fromXML(Element xmlElement) {
+		this.fsDescriptor = new FileSetDescriptor();
+		fsDescriptor.fromXML(xmlElement.element("filesetdescriptor"));
+	}
 }

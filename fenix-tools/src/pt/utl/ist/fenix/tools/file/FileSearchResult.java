@@ -8,26 +8,26 @@ public class FileSearchResult {
 	private int pageSize;
 	private int start;
 	private int totalElements;
-	
+
 	public FileSearchResult(List<FileDescriptor> results, int start, int pageSize, Integer totalElements) {
-		this.results =results;
+		this.results = results;
 		this.start = start;
 		this.pageSize = pageSize;
 		this.totalElements = totalElements;
 	}
-	
+
 	public List<FileDescriptor> getSearchResults() {
 		return results;
 	}
-	
+
 	public Boolean hasMoreElements() {
 		return (start + pageSize) < totalElements;
 	}
-	
-	public Integer getTotalElements()  {
+
+	public Integer getTotalElements() {
 		return totalElements;
 	}
-	
+
 	public Integer getPageSize() {
 		return pageSize;
 	}

@@ -16,11 +16,11 @@ import pt.linkare.scorm.xmlbeans.ScormAsset;
 import pt.linkare.scorm.xmlbeans.ScormData;
 
 /**
- * @author José Pedro Pereira - Linkare TI
- *
- * This class represents an abstraction over the file system to enable the use
- * of related files, metadata associated to files, files containing metadata and 
- * groups of related files...
+ * @author Josï¿½ Pedro Pereira - Linkare TI
+ * 
+ *         This class represents an abstraction over the file system to enable the use
+ *         of related files, metadata associated to files, files containing metadata and
+ *         groups of related files...
  */
 @SuppressWarnings("serial")
 public class FileSet implements Serializable, XMLSerializable {
@@ -28,9 +28,9 @@ public class FileSet implements Serializable, XMLSerializable {
 	/**
 	 * Item ID, used when you want to append a file to an existing item.
 	 */
-	
+
 	private String itemHandle;
-	
+
 	/**
 	 * The related child FileSet's
 	 */
@@ -71,7 +71,9 @@ public class FileSet implements Serializable, XMLSerializable {
 	 *            adds one FileSet as a child to the childs Collection
 	 */
 	public void addChildSet(FileSet childSet) {
-		if (this.childSets == null) this.childSets = new ArrayList<FileSet>();
+		if (this.childSets == null) {
+			this.childSets = new ArrayList<FileSet>();
+		}
 
 		this.childSets.add(childSet);
 
@@ -82,7 +84,9 @@ public class FileSet implements Serializable, XMLSerializable {
 	 *            removes the FileSet passed from the childs Collection
 	 */
 	public void removeChildSet(FileSet childSet) {
-		if (this.childSets == null) this.childSets = new ArrayList<FileSet>();
+		if (this.childSets == null) {
+			this.childSets = new ArrayList<FileSet>();
+		}
 
 		this.childSets.remove(childSet);
 	}
@@ -107,25 +111,33 @@ public class FileSet implements Serializable, XMLSerializable {
 	}
 
 	public void addContentFile(File f) {
-		if (this.contentFiles == null) this.contentFiles = new ArrayList<File>();
+		if (this.contentFiles == null) {
+			this.contentFiles = new ArrayList<File>();
+		}
 
 		this.contentFiles.add(f);
 	}
 
 	public void addContentFile(Collection<File> f) {
-		if (this.contentFiles == null) this.contentFiles = new ArrayList<File>();
+		if (this.contentFiles == null) {
+			this.contentFiles = new ArrayList<File>();
+		}
 
 		this.contentFiles.addAll(f);
 	}
 
 	public void removeContentFile(File f) {
-		if (this.contentFiles == null) this.contentFiles = new ArrayList<File>();
+		if (this.contentFiles == null) {
+			this.contentFiles = new ArrayList<File>();
+		}
 
 		this.contentFiles.remove(f);
 	}
 
 	public void removeContentFile(Collection<File> f) {
-		if (this.contentFiles == null) this.contentFiles = new ArrayList<File>();
+		if (this.contentFiles == null) {
+			this.contentFiles = new ArrayList<File>();
+		}
 
 		this.contentFiles.removeAll(f);
 	}
@@ -146,31 +158,41 @@ public class FileSet implements Serializable, XMLSerializable {
 	}
 
 	public void addMetaFile(File f) {
-		if (this.metaFiles == null) this.metaFiles = new ArrayList<File>();
+		if (this.metaFiles == null) {
+			this.metaFiles = new ArrayList<File>();
+		}
 
 		this.metaFiles.add(f);
 	}
 
 	public void addMetaFile(Collection<File> f) {
-		if (this.metaFiles == null) this.metaFiles = new ArrayList<File>();
+		if (this.metaFiles == null) {
+			this.metaFiles = new ArrayList<File>();
+		}
 
 		this.metaFiles.addAll(f);
 	}
 
 	public void removeMetaFile(File f) {
-		if (this.metaFiles == null) this.metaFiles = new ArrayList<File>();
+		if (this.metaFiles == null) {
+			this.metaFiles = new ArrayList<File>();
+		}
 
 		this.metaFiles.add(f);
 	}
 
 	public void removeMetaFile(Collection<File> f) {
-		if (this.metaFiles == null) this.metaFiles = new ArrayList<File>();
+		if (this.metaFiles == null) {
+			this.metaFiles = new ArrayList<File>();
+		}
 
 		this.metaFiles.removeAll(f);
 	}
 
 	public Collection<File> getAllFiles() {
-		Collection<File> allFiles=new ArrayList<File>((getContentFiles()==null?0:getContentFiles().size())+(getMetaFiles()==null?0:getMetaFiles().size()));
+		Collection<File> allFiles =
+				new ArrayList<File>((getContentFiles() == null ? 0 : getContentFiles().size())
+						+ (getMetaFiles() == null ? 0 : getMetaFiles().size()));
 		allFiles.addAll(getContentFiles());
 		allFiles.addAll(getMetaFiles());
 		return allFiles;
@@ -192,27 +214,35 @@ public class FileSet implements Serializable, XMLSerializable {
 	}
 
 	public void addMetaInfo(FileSetMetaData metaInfo) {
-		if (this.metaInfo == null) this.metaInfo = new ArrayList<FileSetMetaData>();
+		if (this.metaInfo == null) {
+			this.metaInfo = new ArrayList<FileSetMetaData>();
+		}
 
 		this.metaInfo.add(metaInfo);
 	}
 
 	public void addMetaInfo(Collection<FileSetMetaData> metaInfo) {
-		if (this.metaInfo == null) this.metaInfo = new ArrayList<FileSetMetaData>();
-		
-		if(metaInfo!=null) { 
+		if (this.metaInfo == null) {
+			this.metaInfo = new ArrayList<FileSetMetaData>();
+		}
+
+		if (metaInfo != null) {
 			this.metaInfo.addAll(metaInfo);
 		}
 	}
 
 	public void removeMetaInfo(FileSetMetaData metaInfo) {
-		if (this.metaInfo == null) this.metaInfo = new ArrayList<FileSetMetaData>();
+		if (this.metaInfo == null) {
+			this.metaInfo = new ArrayList<FileSetMetaData>();
+		}
 
 		this.metaInfo.remove(metaInfo);
 	}
 
 	public void removeMetaInfo(Collection<FileSetMetaData> metaInfo) {
-		if (this.metaInfo == null) this.metaInfo = new ArrayList<FileSetMetaData>();
+		if (this.metaInfo == null) {
+			this.metaInfo = new ArrayList<FileSetMetaData>();
+		}
 
 		this.metaInfo.removeAll(metaInfo);
 	}
@@ -372,8 +402,7 @@ public class FileSet implements Serializable, XMLSerializable {
 			FileSet assetFileSet = new FileSet();
 			assetFileSet.addContentFile(asset.getContentFiles());
 			assetFileSet.addMetaFile(asset.getMetadataFile());
-			assetFileSet.addMetaInfo(FileSetMetaData.createFileSetMetaDatasFromScormMetaDatas(asset
-					.getContentMetadataInfo()));
+			assetFileSet.addMetaInfo(FileSetMetaData.createFileSetMetaDatasFromScormMetaDatas(asset.getContentMetadataInfo()));
 		}
 
 		return retVal;
@@ -397,42 +426,60 @@ public class FileSet implements Serializable, XMLSerializable {
 
 	public FileSet searchFileSetByFile(File searchFile) {
 		for (File f : getContentFiles()) {
-			if (f.equals(searchFile)) return this;
+			if (f.equals(searchFile)) {
+				return this;
+			}
 		}
 		for (File f : getMetaFiles()) {
-			if (f.equals(searchFile)) return this;
+			if (f.equals(searchFile)) {
+				return this;
+			}
 		}
 		for (FileSet childFileSet : getChildSets()) {
 			FileSet foundInChildFileSet = childFileSet.searchFileSetByFile(searchFile);
-			if (foundInChildFileSet != null) return foundInChildFileSet;
+			if (foundInChildFileSet != null) {
+				return foundInChildFileSet;
+			}
 		}
 		return null;
 	}
 
 	public FileSet searchFileSetByFile(String originalAbsoluteFilePath) {
 		for (File f : getContentFiles()) {
-			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) return this;
+			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) {
+				return this;
+			}
 		}
 		for (File f : getMetaFiles()) {
-			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) return this;
+			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) {
+				return this;
+			}
 		}
 		for (FileSet childFileSet : getChildSets()) {
 			FileSet foundInChildFileSet = childFileSet.searchFileSetByFile(originalAbsoluteFilePath);
-			if (foundInChildFileSet != null) return foundInChildFileSet;
+			if (foundInChildFileSet != null) {
+				return foundInChildFileSet;
+			}
 		}
 		return null;
 	}
 
 	public File searchFileByAbsolutePath(String originalAbsoluteFilePath) {
 		for (File f : getContentFiles()) {
-			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) return f;
+			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) {
+				return f;
+			}
 		}
 		for (File f : getMetaFiles()) {
-			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) return f;
+			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) {
+				return f;
+			}
 		}
 		for (FileSet childFileSet : getChildSets()) {
 			File foundInChildFileSet = childFileSet.searchFileByAbsolutePath(originalAbsoluteFilePath);
-			if (foundInChildFileSet != null) return foundInChildFileSet;
+			if (foundInChildFileSet != null) {
+				return foundInChildFileSet;
+			}
 		}
 		return null;
 	}
@@ -452,16 +499,16 @@ public class FileSet implements Serializable, XMLSerializable {
 				this.getMetaFiles().add(newFile);
 				return true;
 			}
-		}		
+		}
 		for (FileSet childFileSet : getChildSets()) {
-			boolean foundInChildFileSet=childFileSet.replaceFileWithAbsolutePath(originalAbsoluteFilePath, newFile);
-			if(foundInChildFileSet)
+			boolean foundInChildFileSet = childFileSet.replaceFileWithAbsolutePath(originalAbsoluteFilePath, newFile);
+			if (foundInChildFileSet) {
 				return true;
+			}
 		}
 		return false;
 	}
-	
-	
+
 	public boolean replaceFileWithAbsolutePath(String originalAbsoluteFilePath, String replacementAbsoluteFilePath) {
 		for (File f : getContentFiles()) {
 			if (f.getAbsolutePath().equals(originalAbsoluteFilePath)) {
@@ -477,11 +524,13 @@ public class FileSet implements Serializable, XMLSerializable {
 				this.getMetaFiles().add(new File(replacementAbsoluteFilePath));
 				return true;
 			}
-		}		
+		}
 		for (FileSet childFileSet : getChildSets()) {
-			boolean foundInChildFileSet=childFileSet.replaceFileWithAbsolutePath(originalAbsoluteFilePath, replacementAbsoluteFilePath);
-			if(foundInChildFileSet)
+			boolean foundInChildFileSet =
+					childFileSet.replaceFileWithAbsolutePath(originalAbsoluteFilePath, replacementAbsoluteFilePath);
+			if (foundInChildFileSet) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -489,8 +538,9 @@ public class FileSet implements Serializable, XMLSerializable {
 	public Collection<File> recursiveListContentFiles() {
 		ArrayList<File> retVal = new ArrayList<File>(getContentFiles().size());
 		retVal.addAll(getContentFiles());
-		for (FileSet childFileSet : getChildSets())
+		for (FileSet childFileSet : getChildSets()) {
 			retVal.addAll(childFileSet.recursiveListContentFiles());
+		}
 
 		return retVal;
 	}
@@ -498,8 +548,9 @@ public class FileSet implements Serializable, XMLSerializable {
 	public Collection<File> recursiveListMetaFiles() {
 		ArrayList<File> retVal = new ArrayList<File>(getMetaFiles().size());
 		retVal.addAll(getMetaFiles());
-		for (FileSet childFileSet : getChildSets())
+		for (FileSet childFileSet : getChildSets()) {
 			retVal.addAll(childFileSet.recursiveListMetaFiles());
+		}
 
 		return retVal;
 	}
@@ -510,6 +561,7 @@ public class FileSet implements Serializable, XMLSerializable {
 		return allFiles;
 	}
 
+	@Override
 	public String toXMLString() {
 
 		return toXML().asXML();
@@ -517,52 +569,56 @@ public class FileSet implements Serializable, XMLSerializable {
 
 	public Element toXML() {
 		Element xmlElement = new BaseElement("fileset");
-		if(getItemHandle()!=null) {
+		if (getItemHandle() != null) {
 			xmlElement.addElement("itemHandle").addText(getItemHandle());
 		}
 		if (getChildSets() != null) {
 			Element childsElement = xmlElement.addElement("childsets");
-			for (FileSet child : getChildSets())
+			for (FileSet child : getChildSets()) {
 				childsElement.add(child.toXML());
+			}
 		}
 		if (getContentFiles() != null) {
 			Element contentFileElement = xmlElement.addElement("contentfiles");
-			for (File current : getContentFiles())
+			for (File current : getContentFiles()) {
 				contentFileElement.addElement("contentfile").setText(current.getAbsolutePath());
+			}
 		}
 		if (getMetaFiles() != null) {
 			Element metaFileElement = xmlElement.addElement("metafiles");
-			for (File current : getMetaFiles())
+			for (File current : getMetaFiles()) {
 				metaFileElement.addElement("metafile").setText(current.getAbsolutePath());
+			}
 		}
 		if (getMetaInfo() != null) {
 			Element metaInfoDescElement = xmlElement.addElement("metainfo");
-			for (FileSetMetaData current : getMetaInfo())
+			for (FileSetMetaData current : getMetaInfo()) {
 				metaInfoDescElement.add(current.toXML());
+			}
 
 		}
 
 		return xmlElement;
 	}
 
+	@Override
 	public void fromXMLString(String xml) {
 		try {
 			fromXML(DocumentHelper.parseText(xml).getRootElement());
-		}
-		catch (DocumentException e) {
+		} catch (DocumentException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void fromXML(Element xmlElement) {
-		if(xmlElement.element("itemHandle")!=null) {
+		if (xmlElement.element("itemHandle") != null) {
 			Element id = xmlElement.element("itemHandle");
 			this.setItemHandle(id.getText());
 		}
 		if (xmlElement.element("childsets") != null) {
 			Element childSetsElement = xmlElement.element("childsets");
-			List<Element> childSetsList = (List<Element>) childSetsElement.elements("fileset");
+			List<Element> childSetsList = childSetsElement.elements("fileset");
 			for (Element filesetElement : childSetsList) {
 				FileSet child = new FileSet();
 				child.fromXML(filesetElement);
@@ -571,7 +627,7 @@ public class FileSet implements Serializable, XMLSerializable {
 		}
 		if (xmlElement.element("contentfiles") != null) {
 			Element contentFilesElement = xmlElement.element("contentfiles");
-			List<Element> contentFileList = (List<Element>) contentFilesElement.elements("contentfile");
+			List<Element> contentFileList = contentFilesElement.elements("contentfile");
 			for (Element contentFileElement : contentFileList) {
 				File file = new File(contentFileElement.getText());
 				this.addContentFile(file);
@@ -579,7 +635,7 @@ public class FileSet implements Serializable, XMLSerializable {
 		}
 		if (xmlElement.element("metafiles") != null) {
 			Element metaFilesElement = xmlElement.element("metafiles");
-			List<Element> metaFileList = (List<Element>) metaFilesElement.elements();
+			List<Element> metaFileList = metaFilesElement.elements();
 			for (Element metaFileElement : metaFileList) {
 				File metaFile = new File(metaFileElement.getText());
 				this.addMetaFile(metaFile);
@@ -587,7 +643,7 @@ public class FileSet implements Serializable, XMLSerializable {
 		}
 		if (xmlElement.element("metainfo") != null) {
 			Element filesetMetaDatasElement = xmlElement.element("metainfo");
-			List<Element> filesetMetaDatasList = (List<Element>) filesetMetaDatasElement.elements("filesetmetadata");
+			List<Element> filesetMetaDatasList = filesetMetaDatasElement.elements("filesetmetadata");
 			for (Element filesetMetaDataElement : filesetMetaDatasList) {
 				FileSetMetaData metaData = new FileSetMetaData();
 				metaData.fromXML(filesetMetaDataElement);
@@ -599,20 +655,23 @@ public class FileSet implements Serializable, XMLSerializable {
 	public FileSetDescriptor createBasicFileSetDescriptor() {
 		FileSetDescriptor fsDescriptor = new FileSetDescriptor();
 		fsDescriptor.addMetaInfo(this.getMetaInfo());
-		for (File f : getContentFiles())
-			fsDescriptor.addContentFileDescriptor(new FileDescriptor(f.getAbsolutePath(), f.getName(), null, null,
-					null, (int)f.length(), null));
-		for (File f : getMetaFiles())
-			fsDescriptor.addMetaFileDescriptors(new FileDescriptor(f.getAbsolutePath(), f.getName(), null, null, null,
-					(int)f.length(), null));
+		for (File f : getContentFiles()) {
+			fsDescriptor.addContentFileDescriptor(new FileDescriptor(f.getAbsolutePath(), f.getName(), null, null, null, (int) f
+					.length(), null));
+		}
+		for (File f : getMetaFiles()) {
+			fsDescriptor.addMetaFileDescriptors(new FileDescriptor(f.getAbsolutePath(), f.getName(), null, null, null, (int) f
+					.length(), null));
+		}
 
 		return fsDescriptor;
 	}
 
 	public FileSetDescriptor recursiveCreateBasicFileSetDescriptor() {
 		FileSetDescriptor fsDescriptor = createBasicFileSetDescriptor();
-		for (FileSet child : getChildSets())
+		for (FileSet child : getChildSets()) {
 			fsDescriptor.addChildSet(child.recursiveCreateBasicFileSetDescriptor());
+		}
 
 		return fsDescriptor;
 	}
@@ -624,7 +683,5 @@ public class FileSet implements Serializable, XMLSerializable {
 	public void setItemHandle(String itemHandle) {
 		this.itemHandle = itemHandle;
 	}
-
-	
 
 }

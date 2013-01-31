@@ -5,7 +5,7 @@ package pt.linkare.ant;
 
 /**
  * @author jpereira
- *
+ * 
  */
 public class InvalidPropertySpecException extends Exception {
 

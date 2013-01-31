@@ -6,18 +6,18 @@ package pt.utl.ist.fenix.tools.spreadsheet;
  * @author Pedro Santos (pedro.miguel.santos@ist.utl.pt)
  */
 public enum WorkbookExportFormat {
-    EXCEL, CSV(","), TSV("\t"), DOCX;
+	EXCEL, CSV(","), TSV("\t"), DOCX;
 
-    private String separator;
+	private String separator;
 
-    private WorkbookExportFormat() {
-    }
+	private WorkbookExportFormat() {
+	}
 
-    private WorkbookExportFormat(String separator) {
-	this.separator = separator;
-    }
+	private WorkbookExportFormat(String separator) {
+		this.separator = separator;
+	}
 
-    public String getSeparator() {
-	return separator;
-    }
+	public String getSeparator() {
+		return separator;
+	}
 }

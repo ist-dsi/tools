@@ -9,75 +9,70 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.tree.BaseElement;
 
-public class VirtualPath implements Serializable,XMLSerializable{
+public class VirtualPath implements Serializable, XMLSerializable {
 
-    private List<VirtualPathNode> nodes;
+	private List<VirtualPathNode> nodes;
 
-    public VirtualPath() {
-        this.nodes = new ArrayList<VirtualPathNode>();
-    }
+	public VirtualPath() {
+		this.nodes = new ArrayList<VirtualPathNode>();
+	}
 
-    public VirtualPath addNode(int index, VirtualPathNode node) {
-        this.nodes.add(index, node);
-        return this;
-    }
+	public VirtualPath addNode(int index, VirtualPathNode node) {
+		this.nodes.add(index, node);
+		return this;
+	}
 
-    public VirtualPath addNode(VirtualPathNode node) {
-        this.nodes.add(node);
-        return this;
-    }
+	public VirtualPath addNode(VirtualPathNode node) {
+		this.nodes.add(node);
+		return this;
+	}
 
-    public List<VirtualPathNode> getNodes() {
-        return this.nodes;
-    }
+	public List<VirtualPathNode> getNodes() {
+		return this.nodes;
+	}
 
-    //Óscar Ferreira - Linkare TI
+	//Óscar Ferreira - Linkare TI
+	@Override
 	public String toXMLString() {
 		return toXML().asXML();
 	}
 
+	@Override
 	public void fromXMLString(String xml) {
 		try {
 			fromXML(DocumentHelper.parseText(xml).getRootElement());
+		} catch (DocumentException e) {
+			throw new RuntimeException("Error parsing xml string : " + xml, e);
 		}
-		catch (DocumentException e) {
-			throw new RuntimeException("Error parsing xml string : "+xml,e);
-		}		
 	}
 
-	public Element toXML()
-	{
-		Element xmlElement=new BaseElement("virtualpath");
-        if(getNodes()!=null)
-        {
-            Element nodesElement=xmlElement.addElement("nodes");
-            for(VirtualPathNode vNode:getNodes())
-            {
-                nodesElement.add(vNode.toXML());
-            }           
-        }
+	public Element toXML() {
+		Element xmlElement = new BaseElement("virtualpath");
+		if (getNodes() != null) {
+			Element nodesElement = xmlElement.addElement("nodes");
+			for (VirtualPathNode vNode : getNodes()) {
+				nodesElement.add(vNode.toXML());
+			}
+		}
 		return xmlElement;
 	}
-		
-    @SuppressWarnings("unchecked")
-	public void fromXML(Element xmlElement)
-	{
-		Element nodesElement=xmlElement.element("nodes");
-        if(nodesElement!=null)
-        {
-            List<Element> vPathNodeElements=(List<Element>)nodesElement.elements("virtualpathnode");
-            for(Element vPathNodeElement:vPathNodeElements)
-            {
-            	VirtualPathNode vPathNode=new VirtualPathNode();
-            	vPathNode.fromXML(vPathNodeElement);
-                this.addNode(vPathNode);
-            }
-        }
+
+	@SuppressWarnings("unchecked")
+	public void fromXML(Element xmlElement) {
+		Element nodesElement = xmlElement.element("nodes");
+		if (nodesElement != null) {
+			List<Element> vPathNodeElements = nodesElement.elements("virtualpathnode");
+			for (Element vPathNodeElement : vPathNodeElements) {
+				VirtualPathNode vPathNode = new VirtualPathNode();
+				vPathNode.fromXML(vPathNodeElement);
+				this.addNode(vPathNode);
+			}
+		}
 	}
 
-    public static VirtualPath buildFromXMLString(String xmlString) {
-        VirtualPath path = new VirtualPath();
-        path.fromXMLString(xmlString);
-        return path;
-    }
+	public static VirtualPath buildFromXMLString(String xmlString) {
+		VirtualPath path = new VirtualPath();
+		path.fromXMLString(xmlString);
+		return path;
+	}
 }

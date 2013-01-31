@@ -1,7 +1,7 @@
 package pt.utl.ist.fenix.tools.html;
 
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 public abstract class PropertiesConverter {
 

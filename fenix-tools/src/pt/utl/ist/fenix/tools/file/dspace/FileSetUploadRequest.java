@@ -11,88 +11,85 @@ import pt.utl.ist.fenix.tools.file.FileSet;
 import pt.utl.ist.fenix.tools.file.VirtualPath;
 import pt.utl.ist.fenix.tools.file.XMLSerializable;
 
-public class FileSetUploadRequest implements Serializable,XMLSerializable
-{
+public class FileSetUploadRequest implements Serializable, XMLSerializable {
 
-    private VirtualPath path;
+	private VirtualPath path;
 
-    private String originalFilename;
+	private String originalFilename;
 
-    private Boolean privateFile;
+	private Boolean privateFile;
 
-    private FileSet fileSet;
-    
-    //Serialization support
-    public FileSetUploadRequest() {
-    }
-    
-    public FileSetUploadRequest(VirtualPath path, String originalFilename, boolean privateFile, FileSet fileSet) {
-        this.path = path;
-        this.originalFilename = originalFilename;
-        this.privateFile = privateFile;
-        this.fileSet = fileSet;
-    }
+	private FileSet fileSet;
 
-    public VirtualPath getPath() {
-        return this.path;
-    }
+	//Serialization support
+	public FileSetUploadRequest() {
+	}
 
-    public String getOriginalFilename() {
-        return this.originalFilename;
-    }
+	public FileSetUploadRequest(VirtualPath path, String originalFilename, boolean privateFile, FileSet fileSet) {
+		this.path = path;
+		this.originalFilename = originalFilename;
+		this.privateFile = privateFile;
+		this.fileSet = fileSet;
+	}
 
-    public FileSet getFileSet() {
-        return fileSet;
-    }
+	public VirtualPath getPath() {
+		return this.path;
+	}
 
-    public boolean isPrivateFile() {
-        return privateFile;
-    }
-    
+	public String getOriginalFilename() {
+		return this.originalFilename;
+	}
+
+	public FileSet getFileSet() {
+		return fileSet;
+	}
+
+	public boolean isPrivateFile() {
+		return privateFile;
+	}
+
+	@Override
 	public String toXMLString() {
 		return toXML().asXML();
 	}
 
-    public static FileSetUploadRequest createFromXml(String xml) {
-        FileSetUploadRequest retVal=new FileSetUploadRequest();
-        retVal.fromXMLString(xml);
-        return retVal;
-    }
+	public static FileSetUploadRequest createFromXml(String xml) {
+		FileSetUploadRequest retVal = new FileSetUploadRequest();
+		retVal.fromXMLString(xml);
+		return retVal;
+	}
 
+	@Override
 	public void fromXMLString(String xml) {
 		try {
 			fromXML(DocumentHelper.parseText(xml).getRootElement());
+		} catch (DocumentException e) {
+			throw new RuntimeException("Error parsing xml string : " + xml, e);
 		}
-		catch (DocumentException e) {
-			throw new RuntimeException("Error parsing xml string : "+xml,e);
-		}		
 	}
 
-	public Element toXML()
-	{
-		Element rootElement=new BaseElement("filesetuploadrequest");
+	public Element toXML() {
+		Element rootElement = new BaseElement("filesetuploadrequest");
 		rootElement.add(getPath().toXML());
-		if(getFileSet().getItemHandle()!=null) {
+		if (getFileSet().getItemHandle() != null) {
 			rootElement.addElement("itemHandle").setText(getFileSet().getItemHandle());
 		}
 		rootElement.addElement("filename").setText(getOriginalFilename());
-		rootElement.addElement("privatefile").setText(""+isPrivateFile());
+		rootElement.addElement("privatefile").setText("" + isPrivateFile());
 		rootElement.add(getFileSet().toXML());
 		return rootElement;
 	}
-	
-	
-	public void fromXML(Element xmlElement)
-	{
-		this.path=new VirtualPath();
+
+	public void fromXML(Element xmlElement) {
+		this.path = new VirtualPath();
 		this.path.fromXML(xmlElement.element("virtualpath"));
-		this.fileSet=new FileSet();
-		if(xmlElement.elementText("itemHandle")!=null) {
+		this.fileSet = new FileSet();
+		if (xmlElement.elementText("itemHandle") != null) {
 			this.fileSet.setItemHandle(xmlElement.elementText("itemHandle"));
 		}
 		this.fileSet.fromXML(xmlElement.element("fileset"));
-		this.originalFilename=xmlElement.element("filename").getText();
-		this.privateFile=Boolean.parseBoolean(xmlElement.element("privatefile").getText());
+		this.originalFilename = xmlElement.element("filename").getText();
+		this.privateFile = Boolean.parseBoolean(xmlElement.element("privatefile").getText());
 	}
 
 }

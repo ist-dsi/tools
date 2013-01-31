@@ -20,36 +20,36 @@ public class RemoteStreamsHandlerImpl extends Thread {
 		this.checkInterval = checkInterval;
 	}
 
+	@Override
 	public void run() {
 		while (!stop) {
 			synchronized (remoteStreams) {
 				try {
 					remoteStreams.wait(checkInterval);
+				} catch (InterruptedException ignored) {
 				}
-				catch (InterruptedException ignored) {
-				}
-			
-				if (stop) break;
 
-				ArrayList<RemoteHandledStream> toRemove = new ArrayList<RemoteHandledStream>(
-						remoteStreams.size());
+				if (stop) {
+					break;
+				}
+
+				ArrayList<RemoteHandledStream> toRemove = new ArrayList<RemoteHandledStream>(remoteStreams.size());
 
 				for (RemoteHandledStream ref : remoteStreams) {
-					if (stop) break;
-
-					if (ref== null) {
-						toRemove.add(ref);
+					if (stop) {
+						break;
 					}
-					else {
+
+					if (ref == null) {
+						toRemove.add(ref);
+					} else {
 						if (System.currentTimeMillis() - ref.getLastAccessTime() >= timeout && !ref.hasEnded()) {
 							try {
 								ref.destroy();
-							}
-							catch (IOException ignored) {
+							} catch (IOException ignored) {
 							}
 							toRemove.add(ref);
-						}
-						else if (ref.hasEnded()) {
+						} else if (ref.hasEnded()) {
 							toRemove.add(ref);
 						}
 					}
@@ -76,16 +76,17 @@ public class RemoteStreamsHandlerImpl extends Thread {
 	}
 
 	public void unManageStream(RemoteHandledStream stream) {
-		ArrayList<RemoteHandledStream> toRemove = new ArrayList<RemoteHandledStream>(
-				remoteStreams.size());
-		ArrayList<RemoteHandledStream> originalList = new ArrayList<RemoteHandledStream>(
-				remoteStreams.size());
+		ArrayList<RemoteHandledStream> toRemove = new ArrayList<RemoteHandledStream>(remoteStreams.size());
+		ArrayList<RemoteHandledStream> originalList = new ArrayList<RemoteHandledStream>(remoteStreams.size());
 		synchronized (remoteStreams) {
 			originalList.addAll(remoteStreams);
 		}
 		for (RemoteHandledStream ref : originalList) {
-			if (ref == null) toRemove.add(ref);
-			else if (ref == stream) toRemove.add(ref);
+			if (ref == null) {
+				toRemove.add(ref);
+			} else if (ref == stream) {
+				toRemove.add(ref);
+			}
 		}
 		synchronized (remoteStreams) {
 			remoteStreams.removeAll(toRemove);

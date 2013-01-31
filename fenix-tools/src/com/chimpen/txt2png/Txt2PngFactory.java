@@ -24,302 +24,318 @@ import javax.imageio.ImageIO;
  */
 public class Txt2PngFactory {
 
-  /** Font name */
-  private String fontname;
+	/** Font name */
+	private String fontname;
 
-  /** Font size */
-  private int fontsize;
+	/** Font size */
+	private int fontsize;
 
-  /** Text to render */
-  private String text="";
+	/** Text to render */
+	private String text = "";
 
-  /** Text color */
-  private int r=0;
-  private int g=0;
-  private int b=0;
+	/** Text color */
+	private int r = 0;
+	private int g = 0;
+	private int b = 0;
 
-  /** Background colour */
-  private int br=0xff;
-  private int bg=0xff;
-  private int bb=0xff;
+	/** Background colour */
+	private int br = 0xff;
+	private int bg = 0xff;
+	private int bb = 0xff;
 
-  /** Used to obtain fontmetrics for given fontname */
-  private Graphics2D g2;
+	/** Used to obtain fontmetrics for given fontname */
+	private Graphics2D g2;
 
-  /** Cached Font object */
-  private Font cachedFont;
-  
+	/** Cached Font object */
+	private Font cachedFont;
 
-  /**
-   * Construct factory without setting font 
-   */
-  public Txt2PngFactory() {
-    // Create a single-pixel buffered image to do font stuff with
-    this.g2=new BufferedImage(1,1,BufferedImage.TYPE_3BYTE_BGR).createGraphics();
-    // Set same hints as used for final render
-    setOptimalRenderQuality(g2);
-  }
+	/**
+	 * Construct factory without setting font
+	 */
+	public Txt2PngFactory() {
+		// Create a single-pixel buffered image to do font stuff with
+		this.g2 = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR).createGraphics();
+		// Set same hints as used for final render
+		setOptimalRenderQuality(g2);
+	}
 
-  /**
-   * Construct factory with given font face and size
-   * @param fontname Name of TrueType font
-   * @param fontsize Point size of font
-   * @throws IOException if font can't be loaded
-   * @throws FontFormatException if font is not a valid TTF
-   */
-  public Txt2PngFactory(String fontname, int fontsize) throws IOException, FontFormatException {
-    this(fontname, fontsize, "");
-  }
+	/**
+	 * Construct factory with given font face and size
+	 * 
+	 * @param fontname Name of TrueType font
+	 * @param fontsize Point size of font
+	 * @throws IOException if font can't be loaded
+	 * @throws FontFormatException if font is not a valid TTF
+	 */
+	public Txt2PngFactory(String fontname, int fontsize) throws IOException, FontFormatException {
+		this(fontname, fontsize, "");
+	}
 
-  /**
-   * Construct factory with given font face and size
-   * @param fontname Name of TrueType font
-   * @param fontsize Point size of font
-   * @param text The text to render
-   * @throws IOException if font can't be loaded
-   * @throws FontFormatException if font is not a valid TTF
-   */
-  public Txt2PngFactory(String fontname, int fontsize, String text) throws IOException, FontFormatException {
+	/**
+	 * Construct factory with given font face and size
+	 * 
+	 * @param fontname Name of TrueType font
+	 * @param fontsize Point size of font
+	 * @param text The text to render
+	 * @throws IOException if font can't be loaded
+	 * @throws FontFormatException if font is not a valid TTF
+	 */
+	public Txt2PngFactory(String fontname, int fontsize, String text) throws IOException, FontFormatException {
 
-    // Create a single-pixel buffered image to get font sizes etc from.
-    this.g2=new BufferedImage(1,1,BufferedImage.TYPE_3BYTE_BGR).createGraphics();
-    // Set same hints as used for final render
-    setOptimalRenderQuality(g2);
-    this.setFontFace(fontname);
-    this.setFontSize(fontsize);
-    this.setText(text);
-  }
+		// Create a single-pixel buffered image to get font sizes etc from.
+		this.g2 = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR).createGraphics();
+		// Set same hints as used for final render
+		setOptimalRenderQuality(g2);
+		this.setFontFace(fontname);
+		this.setFontSize(fontsize);
+		this.setText(text);
+	}
 
-  /**
-   * Renders the current text to a .png file
-   * @param location Location to write the file out to
-   * @throws IOException if file cannot be created
-   */
-  public void createPngFile(String location) throws IOException {
-    createPngFile(new File(location));
-  }
+	/**
+	 * Renders the current text to a .png file
+	 * 
+	 * @param location Location to write the file out to
+	 * @throws IOException if file cannot be created
+	 */
+	public void createPngFile(String location) throws IOException {
+		createPngFile(new File(location));
+	}
 
-  /**
-   * Renders the current text to a .png file
-   * @param location Location to write the file out to
-   * @throws IOException if file cannot be created
-   */
-  public void createPngFile(File location) throws IOException {
-    ImageIO.write(createImage(), "png", location);
-  }
+	/**
+	 * Renders the current text to a .png file
+	 * 
+	 * @param location Location to write the file out to
+	 * @throws IOException if file cannot be created
+	 */
+	public void createPngFile(File location) throws IOException {
+		ImageIO.write(createImage(), "png", location);
+	}
 
-  /**
-   * Renders the current text to a .png file
-   * @param outputStream The stream to write the file out to
-   * @throws IOException if file cannot be created
-   */
-  public void createPngFile(OutputStream outputStream) throws IOException {
-    ImageIO.write(createImage(), "png", outputStream);
-  }
+	/**
+	 * Renders the current text to a .png file
+	 * 
+	 * @param outputStream The stream to write the file out to
+	 * @throws IOException if file cannot be created
+	 */
+	public void createPngFile(OutputStream outputStream) throws IOException {
+		ImageIO.write(createImage(), "png", outputStream);
+	}
 
-  /**
-   * Renders the current text in the current font fontname, fontsize and color
-   * @return Image containing rendered text
-   * @throws IOException if no font name has been specified yet
-   */
-  public RenderedImage createImage() throws IOException {
+	/**
+	 * Renders the current text in the current font fontname, fontsize and color
+	 * 
+	 * @return Image containing rendered text
+	 * @throws IOException if no font name has been specified yet
+	 */
+	public RenderedImage createImage() throws IOException {
 
-    if (this.fontname==null) 
-      throw new IOException("No font name given!");
+		if (this.fontname == null) {
+			throw new IOException("No font name given!");
+		}
 
-    // Get the bounds needed to render the text
-    FontRenderContext frc = g2.getFontRenderContext();
-    TextLayout layout = new TextLayout(text, cachedFont, frc);
-    Rectangle2D bounds = layout.getBounds();
+		// Get the bounds needed to render the text
+		FontRenderContext frc = g2.getFontRenderContext();
+		TextLayout layout = new TextLayout(text, cachedFont, frc);
+		Rectangle2D bounds = layout.getBounds();
 
-    // Get the width needed to render this piece of text
-    int stringWidth=(int)(Math.ceil(bounds.getWidth()));
-     
-    // Get the height from generic font info
-    // This way, all strings in this font will have same height
-    // and vertical alignment
-    FontMetrics fm=g2.getFontMetrics();
-    int stringHeight=fm.getHeight();
-    
-    // Make an image to contain string
-    BufferedImage im=new BufferedImage(stringWidth,stringHeight,BufferedImage.TYPE_3BYTE_BGR);
-    
-    // Set the font and colours on the image
-    Graphics2D graphics=im.createGraphics();
+		// Get the width needed to render this piece of text
+		int stringWidth = (int) (Math.ceil(bounds.getWidth()));
 
-    // Setup best-quality rendering
-    setOptimalRenderQuality(graphics);
+		// Get the height from generic font info
+		// This way, all strings in this font will have same height
+		// and vertical alignment
+		FontMetrics fm = g2.getFontMetrics();
+		int stringHeight = fm.getHeight();
 
-    // Set colours and clear rectangle
-    graphics.setBackground(new Color(br,bg,bb));
-    graphics.setColor(new Color(r,g,b));
-    graphics.clearRect(0,0,stringWidth,stringHeight);
+		// Make an image to contain string
+		BufferedImage im = new BufferedImage(stringWidth, stringHeight, BufferedImage.TYPE_3BYTE_BGR);
 
-    // Set the font to use
-    graphics.setFont(getFont());
+		// Set the font and colours on the image
+		Graphics2D graphics = im.createGraphics();
 
-    // Position text on baseline, with first character exactly against
-    // left margin
-    layout.draw(graphics,-(float)Math.floor(bounds.getX()),fm.getMaxAscent());
+		// Setup best-quality rendering
+		setOptimalRenderQuality(graphics);
 
-    // Return the image
-    return im;
-  }
+		// Set colours and clear rectangle
+		graphics.setBackground(new Color(br, bg, bb));
+		graphics.setColor(new Color(r, g, b));
+		graphics.clearRect(0, 0, stringWidth, stringHeight);
 
-  /**
-   * Set the text to be rendered by the Txt2PngFactory
-   * @param text The text to render
-   */
-  public void setText(String text) {
-    this.text=text;
-  }
-  
-  /**
-   * Set 8-bit RGB values for text colour
-   * @param r Red component (0-255)
-   * @param g Green component (0-255) 
-   * @param b Blue component (0-255) 
-   */
-  public void setTextRGB(int r, int g, int b) {
-    this.r=r;
-    this.g=g;
-    this.b=b;
-  }
-  
-  /**
-   * Set 8-bit RGB values for background colour
-   * @param r Red component (0-255)
-   * @param g Green component (0-255) 
-   * @param b Blue component (0-255) 
-   */
-  public void setBackgroundRGB(int r, int g, int b) {
-    this.br=r;
-    this.bg=g;
-    this.bb=b;
-  }
+		// Set the font to use
+		graphics.setFont(getFont());
 
-  /**
-   * Set the TrueType font to render with
-   * @param fontname The name of the font to use
-   */
-  public void setFontFace(String fontname) throws IOException, FontFormatException {
+		// Position text on baseline, with first character exactly against
+		// left margin
+		layout.draw(graphics, -(float) Math.floor(bounds.getX()), fm.getMaxAscent());
 
-    if (!fontname.equals(this.fontname)) {
-      this.fontname=fontname;
-      updateFace();
-    }
-  }
+		// Return the image
+		return im;
+	}
 
-  /**
-   * Set the point size of the font
-   * @param fontsize The point size of the font
-   */
-  public void setFontSize(int fontsize) {
-    if (fontsize != this.fontsize) {
-      this.fontsize=fontsize;
-      updateSize();
-    }
-  }
+	/**
+	 * Set the text to be rendered by the Txt2PngFactory
+	 * 
+	 * @param text The text to render
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
 
-  /**
-   * Updates the cached font object
-   * @throws IOException if the font can't be loaded
-   * @throws FontFormatException if font is not a valid TTF
-   */
-  private void updateFace() throws IOException, FontFormatException {
+	/**
+	 * Set 8-bit RGB values for text colour
+	 * 
+	 * @param r Red component (0-255)
+	 * @param g Green component (0-255)
+	 * @param b Blue component (0-255)
+	 */
+	public void setTextRGB(int r, int g, int b) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+	}
 
-    Font createdFont=null;
+	/**
+	 * Set 8-bit RGB values for background colour
+	 * 
+	 * @param r Red component (0-255)
+	 * @param g Green component (0-255)
+	 * @param b Blue component (0-255)
+	 */
+	public void setBackgroundRGB(int r, int g, int b) {
+		this.br = r;
+		this.bg = g;
+		this.bb = b;
+	}
 
-    // Attempt to load font from /fonts under classloader
-    String fontpath="fonts/"+fontname+".ttf";
+	/**
+	 * Set the TrueType font to render with
+	 * 
+	 * @param fontname The name of the font to use
+	 */
+	public void setFontFace(String fontname) throws IOException, FontFormatException {
 
-    InputStream fontStream=this.getClass().getClassLoader().getResourceAsStream(fontpath);
+		if (!fontname.equals(this.fontname)) {
+			this.fontname = fontname;
+			updateFace();
+		}
+	}
 
-    if (fontStream!=null) {
-      createdFont=Font.createFont(Font.TRUETYPE_FONT, fontStream);
-      fontStream.close();
-    } 
-    
-    // Next try to get it from fontpath
-    if (createdFont==null) {
-      Font tempFont=new Font(fontname,Font.PLAIN,1);
+	/**
+	 * Set the point size of the font
+	 * 
+	 * @param fontsize The point size of the font
+	 */
+	public void setFontSize(int fontsize) {
+		if (fontsize != this.fontsize) {
+			this.fontsize = fontsize;
+			updateSize();
+		}
+	}
 
-      // Check we got correct font, not a fallback
-      if (tempFont.getFamily().equals(fontname)) {
-        // It's the correct font, set it
-        createdFont=tempFont;
-      }
-    }
+	/**
+	 * Updates the cached font object
+	 * 
+	 * @throws IOException if the font can't be loaded
+	 * @throws FontFormatException if font is not a valid TTF
+	 */
+	private void updateFace() throws IOException, FontFormatException {
 
-    // Last resort, treat as a path to font
-    if (createdFont==null) {
-      fontStream=new FileInputStream(fontname);
+		Font createdFont = null;
 
-      if (fontStream != null) {
-        createdFont=Font.createFont(Font.TRUETYPE_FONT,fontStream);
-        fontStream.close();
-      }
-    }
+		// Attempt to load font from /fonts under classloader
+		String fontpath = "fonts/" + fontname + ".ttf";
 
-    // If we still don't have a font, throw exception
-    if (createdFont==null) {
-      throw new IOException("Can't locate font: "+fontname);
-    }
+		InputStream fontStream = this.getClass().getClassLoader().getResourceAsStream(fontpath);
 
-    // Derive font of correct fontsize
-    cachedFont=createdFont.deriveFont((float)fontsize);
+		if (fontStream != null) {
+			createdFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+			fontStream.close();
+		}
 
-    // Set on prototype image 
-    g2.setFont(cachedFont);
-  }
+		// Next try to get it from fontpath
+		if (createdFont == null) {
+			Font tempFont = new Font(fontname, Font.PLAIN, 1);
 
-  /**
-   * Updates the cached font to new font derived with new size
-   */
-  private void updateSize() {
-    
-    if (cachedFont==null)
-      return;
+			// Check we got correct font, not a fallback
+			if (tempFont.getFamily().equals(fontname)) {
+				// It's the correct font, set it
+				createdFont = tempFont;
+			}
+		}
 
-    // Derive font of correct fontsize
-    cachedFont=cachedFont.deriveFont((float)fontsize);
+		// Last resort, treat as a path to font
+		if (createdFont == null) {
+			fontStream = new FileInputStream(fontname);
 
-    // Set on Graphics object so we can get FontMetrics
-    g2.setFont(cachedFont);
-  }
+			if (fontStream != null) {
+				createdFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+				fontStream.close();
+			}
+		}
 
-  /* Commented out this method as it is private and never locally used...
-   * jpereira - Linkare TI
-   * Get the FontMetrics object for the current font
-   * @return FontMetrics object for current font
-   */
-  /*private FontMetrics getFontMetrics() {
+		// If we still don't have a font, throw exception
+		if (createdFont == null) {
+			throw new IOException("Can't locate font: " + fontname);
+		}
 
-    return g2.getFontMetrics();
-  }*/
+		// Derive font of correct fontsize
+		cachedFont = createdFont.deriveFont((float) fontsize);
 
-  /**
-   * Get a Font object for the current fontname and fontsize
-   * @return Font object for current name and size
-   */
-  private Font getFont() {
+		// Set on prototype image 
+		g2.setFont(cachedFont);
+	}
 
-    return cachedFont;
-  }
+	/**
+	 * Updates the cached font to new font derived with new size
+	 */
+	private void updateSize() {
 
-  /**
-   * Sets rendering hints for optimal rendering quality
-   * @param graphics Graphics2D object to set rendering options on
-   */
-  private void setOptimalRenderQuality(Graphics2D graphics) {
-  
-    graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-    graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-  }
+		if (cachedFont == null) {
+			return;
+		}
 
-  public String toString() {
-    return fontname+", "+fontsize+"pt: "+text;
-  }
+		// Derive font of correct fontsize
+		cachedFont = cachedFont.deriveFont((float) fontsize);
+
+		// Set on Graphics object so we can get FontMetrics
+		g2.setFont(cachedFont);
+	}
+
+	/* Commented out this method as it is private and never locally used...
+	 * jpereira - Linkare TI
+	 * Get the FontMetrics object for the current font
+	 * @return FontMetrics object for current font
+	 */
+	/*private FontMetrics getFontMetrics() {
+
+	  return g2.getFontMetrics();
+	}*/
+
+	/**
+	 * Get a Font object for the current fontname and fontsize
+	 * 
+	 * @return Font object for current name and size
+	 */
+	private Font getFont() {
+
+		return cachedFont;
+	}
+
+	/**
+	 * Sets rendering hints for optimal rendering quality
+	 * 
+	 * @param graphics Graphics2D object to set rendering options on
+	 */
+	private void setOptimalRenderQuality(Graphics2D graphics) {
+
+		graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+	}
+
+	@Override
+	public String toString() {
+		return fontname + ", " + fontsize + "pt: " + text;
+	}
 }

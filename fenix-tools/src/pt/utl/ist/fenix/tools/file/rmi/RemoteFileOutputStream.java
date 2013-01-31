@@ -6,13 +6,12 @@ import java.rmi.RemoteException;
 
 public class RemoteFileOutputStream extends OutputStream {
 
-	private IRemoteOutputStream remoteOutputStream=null;
-	
-	public RemoteFileOutputStream(IRemoteFile remoteFile) throws IOException{
+	private IRemoteOutputStream remoteOutputStream = null;
+
+	public RemoteFileOutputStream(IRemoteFile remoteFile) throws IOException {
 		try {
-			remoteOutputStream=remoteFile.getOuputStream();
-		}
-		catch (RemoteException e) {
+			remoteOutputStream = remoteFile.getOuputStream();
+		} catch (RemoteException e) {
 			throw new IOException(e.getMessage());
 		}
 	}
@@ -54,6 +53,4 @@ public class RemoteFileOutputStream extends OutputStream {
 		remoteOutputStream.write(b);
 	}
 
-	
-	
 }

@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
  * Signals a problem in a file uploadrequest
  * 
  * @author jpereira - Linkare TI
- *
+ * 
  */
 public class FileSetUploadException extends RemoteException {
 
@@ -22,6 +22,7 @@ public class FileSetUploadException extends RemoteException {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param message The message to pass to the client side
 	 */
 	public FileSetUploadException(String message) {

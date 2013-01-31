@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
  * Signals a problem in a permission change request
  * 
  * @author jpereira - Linkare TI
- *
+ * 
  */
 public class FileSetMetadataSearchException extends RemoteException {
 
@@ -22,6 +22,7 @@ public class FileSetMetadataSearchException extends RemoteException {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param message The message to pass to the client side
 	 */
 	public FileSetMetadataSearchException(String message) {

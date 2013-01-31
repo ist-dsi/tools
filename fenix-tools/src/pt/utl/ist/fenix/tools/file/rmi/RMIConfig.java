@@ -296,12 +296,12 @@ public class RMIConfig {
 	}
 
 	public Remote exportObject(Remote remoteObject) throws RemoteException {
-		return UnicastRemoteObject.exportObject(remoteObject, defaultPortNumber, getClientSocketFactory(),getServerSocketFactory());
+		return UnicastRemoteObject.exportObject(remoteObject, defaultPortNumber, getClientSocketFactory(),
+				getServerSocketFactory());
 	}
 
 	public void bindObject(String name, Remote object) throws AlreadyBoundException, NamingException, IOException {
-		if (name != null && name.trim().length() >= 0)
-		{
+		if (name != null && name.trim().length() >= 0) {
 			/*if(registry!=null)
 			{
 				System.out.println("RMI Registry Rebind object "+object+" as "+name);
@@ -309,11 +309,11 @@ public class RMIConfig {
 			}
 			else
 			{*/
-				Context ctx=locateJNDI();
-				ctx.rebind(name, object);
+			Context ctx = locateJNDI();
+			ctx.rebind(name, object);
 			/*}*/
 		}
-		
+
 	}
 
 	public Remote exportAndBindRemoteObject(String name, Remote object) throws AlreadyBoundException, NamingException,
@@ -323,32 +323,36 @@ public class RMIConfig {
 		return retVal;
 	}
 
-	public void unExportAndUnBindRemoteObject(String name, Remote object) throws AlreadyBoundException,
-			NamingException, IOException, NotBoundException {
+	public void unExportAndUnBindRemoteObject(String name, Remote object) throws AlreadyBoundException, NamingException,
+			IOException, NotBoundException {
 		unExportObject(object);
-		if (name != null && name.trim().length() > 0) unBindObject(name);
+		if (name != null && name.trim().length() > 0) {
+			unBindObject(name);
+		}
 	}
 
 	public void unBindObject(String name) throws NotBoundException, NamingException, IOException {
-		if (name.trim().length() >= 0)
-		{
-			if(registry!=null)
+		if (name.trim().length() >= 0) {
+			if (registry != null) {
 				registry.unbind(name);
-			else
+			} else {
 				locateJNDI().unbind(name);
+			}
 		}
 	}
 
 	public boolean isValidKeyStore(String sslKeyStore) {
 
-		if (FileUtils.locateFilePath(sslKeyStore) != null) return true;
+		if (FileUtils.locateFilePath(sslKeyStore) != null) {
+			return true;
+		}
 
 		return false;
 	}
 
 	public static SocketFactory loadClientSSLSocketFactory(String trustStoreLocation, String trustStorePassword)
-			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException,
-			IOException, UnrecoverableKeyException, KeyManagementException {
+			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException, IOException,
+			UnrecoverableKeyException, KeyManagementException {
 		javax.net.ssl.KeyManagerFactory kmf;
 		KeyStore ks;
 		javax.net.ssl.TrustManagerFactory tmf;
@@ -364,8 +368,8 @@ public class RMIConfig {
 	}
 
 	public static ServerSocketFactory loadServerSSLSocketFactory(String keyStoreLocation, String keyStorePassword)
-			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException,
-			IOException, UnrecoverableKeyException, KeyManagementException {
+			throws NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException, IOException,
+			UnrecoverableKeyException, KeyManagementException {
 		javax.net.ssl.KeyManagerFactory kmf;
 		KeyStore ks;
 		javax.net.ssl.TrustManagerFactory tmf;
@@ -381,13 +385,14 @@ public class RMIConfig {
 	}
 
 	public void initializeSocketFactories() {
-		if (serverSocketFactory != null && clientSocketFactory != null) return;
+		if (serverSocketFactory != null && clientSocketFactory != null) {
+			return;
+		}
 
 		if (useSSL) {
 			serverSocketFactory = new SslRmiServerSocketFactory();
 			clientSocketFactory = new SslRmiClientSocketFactory();
-		}
-		else {
+		} else {
 			serverSocketFactory = RMISocketFactory.getDefaultSocketFactory();
 			clientSocketFactory = RMISocketFactory.getDefaultSocketFactory();
 		}
@@ -423,9 +428,10 @@ public class RMIConfig {
 		this.sslKeyStorePass = sslKeyStorePass;
 	}
 
-	private Registry registry=null;
+	private Registry registry = null;
+
 	public void initializeRegistry() throws RemoteException {
-		if (startRMIRegistry && registry==null) {
+		if (startRMIRegistry && registry == null) {
 			registry = LocateRegistry.createRegistry(registryPortNumber);
 		}
 	}
@@ -433,8 +439,7 @@ public class RMIConfig {
 	private InitialContext ctx = null;
 
 	public Context locateJNDI() throws NamingException, IOException {
-		if (ctx == null)
-		{
+		if (ctx == null) {
 			ctx = new InitialContext(readJNDIProperties());
 		}
 		return ctx;
@@ -449,19 +454,16 @@ public class RMIConfig {
 			if (jndiPropertiesFile.startsWith("classpath://")) {
 				jndiPropertiesFile = jndiPropertiesFile.substring("classpath://".length());
 				is = getClass().getClassLoader().getResourceAsStream(jndiPropertiesFile);
-			}
-			else if (jndiPropertiesFile.indexOf("://") != -1) {
+			} else if (jndiPropertiesFile.indexOf("://") != -1) {
 				URL locationJNDIProps = new URL(jndiPropertiesFile);
 				is = locationJNDIProps.openConnection().getInputStream();
-			}
-			else {
+			} else {
 				File f = new File(jndiPropertiesFile);
 				is = new FileInputStream(f);
 			}
 			jndiProps.load(is);
 			is.close();
-			if(useSSL)
-			{
+			if (useSSL) {
 				//jndiProps.put("com.sun.jndi.rmi.factory.socket", getClientSocketFactory());
 				//System.out.println("Setting property to access rmi jndi over ssl");
 			}

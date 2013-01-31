@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.protocol.Protocol;
 
 public class PropertiesTranslator extends PropertiesConverter {
 
+	@Override
 	public String convert(final String string) {
 		try {
 			final String translation = translate(string, "en", "pt");
@@ -28,13 +29,14 @@ public class PropertiesTranslator extends PropertiesConverter {
 		return response.substring(indexOfCloseTagMarker + 1, indexOfCloseTag).trim();
 	}
 
-	private static String queryHost(final String string, final String fromLang, final String toLang) throws HttpException, IOException {
+	private static String queryHost(final String string, final String fromLang, final String toLang) throws HttpException,
+			IOException {
 		final String host = "translate.google.com";
 		final int port = 80;
 
 		final HttpClient httpClient = new HttpClient();
-        final Protocol protocol = new Protocol(host, new DefaultProtocolSocketFactory(), port);
-        httpClient.getHostConfiguration().setHost(host, port, protocol);
+		final Protocol protocol = new Protocol(host, new DefaultProtocolSocketFactory(), port);
+		httpClient.getHostConfiguration().setHost(host, port, protocol);
 
 		final PostMethod postMethod = new PostMethod();
 		postMethod.setFollowRedirects(false);

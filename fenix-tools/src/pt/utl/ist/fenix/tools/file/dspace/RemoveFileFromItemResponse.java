@@ -9,10 +9,10 @@ import org.dom4j.tree.BaseElement;
 
 import pt.utl.ist.fenix.tools.file.XMLSerializable;
 
-public class RemoveFileFromItemResponse implements Serializable,XMLSerializable {
+public class RemoveFileFromItemResponse implements Serializable, XMLSerializable {
 
 	String error;
-	
+
 	public RemoveFileFromItemResponse() {
 		super();
 	}
@@ -26,6 +26,7 @@ public class RemoveFileFromItemResponse implements Serializable,XMLSerializable 
 		return error;
 	}
 
+	@Override
 	public String toXMLString() {
 		return toXML().asXML();
 
@@ -47,6 +48,7 @@ public class RemoveFileFromItemResponse implements Serializable,XMLSerializable 
 		return retVal;
 	}
 
+	@Override
 	public void fromXMLString(String xml) {
 		try {
 			fromXML(DocumentHelper.parseText(xml).getRootElement());

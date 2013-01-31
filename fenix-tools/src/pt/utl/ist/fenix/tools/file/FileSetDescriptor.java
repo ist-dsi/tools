@@ -13,13 +13,13 @@ import org.dom4j.Element;
 import org.dom4j.tree.BaseElement;
 
 /**
- * @author José Pedro Pereira - Linkare TI 
- * This class represents an abstraction over the file system to enable the use
- * of related files, metadata associated to files, files containing metadata and groups of related files...
+ * @author Josï¿½ Pedro Pereira - Linkare TI
+ *         This class represents an abstraction over the file system to enable the use
+ *         of related files, metadata associated to files, files containing metadata and groups of related files...
  */
 
 @SuppressWarnings("serial")
-public class FileSetDescriptor implements Serializable,XMLSerializable {
+public class FileSetDescriptor implements Serializable, XMLSerializable {
 
 	/**
 	 * The related child FileSet's
@@ -61,7 +61,9 @@ public class FileSetDescriptor implements Serializable,XMLSerializable {
 	 *            adds one FileSet as a child to the childs Collection
 	 */
 	public void addChildSet(FileSetDescriptor childSet) {
-		if (this.childSets == null) this.childSets = new ArrayList<FileSetDescriptor>();
+		if (this.childSets == null) {
+			this.childSets = new ArrayList<FileSetDescriptor>();
+		}
 
 		this.childSets.add(childSet);
 
@@ -72,7 +74,9 @@ public class FileSetDescriptor implements Serializable,XMLSerializable {
 	 *            removes the FileSet passed from the childs Collection
 	 */
 	public void removeChildSet(FileSetDescriptor childSet) {
-		if (this.childSets == null) this.childSets = new ArrayList<FileSetDescriptor>();
+		if (this.childSets == null) {
+			this.childSets = new ArrayList<FileSetDescriptor>();
+		}
 
 		this.childSets.remove(childSet);
 	}
@@ -97,25 +101,33 @@ public class FileSetDescriptor implements Serializable,XMLSerializable {
 	}
 
 	public void addContentFileDescriptor(FileDescriptor f) {
-		if (this.contentFilesDescriptors == null) this.contentFilesDescriptors = new ArrayList<FileDescriptor>();
+		if (this.contentFilesDescriptors == null) {
+			this.contentFilesDescriptors = new ArrayList<FileDescriptor>();
+		}
 
 		this.contentFilesDescriptors.add(f);
 	}
 
 	public void addContentFileDescriptor(Collection<FileDescriptor> f) {
-		if (this.contentFilesDescriptors == null) this.contentFilesDescriptors = new ArrayList<FileDescriptor>();
+		if (this.contentFilesDescriptors == null) {
+			this.contentFilesDescriptors = new ArrayList<FileDescriptor>();
+		}
 
 		this.contentFilesDescriptors.addAll(f);
 	}
 
 	public void removeContentFileDescriptor(FileDescriptor f) {
-		if (this.contentFilesDescriptors == null) this.contentFilesDescriptors = new ArrayList<FileDescriptor>();
+		if (this.contentFilesDescriptors == null) {
+			this.contentFilesDescriptors = new ArrayList<FileDescriptor>();
+		}
 
 		this.contentFilesDescriptors.remove(f);
 	}
 
 	public void removeContentFileDescriptor(Collection<FileDescriptor> f) {
-		if (this.contentFilesDescriptors == null) this.contentFilesDescriptors = new ArrayList<FileDescriptor>();
+		if (this.contentFilesDescriptors == null) {
+			this.contentFilesDescriptors = new ArrayList<FileDescriptor>();
+		}
 
 		this.contentFilesDescriptors.removeAll(f);
 	}
@@ -136,33 +148,41 @@ public class FileSetDescriptor implements Serializable,XMLSerializable {
 	}
 
 	public void addMetaFileDescriptors(FileDescriptor f) {
-		if (this.metaFilesDescriptors == null) this.metaFilesDescriptors = new ArrayList<FileDescriptor>();
+		if (this.metaFilesDescriptors == null) {
+			this.metaFilesDescriptors = new ArrayList<FileDescriptor>();
+		}
 
 		this.metaFilesDescriptors.add(f);
 	}
 
 	public void addMetaFileDescriptors(Collection<FileDescriptor> f) {
-		if (this.metaFilesDescriptors == null) this.metaFilesDescriptors = new ArrayList<FileDescriptor>();
+		if (this.metaFilesDescriptors == null) {
+			this.metaFilesDescriptors = new ArrayList<FileDescriptor>();
+		}
 
 		this.metaFilesDescriptors.addAll(f);
 	}
 
 	public void removeMetaFileDescriptor(FileDescriptor f) {
-		if (this.metaFilesDescriptors == null) this.metaFilesDescriptors = new ArrayList<FileDescriptor>();
+		if (this.metaFilesDescriptors == null) {
+			this.metaFilesDescriptors = new ArrayList<FileDescriptor>();
+		}
 
 		this.metaFilesDescriptors.add(f);
 	}
 
 	public void removeMetaFileDescriptors(Collection<FileDescriptor> f) {
-		if (this.metaFilesDescriptors == null) this.metaFilesDescriptors = new ArrayList<FileDescriptor>();
+		if (this.metaFilesDescriptors == null) {
+			this.metaFilesDescriptors = new ArrayList<FileDescriptor>();
+		}
 
 		this.metaFilesDescriptors.removeAll(f);
 	}
-	
-	
-	public Collection<FileDescriptor> getAllFileDescriptors()
-	{
-		ArrayList<FileDescriptor> allDescriptors=new ArrayList<FileDescriptor>((getContentFilesDescriptors()!=null?getContentFilesDescriptors().size():0)+(getMetaFilesDescriptors()!=null?getMetaFilesDescriptors().size():0));
+
+	public Collection<FileDescriptor> getAllFileDescriptors() {
+		ArrayList<FileDescriptor> allDescriptors =
+				new ArrayList<FileDescriptor>((getContentFilesDescriptors() != null ? getContentFilesDescriptors().size() : 0)
+						+ (getMetaFilesDescriptors() != null ? getMetaFilesDescriptors().size() : 0));
 		allDescriptors.addAll(getContentFilesDescriptors());
 		allDescriptors.addAll(getMetaFilesDescriptors());
 		return allDescriptors;
@@ -184,25 +204,33 @@ public class FileSetDescriptor implements Serializable,XMLSerializable {
 	}
 
 	public void addMetaInfo(FileSetMetaData metaInfo) {
-		if (this.metaInfo == null) this.metaInfo = new ArrayList<FileSetMetaData>();
+		if (this.metaInfo == null) {
+			this.metaInfo = new ArrayList<FileSetMetaData>();
+		}
 
 		this.metaInfo.add(metaInfo);
 	}
 
 	public void addMetaInfo(Collection<FileSetMetaData> metaInfo) {
-		if (this.metaInfo == null) this.metaInfo = new ArrayList<FileSetMetaData>();
+		if (this.metaInfo == null) {
+			this.metaInfo = new ArrayList<FileSetMetaData>();
+		}
 
 		this.metaInfo.addAll(metaInfo);
 	}
 
 	public void removeMetaInfo(FileSetMetaData metaInfo) {
-		if (this.metaInfo == null) this.metaInfo = new ArrayList<FileSetMetaData>();
+		if (this.metaInfo == null) {
+			this.metaInfo = new ArrayList<FileSetMetaData>();
+		}
 
 		this.metaInfo.remove(metaInfo);
 	}
 
 	public void removeMetaInfo(Collection<FileSetMetaData> metaInfo) {
-		if (this.metaInfo == null) this.metaInfo = new ArrayList<FileSetMetaData>();
+		if (this.metaInfo == null) {
+			this.metaInfo = new ArrayList<FileSetMetaData>();
+		}
 
 		this.metaInfo.removeAll(metaInfo);
 	}
@@ -352,210 +380,189 @@ public class FileSetDescriptor implements Serializable,XMLSerializable {
 		this.addContentFileDescriptor(Arrays.asList(f));
 	}
 
-	
 	public Element toXML() {
-		Element xmlElement=new BaseElement("filesetdescriptor");
-		if(getChildSets()!=null)
-		{
-			Element childsElement=xmlElement.addElement("childsets");
-			for(FileSetDescriptor childDescriptor:getChildSets())
+		Element xmlElement = new BaseElement("filesetdescriptor");
+		if (getChildSets() != null) {
+			Element childsElement = xmlElement.addElement("childsets");
+			for (FileSetDescriptor childDescriptor : getChildSets()) {
 				childsElement.add(childDescriptor.toXML());
+			}
 		}
-		if(getContentFilesDescriptors()!=null)
-		{
-			Element contentFileDescElement=xmlElement.addElement("contentfiledescriptors");
-			for(FileDescriptor current:getContentFilesDescriptors())
-			{
+		if (getContentFilesDescriptors() != null) {
+			Element contentFileDescElement = xmlElement.addElement("contentfiledescriptors");
+			for (FileDescriptor current : getContentFilesDescriptors()) {
 				contentFileDescElement.add(current.toXML());
 			}
 		}
-		if(getMetaFilesDescriptors()!=null)
-		{
-			Element metaFileDescElement=xmlElement.addElement("metafiledescriptors");
-			for(FileDescriptor current:getMetaFilesDescriptors())
-			{
+		if (getMetaFilesDescriptors() != null) {
+			Element metaFileDescElement = xmlElement.addElement("metafiledescriptors");
+			for (FileDescriptor current : getMetaFilesDescriptors()) {
 				metaFileDescElement.add(current.toXML());
 			}
 		}
-		if(getMetaInfo()!=null)
-		{
-			Element metaInfoDescElement=xmlElement.addElement("metainfo");
-			for(FileSetMetaData current:getMetaInfo())
-			{
+		if (getMetaInfo() != null) {
+			Element metaInfoDescElement = xmlElement.addElement("metainfo");
+			for (FileSetMetaData current : getMetaInfo()) {
 				metaInfoDescElement.add(current.toXML());
 			}
-			
+
 		}
-		
+
 		return xmlElement;
 	}
-	public String toXMLString()
-	{
+
+	@Override
+	public String toXMLString() {
 		return toXML().asXML();
 	}
 
+	@Override
 	public void fromXMLString(String xml) {
 		try {
 			fromXML(DocumentHelper.parseText(xml).getRootElement());
-		}
-		catch (DocumentException e) {
-			throw new RuntimeException("Error parsing xml string : "+xml,e);
+		} catch (DocumentException e) {
+			throw new RuntimeException("Error parsing xml string : " + xml, e);
 		}
 	}
-	
-    @SuppressWarnings("unchecked")
-    public void fromXML(Element xmlElement)
-	{
-		if(xmlElement.element("childsets")!=null)
-		{
-			Element childSetsElement=xmlElement.element("childsets");
-			List<Element> childSetsList=(List<Element>)childSetsElement.elements("filesetdescriptor");
-			for(Element filesetDescriptorElement:childSetsList)
-			{
-				FileSetDescriptor child=new FileSetDescriptor();
+
+	@SuppressWarnings("unchecked")
+	public void fromXML(Element xmlElement) {
+		if (xmlElement.element("childsets") != null) {
+			Element childSetsElement = xmlElement.element("childsets");
+			List<Element> childSetsList = childSetsElement.elements("filesetdescriptor");
+			for (Element filesetDescriptorElement : childSetsList) {
+				FileSetDescriptor child = new FileSetDescriptor();
 				child.fromXML(filesetDescriptorElement);
 				this.addChildSet(child);
 			}
 		}
-		if(xmlElement.element("contentfiledescriptors")!=null)
-		{
-			Element contentFileDescriptorsElement=xmlElement.element("contentfiledescriptors");
-			List<Element> contentFileDescriptorsList=(List<Element>)contentFileDescriptorsElement.elements("filedescriptor");
-			for(Element fileDescriptorElement:contentFileDescriptorsList)
-			{
-				FileDescriptor fileDesc=new FileDescriptor();
+		if (xmlElement.element("contentfiledescriptors") != null) {
+			Element contentFileDescriptorsElement = xmlElement.element("contentfiledescriptors");
+			List<Element> contentFileDescriptorsList = contentFileDescriptorsElement.elements("filedescriptor");
+			for (Element fileDescriptorElement : contentFileDescriptorsList) {
+				FileDescriptor fileDesc = new FileDescriptor();
 				fileDesc.fromXML(fileDescriptorElement);
 				this.addContentFileDescriptor(fileDesc);
 			}
 		}
-		if(xmlElement.element("metafiledescriptors")!=null)
-		{
-			Element metaFileDescriptorsElement=xmlElement.element("metafiledescriptors");
-			List<Element> metaFileDescriptorsList=(List<Element>)metaFileDescriptorsElement.elements("filedescriptor");
-			for(Element metaFileDescriptorElement:metaFileDescriptorsList)
-			{
-				FileDescriptor metaFileDescriptor=new FileDescriptor();
+		if (xmlElement.element("metafiledescriptors") != null) {
+			Element metaFileDescriptorsElement = xmlElement.element("metafiledescriptors");
+			List<Element> metaFileDescriptorsList = metaFileDescriptorsElement.elements("filedescriptor");
+			for (Element metaFileDescriptorElement : metaFileDescriptorsList) {
+				FileDescriptor metaFileDescriptor = new FileDescriptor();
 				metaFileDescriptor.fromXML(metaFileDescriptorElement);
 				this.addMetaFileDescriptors(metaFileDescriptor);
 			}
 		}
-		if(xmlElement.element("metainfo")!=null)
-		{
-			Element filesetMetaDatasElement=xmlElement.element("metainfo");
-			List<Element> filesetMetaDatasList=(List<Element>)filesetMetaDatasElement.elements("filesetmetadata");
-			for(Element filesetMetaDataElement:filesetMetaDatasList)
-			{
-				FileSetMetaData metaData=new FileSetMetaData();
+		if (xmlElement.element("metainfo") != null) {
+			Element filesetMetaDatasElement = xmlElement.element("metainfo");
+			List<Element> filesetMetaDatasList = filesetMetaDatasElement.elements("filesetmetadata");
+			for (Element filesetMetaDataElement : filesetMetaDatasList) {
+				FileSetMetaData metaData = new FileSetMetaData();
 				metaData.fromXML(filesetMetaDataElement);
 				this.addMetaInfo(metaData);
 			}
 		}
 	}
-	
-	public static FileSetDescriptor createFromXMLString(String xml)
-	{
-		FileSetDescriptor retVal=new FileSetDescriptor();
+
+	public static FileSetDescriptor createFromXMLString(String xml) {
+		FileSetDescriptor retVal = new FileSetDescriptor();
 		retVal.fromXMLString(xml);
 		return retVal;
 	}
-	
-	
-	public FileSet createBasicFileSet()
-	{
-		FileSet fs=new FileSet();
+
+	public FileSet createBasicFileSet() {
+		FileSet fs = new FileSet();
 		fs.addMetaInfo(this.getMetaInfo());
-		for(FileDescriptor f:getContentFilesDescriptors()) {
+		for (FileDescriptor f : getContentFilesDescriptors()) {
 			String originalPath = f.getOriginalAbsoluteFilePath();
-			if(originalPath!=null) {
+			if (originalPath != null) {
 				fs.addContentFile(new File(f.getOriginalAbsoluteFilePath()));
 			}
 		}
-		for(FileDescriptor f:getMetaFilesDescriptors()) {
+		for (FileDescriptor f : getMetaFilesDescriptors()) {
 			String originalPath = f.getOriginalAbsoluteFilePath();
-			if(originalPath!=null) {
+			if (originalPath != null) {
 				fs.addMetaFile(new File(f.getOriginalAbsoluteFilePath()));
 			}
 		}
 		return fs;
 	}
-	
-	public FileSet createRecursiveFileSet()
-	{
-		FileSet baseFileSet=createBasicFileSet();
-		for(FileSetDescriptor child:getChildSets())
+
+	public FileSet createRecursiveFileSet() {
+		FileSet baseFileSet = createBasicFileSet();
+		for (FileSetDescriptor child : getChildSets()) {
 			baseFileSet.addChildSet(child.createRecursiveFileSet());
-		
+		}
+
 		return baseFileSet;
 	}
-	
-	
-	public Collection<FileDescriptor> recursiveListContentFilesDescriptors()
-	{
-		ArrayList<FileDescriptor> retVal=new ArrayList<FileDescriptor>(getContentFilesDescriptors().size());
+
+	public Collection<FileDescriptor> recursiveListContentFilesDescriptors() {
+		ArrayList<FileDescriptor> retVal = new ArrayList<FileDescriptor>(getContentFilesDescriptors().size());
 		retVal.addAll(getContentFilesDescriptors());
-		for(FileSetDescriptor childFileSetDescriptor:getChildSets())
+		for (FileSetDescriptor childFileSetDescriptor : getChildSets()) {
 			retVal.addAll(childFileSetDescriptor.recursiveListContentFilesDescriptors());
-		
+		}
+
 		return retVal;
 	}
-	
-	public Collection<FileDescriptor> recursiveListMetaFilesDescriptors()
-	{
-		ArrayList<FileDescriptor> retVal=new ArrayList<FileDescriptor>(getMetaFilesDescriptors().size());
+
+	public Collection<FileDescriptor> recursiveListMetaFilesDescriptors() {
+		ArrayList<FileDescriptor> retVal = new ArrayList<FileDescriptor>(getMetaFilesDescriptors().size());
 		retVal.addAll(getMetaFilesDescriptors());
-		for(FileSetDescriptor childFileSet:getChildSets())
+		for (FileSetDescriptor childFileSet : getChildSets()) {
 			retVal.addAll(childFileSet.recursiveListMetaFilesDescriptors());
-		
+		}
+
 		return retVal;
 	}
-	
-	public Collection<FileDescriptor> recursiveListAllFileDescriptors()
-	{
-		Collection<FileDescriptor> allFilesDescriptors=recursiveListContentFilesDescriptors();
+
+	public Collection<FileDescriptor> recursiveListAllFileDescriptors() {
+		Collection<FileDescriptor> allFilesDescriptors = recursiveListContentFilesDescriptors();
 		allFilesDescriptors.addAll(recursiveListMetaFilesDescriptors());
 		return allFilesDescriptors;
 	}
-	
-	
-	public void doCleanCopyFromFileSetDescriptor(FileSetDescriptor other)
-	{
+
+	public void doCleanCopyFromFileSetDescriptor(FileSetDescriptor other) {
 		this.childSets.clear();
 		this.contentFilesDescriptors.clear();
 		this.metaFilesDescriptors.clear();
 		this.metaInfo.clear();
-		
+
 		this.childSets.addAll(other.getChildSets());
 		this.contentFilesDescriptors.addAll(other.getContentFilesDescriptors());
 		this.metaFilesDescriptors.addAll(other.getMetaFilesDescriptors());
 		this.metaInfo.addAll(other.getMetaInfo());
 	}
-	
-	public boolean existsFileRecursively(String originalAbsoluteFilePath)
-	{
-		return searchFileSetDescriptorByFile(originalAbsoluteFilePath)!=null;
+
+	public boolean existsFileRecursively(String originalAbsoluteFilePath) {
+		return searchFileSetDescriptorByFile(originalAbsoluteFilePath) != null;
 	}
-    
-    public FileSetDescriptor searchFileSetDescriptorByFile(String originalAbsoluteFilePath)
-    {
-        for(FileDescriptor f:getContentFilesDescriptors())
-        {
-            if(f.getOriginalAbsoluteFilePath().equals(originalAbsoluteFilePath)) return this;
-        }
-        for(FileDescriptor f:getMetaFilesDescriptors())
-        {
-            if(f.getOriginalAbsoluteFilePath().equals(originalAbsoluteFilePath)) return this;
-        }
-        for(FileSetDescriptor childFileSet:getChildSets())
-        {
-            FileSetDescriptor foundInChildFileSet=childFileSet.searchFileSetDescriptorByFile(originalAbsoluteFilePath);
-            if(foundInChildFileSet!=null) return foundInChildFileSet;
-        }
-        return null;
-    }
+
+	public FileSetDescriptor searchFileSetDescriptorByFile(String originalAbsoluteFilePath) {
+		for (FileDescriptor f : getContentFilesDescriptors()) {
+			if (f.getOriginalAbsoluteFilePath().equals(originalAbsoluteFilePath)) {
+				return this;
+			}
+		}
+		for (FileDescriptor f : getMetaFilesDescriptors()) {
+			if (f.getOriginalAbsoluteFilePath().equals(originalAbsoluteFilePath)) {
+				return this;
+			}
+		}
+		for (FileSetDescriptor childFileSet : getChildSets()) {
+			FileSetDescriptor foundInChildFileSet = childFileSet.searchFileSetDescriptorByFile(originalAbsoluteFilePath);
+			if (foundInChildFileSet != null) {
+				return foundInChildFileSet;
+			}
+		}
+		return null;
+	}
 
 	public FileDescriptor getContentFileDescriptorWithName(String name) {
-		for(FileDescriptor descriptor: getContentFilesDescriptors()) {
-			if(descriptor.getFilename().equals(name)) {
+		for (FileDescriptor descriptor : getContentFilesDescriptors()) {
+			if (descriptor.getFilename().equals(name)) {
 				return descriptor;
 			}
 		}

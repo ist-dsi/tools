@@ -13,35 +13,25 @@ public interface IScormFileManager {
 	 * 
 	 * @return A FileDescriptor instance that enables access to the saved file
 	 */
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
-			String author, String title, InputStream fileInputStream, FileSetType type);
+	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+			String title, InputStream fileInputStream, FileSetType type);
 
 	/**
 	 * Saves the file for a given type, this is used for saving SCORM packages
 	 * 
 	 * @return A FileDescriptor instance that enables access to the saved file
 	 */
-	
+
 	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
 			Collection<FileSetMetaData> metadata, InputStream inputStream, FileSetType type);
-	
+
 	/**
 	 * Saves the file for a given type, this is used for saving SCORM packages
 	 * 
 	 * @return A FileDescriptor instance that enables access to the saved file
 	 */
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
-			String author, String title, File fileToSave, FileSetType type);
-
-	
-	/**
-	 * Saves the normal with a set of scorm attributes, this is used to create a
-	 * SCORM package on the fly for a given file
-	 * 
-	 * @return A FileDescriptor instance that enables access to the saved file
-	 */
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
-			String author, String title, File fileToSave,  ScormMetaDataHash scormParameters);
+	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+			String title, File fileToSave, FileSetType type);
 
 	/**
 	 * Saves the normal with a set of scorm attributes, this is used to create a
@@ -49,8 +39,17 @@ public interface IScormFileManager {
 	 * 
 	 * @return A FileDescriptor instance that enables access to the saved file
 	 */
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
-			String author, String title, InputStream fileInputStream, ScormMetaDataHash scormParameters);
+	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+			String title, File fileToSave, ScormMetaDataHash scormParameters);
+
+	/**
+	 * Saves the normal with a set of scorm attributes, this is used to create a
+	 * SCORM package on the fly for a given file
+	 * 
+	 * @return A FileDescriptor instance that enables access to the saved file
+	 */
+	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+			String title, InputStream fileInputStream, ScormMetaDataHash scormParameters);
 
 	/**
 	 * Saves the normal with a set of scorm attributes, this is used to create a
@@ -60,9 +59,9 @@ public interface IScormFileManager {
 	 */
 	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
 			Collection<FileSetMetaData> metaData, InputStream fileInputStream, ScormMetaDataHash scormParameters);
-	
+
 	/**
-		/**
+	 * /**
 	 * Deletes an existing file
 	 * 
 	 * @param uniqueId
@@ -79,7 +78,7 @@ public interface IScormFileManager {
 	 * @param privateFile
 	 */
 	public void changeFilePermissions(String uniqueId, Boolean privateFile);
-	
+
 	/**
 	 * Returns the format of the download url. The format should receive only a
 	 * parameter with file unique Id. Example:
@@ -95,7 +94,7 @@ public interface IScormFileManager {
 	 * 
 	 * @return the file InputStream for the File
 	 */
-	
+
 	public InputStream retrieveFile(String uniqueId);
 
 	public FileSearchResult searchFiles(FileSearchCriteria critera);

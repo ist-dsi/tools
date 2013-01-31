@@ -26,6 +26,7 @@ public class ChangeItemMetaDataResponse implements Serializable, XMLSerializable
 		return error;
 	}
 
+	@Override
 	public String toXMLString() {
 		return toXML().asXML();
 
@@ -47,6 +48,7 @@ public class ChangeItemMetaDataResponse implements Serializable, XMLSerializable
 		return retVal;
 	}
 
+	@Override
 	public void fromXMLString(String xml) {
 		try {
 			fromXML(DocumentHelper.parseText(xml).getRootElement());

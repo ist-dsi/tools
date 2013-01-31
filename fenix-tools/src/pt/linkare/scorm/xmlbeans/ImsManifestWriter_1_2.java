@@ -3,14 +3,12 @@
  */
 package pt.linkare.scorm.xmlbeans;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -19,6 +17,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.xml.namespace.QName;
 
 import org.adlnet.xsd.adlcpRootv1P2.ScormtypeAttribute;
@@ -74,7 +73,6 @@ import pt.linkare.scorm.utils.ScormMetaData;
 import pt.linkare.scorm.utils.ScormMetaDataHash;
 import pt.linkare.scorm.utils.ScormMetaInfoEnum;
 import pt.utl.ist.fenix.tools.file.utils.FileUtils;
-import javax.activation.MimetypesFileTypeMap;
 
 /**
  * @author Oscar Ferreira - Linkare TI
@@ -113,22 +111,19 @@ public class ImsManifestWriter_1_2 {
 			manDoc.addNewManifest();
 			XmlCursor cursor = manDoc.newCursor();
 			if (cursor.toFirstChild()) {
-				cursor.setAttributeText(new QName("http://www.w3.org/2001/XMLSchema-instance",
-						"schemaLocation"),
+				cursor.setAttributeText(new QName("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation"),
 						"http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd "
 								+ "http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd "
 								+ "http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd ");
 			}
 
 		} catch (Exception e) {
-			new ScormException("An error was thrown while creating a new instance of ManifestDocument!", e)
-					.printStackTrace();
+			new ScormException("An error was thrown while creating a new instance of ManifestDocument!", e).printStackTrace();
 		}
 	}
 
 	// The Constructor of the Class must create the ManifestDocument
-	public ImsManifestWriter_1_2(String manifestIdentifier, ScormMetaDataHash scormMetadataHash)
-			throws Exception {
+	public ImsManifestWriter_1_2(String manifestIdentifier, ScormMetaDataHash scormMetadataHash) throws Exception {
 		this();
 		ManifestType manType = this.getManDoc().getManifest();
 		manType.setIdentifier(manifestIdentifier);
@@ -143,11 +138,10 @@ public class ImsManifestWriter_1_2 {
 		this.manDoc = manDoc;
 	}
 
-	private void fillLangStringType(String language, String value, LangstringType lStrType)
-			throws ScormException {
-		if (language == null)
+	private void fillLangStringType(String language, String value, LangstringType lStrType) throws ScormException {
+		if (language == null) {
 			language = "x-none";
-		else if (!language.equals("x-none")) {
+		} else if (!language.equals("x-none")) {
 			String languageChangedToJava = language.replaceAll("\\-", "_");
 
 			boolean foundValid = false;
@@ -157,8 +151,9 @@ public class ImsManifestWriter_1_2 {
 					break;
 				}
 			}
-			if (!foundValid)
+			if (!foundValid) {
 				throw new ScormException("Language code " + language + " is an invalid code!");
+			}
 
 		}
 
@@ -168,14 +163,14 @@ public class ImsManifestWriter_1_2 {
 
 	private void fillLOMSourceValue(String language, String value, SourceType sourceType, ValueType valueType)
 			throws ScormException {
-		fillLangStringType(null, ImsManifestReader_1_2.IMS_MANIFEST_READER_LOM_VERSION, sourceType
-				.addNewLangstring());
+		fillLangStringType(null, ImsManifestReader_1_2.IMS_MANIFEST_READER_LOM_VERSION, sourceType.addNewLangstring());
 		fillLangStringType(language, value, valueType.addNewLangstring());
 	}
 
 	private String encodeInVcard(String original) {
-		if (original == null)
+		if (original == null) {
 			return null;
+		}
 		String transformed = original.trim();
 		if (transformed.length() <= "BEGIN:VCARD".length()
 				|| !transformed.substring(0, "BEGIN:VCARD".length()).equalsIgnoreCase("BEGIN:VCARD")) {// not
@@ -189,8 +184,9 @@ public class ImsManifestWriter_1_2 {
 				transformed = "BEGIN:VCARD FN:" + transformed + " END:VCARD";
 			}
 			return transformed;
-		} else
+		} else {
 			return transformed;
+		}
 
 	}
 
@@ -227,7 +223,8 @@ public class ImsManifestWriter_1_2 {
 			// NOTE Data added only once at most...
 			TitleType tLom = general.addNewTitle();
 			// Counters:Used for counting elements that should only have 0 or 1
-			int sizeCounter = 0, statusCounter = 0, durationCounter = 0, versionCounter = 0, costCounter = 0, copyrightCounter = 0, aggregationCounter = 0, interactivityTypeCounter = 0, descriptionCounter = 0;
+			int sizeCounter = 0, statusCounter = 0, durationCounter = 0, versionCounter = 0, costCounter = 0, copyrightCounter =
+					0, aggregationCounter = 0, interactivityTypeCounter = 0, descriptionCounter = 0;
 
 			for (ScormMetaData currentMeta : getScormMetadataHasher().listScormMetaData()) {
 				// NIVEL 1
@@ -260,23 +257,23 @@ public class ImsManifestWriter_1_2 {
 					}
 
 				} else if (currentMeta.getElement().equals("version")) {
-					if (versionCounter > 0)
-						throw new ScormException(
-								"There can be no more than one(1) Version element in the ImsManifest File");
+					if (versionCounter > 0) {
+						throw new ScormException("There can be no more than one(1) Version element in the ImsManifest File");
+					}
 					versionCounter++;
 					VersionType versionType = lifecycle.addNewVersion();
-					fillLangStringType(currentMeta.getLang(), currentMeta.getValues()[0], versionType
-							.addNewLangstring());
+					fillLangStringType(currentMeta.getLang(), currentMeta.getValues()[0], versionType.addNewLangstring());
 
 				} else if (currentMeta.getElement().equals("status")) {
-					if (statusCounter > 0)
-						throw new ScormException(
-								"There can be no more than one(1) Status element in the ImsManifest File");
+					if (statusCounter > 0) {
+						throw new ScormException("There can be no more than one(1) Status element in the ImsManifest File");
+					}
 					statusCounter++;
 					StatusType statusType = lifecycle.addNewStatus();
 					String value = currentMeta.getValues()[0];
-					if (value == null || value.trim().equals(""))
+					if (value == null || value.trim().equals("")) {
 						value = "Final";
+					}
 
 					fillLOMSourceValue(null, value, statusType.addNewSource(), statusType.addNewValue());
 				} else if (currentMeta.getElement().equals("metadatascheme")) {
@@ -296,52 +293,53 @@ public class ImsManifestWriter_1_2 {
 							locType.setType(LocationType.Type.URI);
 						} else if ("TEXT".equalsIgnoreCase(type)) {
 							locType.setType(LocationType.Type.TEXT);
-						} else
-							throw new ScormException("Unknown location type " + type
-									+ " - it should be one of TEXT,URI");
+						} else {
+							throw new ScormException("Unknown location type " + type + " - it should be one of TEXT,URI");
+						}
 						locType.setStringValue(value);
 					}
 
 				} else if (currentMeta.getElement().equals("rights")) {
 					if (currentMeta.getQualifier().equalsIgnoreCase("cost")) {
 						// Here we create a Cost Item
-						if (costCounter > 0)
-							throw new ScormException(
-									"There should one(1) and only one(1) Cost element in the ImsManifest File");
+						if (costCounter > 0) {
+							throw new ScormException("There should one(1) and only one(1) Cost element in the ImsManifest File");
+						}
 						costCounter++;
 						CostType cType = rightsType.addNewCost();
 
 						String value = currentMeta.getValues()[0];
-						if (value == null || value.trim().length() == 0 || value.equalsIgnoreCase("no"))
+						if (value == null || value.trim().length() == 0 || value.equalsIgnoreCase("no")) {
 							value = "no";
-						else
+						} else {
 							value = "yes";
+						}
 
 						fillLOMSourceValue(null, value, cType.addNewSource(), cType.addNewValue());
 					} else if (currentMeta.getQualifier().compareToIgnoreCase("copyright") == 0) {
-						if (copyrightCounter > 0)
+						if (copyrightCounter > 0) {
 							throw new ScormException(
 									"There should one(1) and only one(1) CopyrightandOtherRestriction element in the ImsManifest File");
+						}
 						copyrightCounter++;
 
-						CopyrightandotherrestrictionsType copyType = rightsType
-								.addNewCopyrightandotherrestrictions();
+						CopyrightandotherrestrictionsType copyType = rightsType.addNewCopyrightandotherrestrictions();
 
 						String value = currentMeta.getValues()[0];
-						if (value == null || value.trim().length() == 0 || value.equalsIgnoreCase("no"))
+						if (value == null || value.trim().length() == 0 || value.equalsIgnoreCase("no")) {
 							value = "no";
-						else
+						} else {
 							value = "yes";
+						}
 
 						fillLOMSourceValue(null, value, copyType.addNewSource(), copyType.addNewValue());
 					} else if (currentMeta.getQualifier().compareToIgnoreCase("description") == 0) {
-						if (descriptionCounter > 0)
-							throw new ScormException(
-									"There should at most one(1) Description element in the ImsManifest File");
+						if (descriptionCounter > 0) {
+							throw new ScormException("There should at most one(1) Description element in the ImsManifest File");
+						}
 						descriptionCounter++;
 						DescriptionType dType = rightsType.addNewDescription();
-						fillLangStringType(currentMeta.getLang(), currentMeta.getValues()[0], dType
-								.addNewLangstring());
+						fillLangStringType(currentMeta.getLang(), currentMeta.getValues()[0], dType.addNewLangstring());
 					}
 
 				}
@@ -353,13 +351,14 @@ public class ImsManifestWriter_1_2 {
 						general.addLanguage(value);
 					}
 				} else if (currentMeta.getElement().equals("aggregationLevel")) {
-					if (aggregationCounter > 0)
+					if (aggregationCounter > 0) {
 						throw new ScormException(
 								"There can only be at most one(1) AggregationLevel element in the ImsManifest File");
+					}
 					aggregationCounter++;
 					AggregationlevelType aggrLevelType = general.addNewAggregationlevel();
-					fillLOMSourceValue(currentMeta.getLang(), currentMeta.getValues()[0], aggrLevelType
-							.addNewSource(), aggrLevelType.addNewValue());
+					fillLOMSourceValue(currentMeta.getLang(), currentMeta.getValues()[0], aggrLevelType.addNewSource(),
+							aggrLevelType.addNewValue());
 				}
 				/**
 				 * O ImsManifestReader classifica estes elementos do seguinte
@@ -402,68 +401,66 @@ public class ImsManifestWriter_1_2 {
 				 */
 				else if (currentMeta.getElement().equals("contributor")) {
 					int countVal = 0;
-					String[] dateValues = getScormMetadataHasher()
-							.getValues(
+					String[] dateValues =
+							getScormMetadataHasher().getValues(
 									"date",
-									currentMeta.getQualifier().compareToIgnoreCase("author") == 0 ? "created"
-											: (currentMeta.getQualifier().compareToIgnoreCase("editor") == 0 ? "copyright"
-													: "other"), currentMeta.getLang());
+									currentMeta.getQualifier().compareToIgnoreCase("author") == 0 ? "created" : (currentMeta
+											.getQualifier().compareToIgnoreCase("editor") == 0 ? "copyright" : "other"),
+									currentMeta.getLang());
 					for (String contribValue : currentMeta.getValues()) {
 						ContributeType cType = lifecycle.addNewContribute();
 						RoleType rType = cType.addNewRole();
-						String type = ScormMetaInfoEnum.translateFromDCToScorm(currentMeta.getQualifier(),
-								ScormMetaInfoEnum.DUBLIN_CORE_QUALIFIER_CONTRIBUTOR,
-								ScormMetaInfoEnum.DC2SCORM_QUALIFIER_CONTRIBUTOR_MAP);
-						fillLOMSourceValue(currentMeta.getLang(), type, rType.addNewSource(), rType
-								.addNewValue());
+						String type =
+								ScormMetaInfoEnum.translateFromDCToScorm(currentMeta.getQualifier(),
+										ScormMetaInfoEnum.DUBLIN_CORE_QUALIFIER_CONTRIBUTOR,
+										ScormMetaInfoEnum.DC2SCORM_QUALIFIER_CONTRIBUTOR_MAP);
+						fillLOMSourceValue(currentMeta.getLang(), type, rType.addNewSource(), rType.addNewValue());
 						CentityType centityType = cType.addNewCentity();
 						centityType.setVcard(encodeInVcard(contribValue));
 						if (dateValues != null && dateValues.length > 0) {
 							DateType dType = cType.addNewDate();
 							dType.setDatetime(dateValues[countVal]);
-							fillLangStringType(currentMeta.getLang(), dateValues[countVal + 1], dType
-									.addNewDescription().addNewLangstring());
+							fillLangStringType(currentMeta.getLang(), dateValues[countVal + 1], dType.addNewDescription()
+									.addNewLangstring());
 						}
 						countVal += 2;
 					}
 				} else if (currentMeta.getElement().equals("duration")) {
-					if (durationCounter > 0)
-						throw new ScormException(
-								"There can only be at most one(1) Duration element in the ImsManifest File");
+					if (durationCounter > 0) {
+						throw new ScormException("There can only be at most one(1) Duration element in the ImsManifest File");
+					}
 					durationCounter++;
 					DurationType durationType = techType.addNewDuration();
 					String[] durationVal = currentMeta.getValues();
 					for (int i = 0; i < durationVal.length; i = +2) {
 						durationType.setDatetime(durationVal[i]);
 						DescriptionType descType = durationType.addNewDescription();
-						fillLangStringType(currentMeta.getLang(), durationVal[++i], descType
-								.addNewLangstring());
+						fillLangStringType(currentMeta.getLang(), durationVal[++i], descType.addNewLangstring());
 					}
 
 				} else if (currentMeta.getElement().equals("interactivityType")) {
-					if (interactivityTypeCounter > 0)
+					if (interactivityTypeCounter > 0) {
 						throw new ScormException(
 								"There can be no more than one(1) InteractivityType element in the ImsManifest File");
+					}
 					interactivityTypeCounter++;
 					InteractivitytypeType iType = eduType.addNewInteractivitytype();
-					fillLOMSourceValue(currentMeta.getLang(), currentMeta.getValues()[0], iType
-							.addNewSource(), iType.addNewValue());
+					fillLOMSourceValue(currentMeta.getLang(), currentMeta.getValues()[0], iType.addNewSource(),
+							iType.addNewValue());
 				} else if (currentMeta.getElement().equals("type")) {
 					for (String value : currentMeta.getValues()) {
 						LearningresourcetypeType learnType = eduType.addNewLearningresourcetype();
-						fillLOMSourceValue(currentMeta.getLang(), value, learnType.addNewSource(), learnType
-								.addNewValue());
+						fillLOMSourceValue(currentMeta.getLang(), value, learnType.addNewSource(), learnType.addNewValue());
 					}
 				} else if (currentMeta.getElement().equals("context")) {
 					for (String value : currentMeta.getValues()) {
 						ContextType cType = eduType.addNewContext();
-						fillLOMSourceValue(currentMeta.getLang(), value, cType.addNewSource(), cType
-								.addNewValue());
+						fillLOMSourceValue(currentMeta.getLang(), value, cType.addNewSource(), cType.addNewValue());
 					}
 				} else if (currentMeta.getElement().equals("size")) {
-					if (sizeCounter > 0)
-						throw new ScormException(
-								"There can be no more than one(1) Size element in the ImsManifest File");
+					if (sizeCounter > 0) {
+						throw new ScormException("There can be no more than one(1) Size element in the ImsManifest File");
+					}
 					sizeCounter++;
 					techType.setSize(Integer.parseInt(currentMeta.getValues()[0]));
 				}
@@ -482,15 +479,15 @@ public class ImsManifestWriter_1_2 {
 	public File addResource2ImsManifest(File imsManifest, File resFile) throws ScormException {
 
 		try {
-			String resourceRelativeLocation = FileUtils.makeRelativePath(imsManifest.getAbsoluteFile()
-					.getParentFile().getAbsolutePath(), resFile.getAbsoluteFile().getAbsolutePath());
+			String resourceRelativeLocation =
+					FileUtils.makeRelativePath(imsManifest.getAbsoluteFile().getParentFile().getAbsolutePath(), resFile
+							.getAbsoluteFile().getAbsolutePath());
 			ManifestType manType = manDoc.getManifest();
 			File tempDir = imsManifest.getAbsoluteFile().getParentFile();
 
 			String resourceRelativeLocationStartupHtml = resourceRelativeLocation + "_startup_sco.html";
-			String resourceRelativeLocationJScript = resourceRelativeLocation.substring(0,
-					resourceRelativeLocation.indexOf(resFile.getName()))
-					+ "APIWrapper.js";
+			String resourceRelativeLocationJScript =
+					resourceRelativeLocation.substring(0, resourceRelativeLocation.indexOf(resFile.getName())) + "APIWrapper.js";
 
 			FileOutputStream outFileOS;
 			InputStream inFileIS;
@@ -504,8 +501,9 @@ public class ImsManifestWriter_1_2 {
 				String htmlContent = bosHTML.toString();
 				bosHTML.close();
 
-				htmlContent = htmlContent.replaceAll("<!-- TITLE_COURSE_HERE -->", rootLomType.getGeneral()
-						.getTitle().getLangstringArray()[0].getStringValue());
+				htmlContent =
+						htmlContent.replaceAll("<!-- TITLE_COURSE_HERE -->", rootLomType.getGeneral().getTitle()
+								.getLangstringArray()[0].getStringValue());
 				htmlContent = htmlContent.replaceAll("<!-- TITLE_FILE_HERE -->", "Open Educational Resource");
 				htmlContent = htmlContent.replaceAll("<!-- FILENAME_HERE -->", resourceRelativeLocation);
 
@@ -529,8 +527,9 @@ public class ImsManifestWriter_1_2 {
 			ResourceType rType = null;
 			FileType fType = null;
 			resType = manType.getResources();
-			if (resType == null)
+			if (resType == null) {
 				resType = manType.addNewResources();
+			}
 
 			rType = resType.addNewResource();
 			// Setting Attributes for ResourceType
@@ -553,11 +552,12 @@ public class ImsManifestWriter_1_2 {
 			rType.setHref(resourceRelativeLocationStartupHtml);
 
 			File lomFile = instrospectMetaForFile(resourceRelativeLocation, resFile, manDoc);
-			String lomFileRelativePath = FileUtils.makeRelativePath(imsManifest.getAbsoluteFile()
-					.getParentFile().getAbsolutePath(), lomFile.getAbsoluteFile().getAbsolutePath());
+			String lomFileRelativePath =
+					FileUtils.makeRelativePath(imsManifest.getAbsoluteFile().getParentFile().getAbsolutePath(), lomFile
+							.getAbsoluteFile().getAbsolutePath());
 
-			org.adlnet.xsd.adlcpRootv1P2.LocationDocument adlCpLocationDoc = org.adlnet.xsd.adlcpRootv1P2.LocationDocument.Factory
-					.newInstance(xmlOptions);
+			org.adlnet.xsd.adlcpRootv1P2.LocationDocument adlCpLocationDoc =
+					org.adlnet.xsd.adlcpRootv1P2.LocationDocument.Factory.newInstance(xmlOptions);
 			adlCpLocationDoc.setLocation(lomFileRelativePath);
 
 			MetadataType rMeta = rType.addNewMetadata();
@@ -569,8 +569,7 @@ public class ImsManifestWriter_1_2 {
 			if (organizationsType == null) {
 				organizationsType = manType.addNewOrganizations();
 				organizationsType.setDefault(resourceRelativeLocation.replace('.', '_') + "_Org_ID");
-			} else if (organizationsType.getOrganizationArray() == null
-					|| organizationsType.getOrganizationArray().length == 0) {
+			} else if (organizationsType.getOrganizationArray() == null || organizationsType.getOrganizationArray().length == 0) {
 				organizationsType.setDefault(resourceRelativeLocation.replace('.', '_') + "_Org_ID");
 			}
 			OrganizationType orgType = organizationsType.addNewOrganization();
@@ -596,7 +595,6 @@ public class ImsManifestWriter_1_2 {
 	private File instrospectMetaForFile(String resourceRelativeLocation, File resFile, ManifestDocument manDoc)
 			throws IOException, ScormException {
 
-		
 		String fileContentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(resFile.getName());
 		fileContentType = (fileContentType == null ? "application/octet-stream" : fileContentType);
 		long fileSizeBytes = resFile.length();
@@ -621,8 +619,8 @@ public class ImsManifestWriter_1_2 {
 		ClassificationType classificationType = lom.addNewClassification();
 		PurposeType pType = classificationType.addNewPurpose();
 		fillLOMSourceValue(null, "Educational Objective", pType.addNewSource(), pType.addNewValue());
-		fillLangStringType(null, "automatically created by Fenix System", classificationType
-				.addNewDescription().addNewLangstring());
+		fillLangStringType(null, "automatically created by Fenix System", classificationType.addNewDescription()
+				.addNewLangstring());
 		fillLangStringType(null, "fenix", classificationType.addNewKeyword().addNewLangstring());
 
 		TechnicalType technical = lom.addNewTechnical();
@@ -670,7 +668,7 @@ public class ImsManifestWriter_1_2 {
 		createEmptyIfMissing("description");
 		createDefaultIfMissing("metadatascheme", ImsManifestReader_1_2.IMS_MANIFEST_READER_LOM_VERSION);
 		createDefaultIfMissing("format", "application/octet-stream");
-		createDefaultIfMissing("location","http://fenix.ist.utl.pt/privado");
+		createDefaultIfMissing("location", "http://fenix.ist.utl.pt/privado");
 		createDefaultIfMissing("rights", "cost", "no");
 		createDefaultIfMissing("rights", "copyright", "no");
 		createDefaultIfMissing("status", "Final");
@@ -680,8 +678,9 @@ public class ImsManifestWriter_1_2 {
 	 * @param element
 	 */
 	private void createEmptyIfMissing(String element) {
-		if (isMissing(element))
+		if (isMissing(element)) {
 			scormMetadataHasher.put(element, null, null, "");
+		}
 	}
 
 	/**
@@ -690,8 +689,9 @@ public class ImsManifestWriter_1_2 {
 	 */
 	private boolean isMissing(String element) {
 		Set<MultiStringKey> setOfScormElements = scormMetadataHasher.keySetWithElement(element);
-		if (setOfScormElements != null && setOfScormElements.size() > 0)
+		if (setOfScormElements != null && setOfScormElements.size() > 0) {
 			return false;
+		}
 		return true;
 	}
 
@@ -700,8 +700,9 @@ public class ImsManifestWriter_1_2 {
 	 * @param qualifier
 	 */
 	private void createEmptyIfMissing(String element, String qualifier) {
-		if (isMissing(element, qualifier))
+		if (isMissing(element, qualifier)) {
 			scormMetadataHasher.put(element, qualifier, null, "");
+		}
 	}
 
 	/**
@@ -710,10 +711,10 @@ public class ImsManifestWriter_1_2 {
 	 * @return true if the element/qualifier is missing
 	 */
 	private boolean isMissing(String element, String qualifier) {
-		Set<MultiStringKey> setOfScormElements = scormMetadataHasher.keySetWithElementAndQualifier(element,
-				qualifier);
-		if (setOfScormElements != null && setOfScormElements.size() > 0)
+		Set<MultiStringKey> setOfScormElements = scormMetadataHasher.keySetWithElementAndQualifier(element, qualifier);
+		if (setOfScormElements != null && setOfScormElements.size() > 0) {
 			return false;
+		}
 		return true;
 	}
 
@@ -722,8 +723,9 @@ public class ImsManifestWriter_1_2 {
 	 * @param value
 	 */
 	private void createDefaultIfMissing(String element, String value) {
-		if (isMissing(element))
+		if (isMissing(element)) {
 			scormMetadataHasher.put(element, null, null, value);
+		}
 	}
 
 	/**
@@ -732,8 +734,9 @@ public class ImsManifestWriter_1_2 {
 	 * @param value
 	 */
 	private void createDefaultIfMissing(String element, String qualifier, String value) {
-		if (isMissing(element, qualifier))
+		if (isMissing(element, qualifier)) {
 			scormMetadataHasher.put(element, qualifier, null, value);
+		}
 	}
 
 	public static class ImsManifestWriter_1_2_Test {
@@ -744,22 +747,19 @@ public class ImsManifestWriter_1_2 {
 			scormMetaHasher.put("title", null, "pt", "titalo 1");
 			scormMetaHasher.put("title", null, "en", new String[] { "title 1", "tiiitllleee 2", "Le titre" });
 
-			scormMetaHasher.put("subject", null, "pt", new String[] { "subject_value", "subject_value2",
-					"palavra chave 1" });
-			scormMetaHasher.put("description", null, "en",
-					new String[] { "Description...", "Description...2" });
+			scormMetaHasher.put("subject", null, "pt", new String[] { "subject_value", "subject_value2", "palavra chave 1" });
+			scormMetaHasher.put("description", null, "en", new String[] { "Description...", "Description...2" });
 			scormMetaHasher.put("date", "created", null, new String[] { "27-07-2006", "66-07-2006" });
 			scormMetaHasher.put("contributor", "author", "creator", "jose manuel das couves");
 			scormMetaHasher.put("contributor", "author", "author", "joao das gaivotas");
 			scormMetaHasher.put("contributor", "publisher", "en", "joao das gaivotas");
-			scormMetaHasher.put("identifier", "citation", "br", new String[] {
-					"Oscar J. Ferreira, Rua dos Pocos", "joaquin manel, em casa" });
+			scormMetaHasher.put("identifier", "citation", "br", new String[] { "Oscar J. Ferreira, Rua dos Pocos",
+					"joaquin manel, em casa" });
 			scormMetaHasher.put("identifier", "lalala", "br", "oscar J. Ferreira, Rua dos barcos");
 			scormMetaHasher.put("version", null, "pt", new String[] { "v1.0", "v1.2" });
-			scormMetaHasher.put("metadatascheme", null, null, new String[] { "metaschema1", "metaschema2",
-					"metaschema3" });
-			scormMetaHasher.put("location", "something", null, new String[] { "http://www.linux.com",
-					"http://www.apache.com", "http://www.microsoft.crap" });
+			scormMetaHasher.put("metadatascheme", null, null, new String[] { "metaschema1", "metaschema2", "metaschema3" });
+			scormMetaHasher.put("location", "something", null, new String[] { "http://www.linux.com", "http://www.apache.com",
+					"http://www.microsoft.crap" });
 			scormMetaHasher.put("rights", "cost", "pt", new String[] { "credit", "transfer" });
 			try {
 				manWriter.createManifest("/home/pcma/Desktop");

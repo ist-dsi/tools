@@ -103,19 +103,17 @@ public class DSpaceRmiClient implements IDSpaceClient {
 			Object oRemote;
 			try {
 				oRemote = RMIConfig.getInstance().locateJNDI().lookup(dspaceManagerJndiName);
-				remoteDSpaceServer = (IRemoteFileSetManager) PortableRemoteObject.narrow(oRemote,
-						IRemoteFileSetManager.class);
-			}
-			catch (NamingException e) {
+				remoteDSpaceServer = (IRemoteFileSetManager) PortableRemoteObject.narrow(oRemote, IRemoteFileSetManager.class);
+			} catch (NamingException e) {
 				throw new DSpaceClientException("Error finding remote RMI endpoint...", e);
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				throw new DSpaceClientException("Error finding remote RMI endpoint...", e);
 			}
 		}
 		return remoteDSpaceServer;
 	}
 
+	@Override
 	public void init(DSpaceFileManager ctx) {
 		try {
 			username = ctx.getProperty("dspace.username");
@@ -126,10 +124,8 @@ public class DSpaceRmiClient implements IDSpaceClient {
 
 			RMIConfig.getInstance().setJndiPropertiesFile(ctx.getProperty(RMIConfig.JNDI_PROPERTIES_FILE_PARAM));
 			RMIConfig.getInstance().setUseSSL(Integer.parseInt(ctx.getProperty(RMIConfig.RMI_SSL_PARAM)) != 0);
-			RMIConfig.getInstance().setRegistryPortNumber(
-					Integer.parseInt(ctx.getProperty(RMIConfig.RMI_REGISTRY_PORT_PARAM)));
-			RMIConfig.getInstance().setDefaultPortNumber(
-					Integer.parseInt(ctx.getProperty(RMIConfig.RMI_SERVER_PORT_PARAM)));
+			RMIConfig.getInstance().setRegistryPortNumber(Integer.parseInt(ctx.getProperty(RMIConfig.RMI_REGISTRY_PORT_PARAM)));
+			RMIConfig.getInstance().setDefaultPortNumber(Integer.parseInt(ctx.getProperty(RMIConfig.RMI_SERVER_PORT_PARAM)));
 			RMIConfig.getInstance().setSslTrustStore(ctx.getProperty(RMIConfig.RMI_SSL_TRUSTSTORE_PARAM));
 			RMIConfig.getInstance().setSslTrustStorePass(ctx.getProperty(RMIConfig.RMI_SSL_TRUSTSTORE_PASS_PARAM));
 			RMIConfig.getInstance().initializeSocketFactories();
@@ -140,53 +136,50 @@ public class DSpaceRmiClient implements IDSpaceClient {
 				bytesIncreaseLength = Integer.parseInt(ctx.getProperty(RMIConfig.REMOTE_STREAM_BUFFER_BLOCK_PARAM));
 				maxBytesLength = Integer.parseInt(ctx.getProperty(RMIConfig.REMOTE_STREAM_BUFFER_MAX_PARAM));
 
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				logger.log(Level.INFO, "Unable to parse buffer block sizes... Assuming defaults!");
 			}
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Unable to read configuration properties for " + getClass().getName(), e);
 		}
 		try {
 			findRemote();
-		}
-		catch (DSpaceClientException e) {
+		} catch (DSpaceClientException e) {
 			throw new RuntimeException("Error finding remote DSpaceServer implementation...", e);
 		}
 
 	}
 
+	@Override
 	public FileSetDescriptor uploadFileSet(VirtualPath path, String originalFilename, FileSet fs, boolean privateFile)
 			throws DSpaceClientException {
 		try {
 			String localBaseDir = fs.getContentFile(0).getParent();
 			IRemoteFile remoteDir = findRemote().getBaseRemoteDir(username, password);
-			long timeStart=System.currentTimeMillis();
+			long timeStart = System.currentTimeMillis();
 			uploadTransferFileSetRecursive(localBaseDir, remoteDir, fs);
-			FileSetDescriptor retVal=findRemote().uploadFileSet(remoteDir, path, originalFilename, privateFile, fs, username, password);
-			System.out.println("RMI: uploadFileSet took "+(System.currentTimeMillis()-timeStart)+" ms");
+			FileSetDescriptor retVal =
+					findRemote().uploadFileSet(remoteDir, path, originalFilename, privateFile, fs, username, password);
+			System.out.println("RMI: uploadFileSet took " + (System.currentTimeMillis() - timeStart) + " ms");
 			return retVal;
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new DSpaceClientException(e);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new DSpaceClientException(e);
 		}
 	}
 
-	public void uploadTransferFileSetRecursive(String localBaseDir, IRemoteFile remoteDir, FileSet fs)
-			throws IOException, RemoteException {
+	public void uploadTransferFileSetRecursive(String localBaseDir, IRemoteFile remoteDir, FileSet fs) throws IOException,
+			RemoteException {
 		HashMap<String, String> pathReplacements = new HashMap<String, String>();
 
 		for (File f : fs.getAllFiles()) {
 			String relativePath = FileUtils.makeRelativePath(localBaseDir, f.getAbsolutePath());
 			remoteDir.createFile(relativePath);
 			RemoteFileOutputStream rfos = new RemoteFileOutputStream(remoteDir);
-			FileUtils.adaptativeCopyInputStreamToOutputStream(new FileInputStream(f), rfos, bytesStartLength,
-					maxBytesLength, bytesIncreaseLength);
+			FileUtils.adaptativeCopyInputStreamToOutputStream(new FileInputStream(f), rfos, bytesStartLength, maxBytesLength,
+					bytesIncreaseLength);
 			rfos.close();
 			pathReplacements.put(f.getAbsolutePath(), remoteDir.getAbsolutePath());
 		}
@@ -199,6 +192,7 @@ public class DSpaceRmiClient implements IDSpaceClient {
 		}
 	}
 
+	@Override
 	public FileSet retrieveFileSet(FileSetDescriptor descriptor) throws DSpaceClientException {
 		try {
 			IRemoteFile remoteBaseDir = findRemote().retrieveBaseRemoteDir(descriptor, username, password);
@@ -207,17 +201,15 @@ public class DSpaceRmiClient implements IDSpaceClient {
 			FileSet remoteFileSet = descriptor.createRecursiveFileSet();
 			downloadTransferRecursiveFileSet(localBaseDir, remoteBaseDirAbsolutePath, remoteBaseDir, remoteFileSet);
 			return remoteFileSet;
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new DSpaceClientException(e);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new DSpaceClientException(e);
 		}
 	}
 
-	public void downloadTransferRecursiveFileSet(File localBaseDir, String remoteBaseDirAbsolutePath,
-			IRemoteFile remoteBaseDir, FileSet remoteFileSet) throws IOException, RemoteException {
+	public void downloadTransferRecursiveFileSet(File localBaseDir, String remoteBaseDirAbsolutePath, IRemoteFile remoteBaseDir,
+			FileSet remoteFileSet) throws IOException, RemoteException {
 
 		HashMap<String, String> pathReplacements = new HashMap<String, String>();
 
@@ -229,109 +221,115 @@ public class DSpaceRmiClient implements IDSpaceClient {
 			FileOutputStream fos = new FileOutputStream(localFile);
 			remoteBaseDir.getFile(relativePath);
 			RemoteFileInputStream rfis = new RemoteFileInputStream(remoteBaseDir);
-			FileUtils.adaptativeCopyInputStreamToOutputStream(rfis, fos, bytesStartLength, maxBytesLength,
-					bytesIncreaseLength);
+			FileUtils.adaptativeCopyInputStreamToOutputStream(rfis, fos, bytesStartLength, maxBytesLength, bytesIncreaseLength);
 			pathReplacements.put(remoteBaseDir.getAbsolutePath(), localFile.getAbsolutePath());
 		}
 
 		for (Entry<String, String> pathReplacement : pathReplacements.entrySet()) {
 			remoteFileSet.replaceFileWithAbsolutePath(pathReplacement.getKey(), pathReplacement.getValue());
 		}
-		
+
 		for (FileSet childFs : remoteFileSet.getChildSets()) {
 			downloadTransferRecursiveFileSet(localBaseDir, remoteBaseDirAbsolutePath, remoteBaseDir, childFs);
 		}
 	}
 
+	@Override
 	public void deleteFileSet(FileSetDescriptor descriptor) throws DSpaceClientException {
 		try {
 			findRemote().deleteFileSet(descriptor, username, password);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new DSpaceClientException(e);
 		}
 	}
 
-	public void changeFileSetPermissions(FileSetDescriptor descriptor, boolean privateFile)
-			throws DSpaceClientException {
+	@Override
+	public void changeFileSetPermissions(FileSetDescriptor descriptor, boolean privateFile) throws DSpaceClientException {
 		try {
 			findRemote().changeFileSetPermissions(descriptor, privateFile, username, password);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new DSpaceClientException(e);
 		}
 
 	}
 
-	public FileSetDescriptor listAllDescriptorsFromRoot(FileSetDescriptor rootFileSetDescriptor)
-			throws DSpaceClientException {
+	@Override
+	public FileSetDescriptor listAllDescriptorsFromRoot(FileSetDescriptor rootFileSetDescriptor) throws DSpaceClientException {
 		try {
 			return findRemote().listRecursiveFromRoot(rootFileSetDescriptor, username, password);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new DSpaceClientException(e);
 		}
 
 	}
 
+	@Override
 	public FileSetDescriptor getRootDescriptor(FileSetDescriptor innerChildDescriptor) throws DSpaceClientException {
 		try {
 			return findRemote().getRootDescriptor(innerChildDescriptor, username, password);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new DSpaceClientException(e);
 		}
 	}
 
-	public FileSetQueryResults searchFileSets(FilesetMetadataQuery query, VirtualPath optionalPathToRestrictSearch) throws DSpaceClientException {
+	@Override
+	public FileSetQueryResults searchFileSets(FilesetMetadataQuery query, VirtualPath optionalPathToRestrictSearch)
+			throws DSpaceClientException {
 		try {
-			return findRemote().searchFileSets(query,optionalPathToRestrictSearch, username, password);
-		}
-		catch (RemoteException e) {
+			return findRemote().searchFileSets(query, optionalPathToRestrictSearch, username, password);
+		} catch (RemoteException e) {
 			throw new DSpaceClientException(e);
 		}
 	}
 
-	public FileSearchResult searchFiles(FileSearchCriteria criteria, VirtualPath optionalPathToRestrictSearch) throws DSpaceClientException {
+	@Override
+	public FileSearchResult searchFiles(FileSearchCriteria criteria, VirtualPath optionalPathToRestrictSearch)
+			throws DSpaceClientException {
 		List<FileDescriptor> descriptors = new ArrayList<FileDescriptor>();
 		FilesetMetadataQuery query = criteria.getQuery();
-		
+
 		FileSetQueryResults results = searchFileSets(query, optionalPathToRestrictSearch);
-		for(FileSetDescriptor descriptor : results.getResults()) {
+		for (FileSetDescriptor descriptor : results.getResults()) {
 			descriptors.add(getRootDescriptor(descriptor).getContentFileDescriptor(0));
 		}
-		
+
 		return new FileSearchResult(descriptors, query.getStart(), query.getPageSize(), results.getHitsCount());
 	}
 
+	@Override
 	public FileSearchResult searchFiles(FileSearchCriteria criteria) throws DSpaceClientException {
 		return searchFiles(criteria, null);
 	}
 
-	public FileSetDescriptor addFileToItem(VirtualPath path, String name, String itemId, FileSet fileSet, boolean privateFile) throws DSpaceClientException {
+	@Override
+	public FileSetDescriptor addFileToItem(VirtualPath path, String name, String itemId, FileSet fileSet, boolean privateFile)
+			throws DSpaceClientException {
 		/**
 		 * Should be implemented
 		 */
 		return null;
 	}
 
+	@Override
 	public void changeItemMetaData(String itemHandler, Collection<FileSetMetaData> metaData) {
 		/**
 		 * Should be implemented
-		 */	
+		 */
 	}
 
+	@Override
 	public void removeFileFromItem(String uniqueId) throws DSpaceClientException {
 		/**
 		 * Should be implemented
 		 */
 	}
 
+	@Override
 	public InputStream retrieveStreamForFile(String uniqueIdentifier) throws DSpaceClientException {
 		/**
 		 * Should be implemented
 		 */
 		return null;
 	}
-	
+
 }

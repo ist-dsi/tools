@@ -8,72 +8,74 @@ import java.util.List;
 
 public class CSSTextBlockParser implements TextBlockParser {
 
-    public List<TextBlock> readBlocks(Reader in) throws IOException {
-	List<TextBlock> outList = new ArrayList<TextBlock>();
+	@Override
+	public List<TextBlock> readBlocks(Reader in) throws IOException {
+		List<TextBlock> outList = new ArrayList<TextBlock>();
 
-	BufferedReader br = (in instanceof BufferedReader) ? (BufferedReader) in
-		: new BufferedReader(in);
+		BufferedReader br = (in instanceof BufferedReader) ? (BufferedReader) in : new BufferedReader(in);
 
-	String line = null;
-	String previousContentFinish = null;
-	String startNextContent = null;
+		String line = null;
+		String previousContentFinish = null;
+		String startNextContent = null;
 
-	boolean multilineComment = false;
-	boolean commentBlock = false;
-	boolean cssBlock = false;
-	
-	StringBuilder content = new StringBuilder();
-	while ((line = br.readLine()) != null) {
+		boolean multilineComment = false;
+		boolean commentBlock = false;
+		boolean cssBlock = false;
 
-	    if (line.trim().length() == 0)
-		continue;
+		StringBuilder content = new StringBuilder();
+		while ((line = br.readLine()) != null) {
 
-	    if(line.contains("{"))
-		cssBlock=true;
-	    
-	    if (line.trim().startsWith("//")
-		    || (line.trim().startsWith("/*") && line.trim().endsWith("*/"))) {
-		previousContentFinish = line;
-		commentBlock = true;
-	    } else if (line.contains("/*") && !cssBlock) {
-		previousContentFinish = line.substring(0, line.indexOf("/*"));
-		startNextContent = line.substring(line.indexOf("/*"));
-		multilineComment = true;
-	    } else if (line.contains("*/") && !cssBlock) {
-		previousContentFinish = line.substring(0, line.indexOf("*/") + 2);
-		startNextContent = line.substring(line.indexOf("*/") + 2);
-		commentBlock = true;
-		multilineComment = false;
-	    } else if (!multilineComment && line.contains("}")) {
-		previousContentFinish = line.substring(0, line.indexOf("}") + 1);
-		startNextContent = line.substring(line.indexOf("}") + 1);
-		cssBlock=false;
-	    } else {
-		previousContentFinish = line;
-		startNextContent = null;
-	    }
+			if (line.trim().length() == 0) {
+				continue;
+			}
 
-	    content.append(previousContentFinish).append(CRLF);
-	    if (startNextContent != null) {
+			if (line.contains("{")) {
+				cssBlock = true;
+			}
 
-		if (content.toString().trim().length() != 0) {
-		    TextBlock block = null;
-		    if (commentBlock) {
-			block = new UnknownTextBlock();
-			commentBlock = false;
-		    } else
-			block = new CSSTextBlock();
+			if (line.trim().startsWith("//") || (line.trim().startsWith("/*") && line.trim().endsWith("*/"))) {
+				previousContentFinish = line;
+				commentBlock = true;
+			} else if (line.contains("/*") && !cssBlock) {
+				previousContentFinish = line.substring(0, line.indexOf("/*"));
+				startNextContent = line.substring(line.indexOf("/*"));
+				multilineComment = true;
+			} else if (line.contains("*/") && !cssBlock) {
+				previousContentFinish = line.substring(0, line.indexOf("*/") + 2);
+				startNextContent = line.substring(line.indexOf("*/") + 2);
+				commentBlock = true;
+				multilineComment = false;
+			} else if (!multilineComment && line.contains("}")) {
+				previousContentFinish = line.substring(0, line.indexOf("}") + 1);
+				startNextContent = line.substring(line.indexOf("}") + 1);
+				cssBlock = false;
+			} else {
+				previousContentFinish = line;
+				startNextContent = null;
+			}
 
-		    block.setContent(content.toString());
-		    outList.add(block);
+			content.append(previousContentFinish).append(CRLF);
+			if (startNextContent != null) {
+
+				if (content.toString().trim().length() != 0) {
+					TextBlock block = null;
+					if (commentBlock) {
+						block = new UnknownTextBlock();
+						commentBlock = false;
+					} else {
+						block = new CSSTextBlock();
+					}
+
+					block.setContent(content.toString());
+					outList.add(block);
+				}
+
+				content = new StringBuilder(startNextContent);
+				content.append(CRLF);
+			}
 		}
 
-		content = new StringBuilder(startNextContent);
-		content.append(CRLF);
-	    }
+		return outList;
 	}
-
-	return outList;
-    }
 
 }

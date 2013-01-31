@@ -18,11 +18,12 @@ import pt.linkare.scorm.utils.ScormMetaData;
  * This class is an abstraction around the concept of metadata
  * It clearly uses the Dublin Core approach to MetaData which will
  * be enough for now
- * @author José Pedro Pereira - Linkare TI
- *
+ * 
+ * @author Josï¿½ Pedro Pereira - Linkare TI
+ * 
  */
 @SuppressWarnings("serial")
-public class FileSetMetaData implements Serializable,XMLSerializable{
+public class FileSetMetaData implements Serializable, XMLSerializable {
 
 	/**
 	 * Dublin Core qualification "element"
@@ -30,10 +31,10 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
 	private String element = null;
 
 	/**
-	 * Dublin Core qualification "qualifier" 
+	 * Dublin Core qualification "qualifier"
 	 */
 	private String qualifier = null;
-	
+
 	/**
 	 * Dublin Core qualification "lang"
 	 */
@@ -60,6 +61,7 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
 
 	/**
 	 * Shortcut constructor @see FileSetMetaData#FileSetMetaData(String, String, String, String[])
+	 * 
 	 * @param element
 	 * @param qualifier
 	 * @param lang
@@ -74,7 +76,7 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
 
 	/**
 	 * default public constructor for serialization
-	 */ 
+	 */
 	public FileSetMetaData() {
 
 	}
@@ -143,7 +145,7 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
 	public void setValue(String value) {
 		Collection<String> colstr = new ArrayList<String>(1);
 		colstr.add(value);
-		this.values = (String[]) colstr.toArray(new String[0]);
+		this.values = colstr.toArray(new String[0]);
 	}
 
 	public static void print(PrintWriter out, Collection<FileSetMetaData> colItemMetadata) {
@@ -153,8 +155,9 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
 				out.println("Metadata[" + (colIndex++) + "] :");
 				itemMeta.print(out);
 			}
+		} else {
+			out.println("No FileSet Metadata in collection");
 		}
-		else out.println("No FileSet Metadata in collection");
 	}
 
 	private void print(PrintWriter out) {
@@ -167,10 +170,12 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
 			for (String value : valueArray) {
 				out.println("   Value[" + (arrayIndex++) + "]: " + value);
 			}
+		} else {
+			out.println("   No value defined");
 		}
-		else out.println("   No value defined");
 	}
 
+	@Override
 	public String toString() {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
@@ -183,16 +188,15 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
 
 		return retVal;
 	}
-	
+
 	/**
 	 * Factory method for commonly used "author" metainfo
 	 * 
 	 * @param name The name of the author
 	 * @return A FileSetMetaData correctly specified for DublinCore classification
 	 */
-	public static FileSetMetaData createAuthorMeta(String name)
-	{
-		return new FileSetMetaData("contributor","author",null,name);
+	public static FileSetMetaData createAuthorMeta(String name) {
+		return new FileSetMetaData("contributor", "author", null, name);
 	}
 
 	/**
@@ -202,9 +206,8 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
 	 * @param name The name of the author
 	 * @return A FileSetMetaData correctly specified for DublinCore classification
 	 */
-	public static FileSetMetaData createAuthorMeta(String lang,String name)
-	{
-		return new FileSetMetaData("contributor","author",lang,name);
+	public static FileSetMetaData createAuthorMeta(String lang, String name) {
+		return new FileSetMetaData("contributor", "author", lang, name);
 	}
 
 	/**
@@ -214,150 +217,133 @@ public class FileSetMetaData implements Serializable,XMLSerializable{
 	 * @param title The title for the content
 	 * @return A FileSetMetaData correctly specified for DublinCore classification
 	 */
-	public static FileSetMetaData createTitleMeta(String lang,String title)
-	{
-		return new FileSetMetaData("title",null,lang,title);
+	public static FileSetMetaData createTitleMeta(String lang, String title) {
+		return new FileSetMetaData("title", null, lang, title);
 	}
 
-	
 	/**
 	 * Factory method for commonly used "title" metainfo
 	 * 
 	 * @param title The title for the content
 	 * @return A FileSetMetaData correctly specified for DublinCore classification
 	 */
-	public static FileSetMetaData createTitleMeta(String title)
-	{
-		return new FileSetMetaData("title",null,null,title);
+	public static FileSetMetaData createTitleMeta(String title) {
+		return new FileSetMetaData("title", null, null, title);
 	}
 
-	public static FileSetMetaData createWidthMeta(int width)
-	{
-		return new FileSetMetaData("width",null,null,""+width);
+	public static FileSetMetaData createWidthMeta(int width) {
+		return new FileSetMetaData("width", null, null, "" + width);
 	}
 
-	public static FileSetMetaData createHeightMeta(int height)
-	{
-		return new FileSetMetaData("height",null,null,""+height);
+	public static FileSetMetaData createHeightMeta(int height) {
+		return new FileSetMetaData("height", null, null, "" + height);
 	}
 
-	public static FileSetMetaData[] createWidthHeightMeta(int width,int height)
-	{
-		return new FileSetMetaData[]{createWidthMeta(width),createHeightMeta(height)};
+	public static FileSetMetaData[] createWidthHeightMeta(int width, int height) {
+		return new FileSetMetaData[] { createWidthMeta(width), createHeightMeta(height) };
 	}
 
-	
-	
-	public static Collection<FileSetMetaData> createFileSetMetaDatasFromScormMetaDatas(Collection<ScormMetaData> scormMetaDatas)
-	{
-		if(scormMetaDatas==null) 
+	public static Collection<FileSetMetaData> createFileSetMetaDatasFromScormMetaDatas(Collection<ScormMetaData> scormMetaDatas) {
+		if (scormMetaDatas == null) {
 			return null;
-		ArrayList<FileSetMetaData> retVal=new ArrayList<FileSetMetaData>(scormMetaDatas.size());
-		for(ScormMetaData current:scormMetaDatas)
-		{
+		}
+		ArrayList<FileSetMetaData> retVal = new ArrayList<FileSetMetaData>(scormMetaDatas.size());
+		for (ScormMetaData current : scormMetaDatas) {
 			retVal.add(createFileSetMetaDataFromScormMetaData(current));
 		}
 		return retVal;
 	}
-	
-	public static FileSetMetaData createFileSetMetaDataFromScormMetaData(ScormMetaData scormMetaData)
-	{
-		if(scormMetaData==null)
+
+	public static FileSetMetaData createFileSetMetaDataFromScormMetaData(ScormMetaData scormMetaData) {
+		if (scormMetaData == null) {
 			return null;
-		
-		return new FileSetMetaData(scormMetaData.getElement(),scormMetaData.getQualifier(),scormMetaData.getLang(),scormMetaData.getValues());
+		}
+
+		return new FileSetMetaData(scormMetaData.getElement(), scormMetaData.getQualifier(), scormMetaData.getLang(),
+				scormMetaData.getValues());
 	}
 
-    /** Auto generated javadoc
-     * 
-     * @see pt.utl.ist.fenix.tools.file.XMLSerializable#toXMLString()
-     */
-    public String toXMLString() {
-        return toXML().asXML();
-    }
-    
-    public Element toXML()
-    {
-        Element xmlElement=new BaseElement("filesetmetadata");
-        if(getElement()!=null)
-        {
-            Element elementElement=xmlElement.addElement("element");
-            elementElement.setText(getElement());
-        }
-        if(getQualifier()!=null)
-        {
-            Element qualifierElement=xmlElement.addElement("qualifier");
-            qualifierElement.setText(getQualifier());
-        }
-        if(getLang()!=null)
-        {
-            Element langElement=xmlElement.addElement("lang");
-            langElement.setText(getLang());
-        }
-        if(getValues()!=null)
-        {
-            Element valuesElement=xmlElement.addElement("values");
-            int count=0;
-            for(String value:getValues())
-            {
-                if(value!=null) {
-                	Element valueElement=valuesElement.addElement("value"+count++);
-                	valueElement.setText(value);
-                }
-            }
-        }
-        return xmlElement;
-    }
-    
-    @SuppressWarnings("unchecked")
-    public void fromXML(Element elem)
-    {
-        Element elementElement=elem.element("element");
-        if(elementElement!=null)
-        {
-            this.setElement((String)elementElement.getText());
-        }
-        Element qualifierElement=elem.element("qualifier");
-        if(qualifierElement!=null)
-        {
-            this.setQualifier((String)qualifierElement.getText());
-        }
-        Element langElement=elem.element("lang");
-        if(langElement!=null)
-        {
-            this.setLang((String)langElement.getText());
-        }
-        Element valuesElement=elem.element("values");
-        if(valuesElement!=null)
-        {
-            List<Element> valueElements=(List<Element>)valuesElement.elements();
-            String[] valuesAux=new String[valueElements.size()];
-            int count=0;
-            for(Element valueElement:valueElements)
-            {
-                valuesAux[count++]=(String)valueElement.getText();
-            }
-            this.setValues(valuesAux);
-        }
+	/**
+	 * Auto generated javadoc
+	 * 
+	 * @see pt.utl.ist.fenix.tools.file.XMLSerializable#toXMLString()
+	 */
+	@Override
+	public String toXMLString() {
+		return toXML().asXML();
+	}
 
-    }
+	public Element toXML() {
+		Element xmlElement = new BaseElement("filesetmetadata");
+		if (getElement() != null) {
+			Element elementElement = xmlElement.addElement("element");
+			elementElement.setText(getElement());
+		}
+		if (getQualifier() != null) {
+			Element qualifierElement = xmlElement.addElement("qualifier");
+			qualifierElement.setText(getQualifier());
+		}
+		if (getLang() != null) {
+			Element langElement = xmlElement.addElement("lang");
+			langElement.setText(getLang());
+		}
+		if (getValues() != null) {
+			Element valuesElement = xmlElement.addElement("values");
+			int count = 0;
+			for (String value : getValues()) {
+				if (value != null) {
+					Element valueElement = valuesElement.addElement("value" + count++);
+					valueElement.setText(value);
+				}
+			}
+		}
+		return xmlElement;
+	}
 
-    /** Auto generated javadoc
-     * 
-     * @see pt.utl.ist.fenix.tools.file.XMLSerializable#fromXMLString(java.lang.String)
-     */    
-    public void fromXMLString(String xml) {
-        try {
-            fromXML(DocumentHelper.parseText(xml).getRootElement());
-        }
-        catch (DocumentException e) {
-            throw new RuntimeException("Error parsing xml string : "+xml,e);
-        }
-    }
+	@SuppressWarnings("unchecked")
+	public void fromXML(Element elem) {
+		Element elementElement = elem.element("element");
+		if (elementElement != null) {
+			this.setElement(elementElement.getText());
+		}
+		Element qualifierElement = elem.element("qualifier");
+		if (qualifierElement != null) {
+			this.setQualifier(qualifierElement.getText());
+		}
+		Element langElement = elem.element("lang");
+		if (langElement != null) {
+			this.setLang(langElement.getText());
+		}
+		Element valuesElement = elem.element("values");
+		if (valuesElement != null) {
+			List<Element> valueElements = valuesElement.elements();
+			String[] valuesAux = new String[valueElements.size()];
+			int count = 0;
+			for (Element valueElement : valueElements) {
+				valuesAux[count++] = valueElement.getText();
+			}
+			this.setValues(valuesAux);
+		}
 
-    public static FileSetMetaData buildFromXMLString(String xmlString) {
-        FileSetMetaData metadata = new FileSetMetaData();
-        metadata.fromXMLString(xmlString);
-        return metadata;
-    }
+	}
+
+	/**
+	 * Auto generated javadoc
+	 * 
+	 * @see pt.utl.ist.fenix.tools.file.XMLSerializable#fromXMLString(java.lang.String)
+	 */
+	@Override
+	public void fromXMLString(String xml) {
+		try {
+			fromXML(DocumentHelper.parseText(xml).getRootElement());
+		} catch (DocumentException e) {
+			throw new RuntimeException("Error parsing xml string : " + xml, e);
+		}
+	}
+
+	public static FileSetMetaData buildFromXMLString(String xmlString) {
+		FileSetMetaData metadata = new FileSetMetaData();
+		metadata.fromXMLString(xmlString);
+		return metadata;
+	}
 }
