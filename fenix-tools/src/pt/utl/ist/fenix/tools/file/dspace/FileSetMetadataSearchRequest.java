@@ -13,72 +13,72 @@ import pt.utl.ist.fenix.tools.file.XMLSerializable;
 
 public class FileSetMetadataSearchRequest implements Serializable, XMLSerializable {
 
-	private FilesetMetadataQuery query;
-	private VirtualPath optionalVirtualPath;
+    private FilesetMetadataQuery query;
+    private VirtualPath optionalVirtualPath;
 
-	//Serialization support
-	public FileSetMetadataSearchRequest() {
+    //Serialization support
+    public FileSetMetadataSearchRequest() {
 
-	}
+    }
 
-	public FileSetMetadataSearchRequest(FilesetMetadataQuery query) {
-		this.query = query;
-	}
+    public FileSetMetadataSearchRequest(FilesetMetadataQuery query) {
+        this.query = query;
+    }
 
-	public FileSetMetadataSearchRequest(FilesetMetadataQuery query, VirtualPath optionalVirtualPath) {
-		this.query = query;
-		this.optionalVirtualPath = optionalVirtualPath;
-	}
+    public FileSetMetadataSearchRequest(FilesetMetadataQuery query, VirtualPath optionalVirtualPath) {
+        this.query = query;
+        this.optionalVirtualPath = optionalVirtualPath;
+    }
 
-	/**
-	 * @return the optionalVirtualPath
-	 */
-	public VirtualPath getOptionalVirtualPath() {
-		return optionalVirtualPath;
-	}
+    /**
+     * @return the optionalVirtualPath
+     */
+    public VirtualPath getOptionalVirtualPath() {
+        return optionalVirtualPath;
+    }
 
-	public FilesetMetadataQuery getQuery() {
-		return this.query;
-	}
+    public FilesetMetadataQuery getQuery() {
+        return this.query;
+    }
 
-	@Override
-	public String toXMLString() {
-		return toXML().asXML();
-	}
+    @Override
+    public String toXMLString() {
+        return toXML().asXML();
+    }
 
-	public Element toXML() {
-		Element fileSetMetaSearchElement = new BaseElement("filesetmetadatasearchrequest");
+    public Element toXML() {
+        Element fileSetMetaSearchElement = new BaseElement("filesetmetadatasearchrequest");
 
-		fileSetMetaSearchElement.add(query.toXML());
-		if (optionalVirtualPath != null) {
-			fileSetMetaSearchElement.add(optionalVirtualPath.toXML());
-		}
+        fileSetMetaSearchElement.add(query.toXML());
+        if (optionalVirtualPath != null) {
+            fileSetMetaSearchElement.add(optionalVirtualPath.toXML());
+        }
 
-		return fileSetMetaSearchElement;
+        return fileSetMetaSearchElement;
 
-	}
+    }
 
-	public static FileSetMetadataSearchRequest createFromXml(String xml) {
-		FileSetMetadataSearchRequest retVal = new FileSetMetadataSearchRequest();
-		retVal.fromXMLString(xml);
-		return retVal;
-	}
+    public static FileSetMetadataSearchRequest createFromXml(String xml) {
+        FileSetMetadataSearchRequest retVal = new FileSetMetadataSearchRequest();
+        retVal.fromXMLString(xml);
+        return retVal;
+    }
 
-	@Override
-	public void fromXMLString(String xml) {
-		try {
-			fromXML(DocumentHelper.parseText(xml).getRootElement());
-		} catch (DocumentException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public void fromXMLString(String xml) {
+        try {
+            fromXML(DocumentHelper.parseText(xml).getRootElement());
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public void fromXML(Element xmlElement) {
-		this.query = new FilesetMetadataQuery();
-		query.fromXML(xmlElement.element("filesetmetadataquery"));
-		if (xmlElement.element("virtualpath") != null) {
-			this.optionalVirtualPath = new VirtualPath();
-			optionalVirtualPath.fromXML(xmlElement.element("virtualpath"));
-		}
-	}
+    public void fromXML(Element xmlElement) {
+        this.query = new FilesetMetadataQuery();
+        query.fromXML(xmlElement.element("filesetmetadataquery"));
+        if (xmlElement.element("virtualpath") != null) {
+            this.optionalVirtualPath = new VirtualPath();
+            optionalVirtualPath.fromXML(xmlElement.element("virtualpath"));
+        }
+    }
 }

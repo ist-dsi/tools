@@ -9,8 +9,8 @@ package pt.utl.ist.fenix.tools.loaders;
  */
 public interface IFileLine {
 
-	public boolean fillWithFileLineData(String dataLine);
+    public boolean fillWithFileLineData(String dataLine);
 
-	public String getUniqueKey();
+    public String getUniqueKey();
 
 }

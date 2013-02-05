@@ -16,6 +16,6 @@ package pt.utl.ist.fenix.tools.util;
  */
 public interface Closure<T> {
 
-	public void execute(T object);
+    public void execute(T object);
 
 }

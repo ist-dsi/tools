@@ -9,45 +9,45 @@ import java.util.TreeSet;
 
 public class DomainModelDirFileLister {
 
-	private static class DomainModelFileFilter implements FileFilter {
+    private static class DomainModelFileFilter implements FileFilter {
 
-		@Override
-		public boolean accept(File file) {
-			if (file.isDirectory()) {
-				return false;
-			}
-			return file.getAbsolutePath().endsWith(".dml");
-		}
+        @Override
+        public boolean accept(File file) {
+            if (file.isDirectory()) {
+                return false;
+            }
+            return file.getAbsolutePath().endsWith(".dml");
+        }
 
-	}
+    }
 
-	private static class DomainModelFileComparator implements Comparator<File> {
+    private static class DomainModelFileComparator implements Comparator<File> {
 
-		@Override
-		public int compare(File o1, File o2) {
-			return o1.getPath().compareTo(o2.getPath());
-		}
+        @Override
+        public int compare(File o1, File o2) {
+            return o1.getPath().compareTo(o2.getPath());
+        }
 
-	}
+    }
 
-	public static String[] listDomainModelFiles(String domainModelDirPath) {
+    public static String[] listDomainModelFiles(String domainModelDirPath) {
 
-		File fDomainDirOrFile = new File(domainModelDirPath);
-		if (fDomainDirOrFile.isFile()) {
-			return new String[] { domainModelDirPath };
-		}
+        File fDomainDirOrFile = new File(domainModelDirPath);
+        if (fDomainDirOrFile.isFile()) {
+            return new String[] { domainModelDirPath };
+        }
 
-		File[] domainModelFiles = (new File(domainModelDirPath)).listFiles(new DomainModelFileFilter());
-		Set<File> sortedDomainModelFiles = new TreeSet<File>(new DomainModelFileComparator());
-		sortedDomainModelFiles.addAll(Arrays.asList(domainModelFiles));
-		domainModelFiles = sortedDomainModelFiles.toArray(new File[0]);
-		String[] domainModelPaths = new String[domainModelFiles.length];
-		int i = 0;
-		for (File f : domainModelFiles) {
-			domainModelPaths[i++] = f.getAbsolutePath();
-		}
+        File[] domainModelFiles = (new File(domainModelDirPath)).listFiles(new DomainModelFileFilter());
+        Set<File> sortedDomainModelFiles = new TreeSet<File>(new DomainModelFileComparator());
+        sortedDomainModelFiles.addAll(Arrays.asList(domainModelFiles));
+        domainModelFiles = sortedDomainModelFiles.toArray(new File[0]);
+        String[] domainModelPaths = new String[domainModelFiles.length];
+        int i = 0;
+        for (File f : domainModelFiles) {
+            domainModelPaths[i++] = f.getAbsolutePath();
+        }
 
-		return domainModelPaths;
-	}
+        return domainModelPaths;
+    }
 
 }

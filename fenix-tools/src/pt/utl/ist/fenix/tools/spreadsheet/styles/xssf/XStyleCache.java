@@ -7,22 +7,22 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class XStyleCache {
-	private XSSFWorkbook book;
+    private XSSFWorkbook book;
 
-	private Map<XCellStyle, XSSFCellStyle> cache = new HashMap<XCellStyle, XSSFCellStyle>();
+    private Map<XCellStyle, XSSFCellStyle> cache = new HashMap<XCellStyle, XSSFCellStyle>();
 
-	public XStyleCache(XSSFWorkbook book) {
-		this.book = book;
-	}
+    public XStyleCache(XSSFWorkbook book) {
+        this.book = book;
+    }
 
-	public XSSFCellStyle getStyle(XCellStyle style) {
-		if (!cache.containsKey(style)) {
-			cache.put(style, style.getStyle(book));
-		}
-		return cache.get(style);
-	}
+    public XSSFCellStyle getStyle(XCellStyle style) {
+        if (!cache.containsKey(style)) {
+            cache.put(style, style.getStyle(book));
+        }
+        return cache.get(style);
+    }
 
-	public int getSize() {
-		return cache.size();
-	}
+    public int getSize() {
+        return cache.size();
+    }
 }

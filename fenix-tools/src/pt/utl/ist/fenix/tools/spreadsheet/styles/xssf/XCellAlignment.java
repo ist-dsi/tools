@@ -6,28 +6,28 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class XCellAlignment extends XCellStyle {
 
-	private final short align;
+    private final short align;
 
-	public XCellAlignment(short align) {
-		this.align = align;
-	}
+    public XCellAlignment(short align) {
+        this.align = align;
+    }
 
-	@Override
-	protected void appendToStyle(XSSFWorkbook book, XSSFCellStyle style, XSSFFont font) {
-		style.setAlignment(align);
-	}
+    @Override
+    protected void appendToStyle(XSSFWorkbook book, XSSFCellStyle style, XSSFFont font) {
+        style.setAlignment(align);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof XCellAlignment) {
-			XCellAlignment cellAlignment = (XCellAlignment) obj;
-			return cellAlignment.align == align;
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof XCellAlignment) {
+            XCellAlignment cellAlignment = (XCellAlignment) obj;
+            return cellAlignment.align == align;
+        }
+        return false;
+    }
 
-	@Override
-	public int hashCode() {
-		return align;
-	}
+    @Override
+    public int hashCode() {
+        return align;
+    }
 }

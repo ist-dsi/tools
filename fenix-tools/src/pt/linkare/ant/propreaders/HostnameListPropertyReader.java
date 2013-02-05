@@ -6,29 +6,29 @@ import pt.linkare.ant.InvalidPropertySpecException;
 
 public class HostnameListPropertyReader extends HostnamePropertyReader {
 
-	public HostnameListPropertyReader() {
-		super();
-	}
+    public HostnameListPropertyReader() {
+        super();
+    }
 
-	@Override
-	public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
+    @Override
+    public String readProperty() throws InvalidPropertySpecException, UnsupportedEncodingException {
 
-		String baseValue = null;
-		boolean validated = false;
-		while (!validated) {
-			baseValue = readPropertySimple();
-			String[] values = splitValues(baseValue);
-			validated = true;
-			if (parseBoolean(getProperty().getMetaData("validate"), false)) {
-				for (String value : values) {
-					validated = validated & isValidHostname(value);
-					if (!validated) {
-						System.out.println("Hostname '" + value + "' is not a valid hostname!");
-						continue;
-					}
-				}
-			}
-		}
-		return baseValue;
-	}
+        String baseValue = null;
+        boolean validated = false;
+        while (!validated) {
+            baseValue = readPropertySimple();
+            String[] values = splitValues(baseValue);
+            validated = true;
+            if (parseBoolean(getProperty().getMetaData("validate"), false)) {
+                for (String value : values) {
+                    validated = validated & isValidHostname(value);
+                    if (!validated) {
+                        System.out.println("Hostname '" + value + "' is not a valid hostname!");
+                        continue;
+                    }
+                }
+            }
+        }
+        return baseValue;
+    }
 }

@@ -15,44 +15,44 @@ import java.io.Serializable;
  */
 public class Pair<K, V> implements Serializable {
 
-	private K key;
-	private V value;
+    private K key;
+    private V value;
 
-	public Pair(K key, V value) {
-		this.key = key;
-		this.value = value;
-	}
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
 
-	public K getKey() {
-		return key;
-	}
+    public K getKey() {
+        return key;
+    }
 
-	public V getValue() {
-		return value;
-	}
+    public V getValue() {
+        return value;
+    }
 
-	@Override
-	public String toString() {
-		return "Pair(" + getKey() + ", " + getValue() + ")";
-	}
+    @Override
+    public String toString() {
+        return "Pair(" + getKey() + ", " + getValue() + ")";
+    }
 
-	@Override
-	public int hashCode() {
-		int keyHashCode = getKey() != null ? getKey().hashCode() : 0;
-		int valueHashCode = getValue() != null ? getValue().hashCode() : 0;
-		return keyHashCode + valueHashCode;
-	}
+    @Override
+    public int hashCode() {
+        int keyHashCode = getKey() != null ? getKey().hashCode() : 0;
+        int valueHashCode = getValue() != null ? getValue().hashCode() : 0;
+        return keyHashCode + valueHashCode;
+    }
 
-	@Override
-	public boolean equals(Object object) {
-		if (object == null) {
-			return false;
-		}
-		Pair<K, V> pair = (Pair<K, V>) object;
-		boolean keyEquals = getKey() != null ? getKey().equals(pair.getKey()) : pair.getKey() == null;
-		if (!keyEquals) {
-			return false;
-		}
-		return getValue() != null ? getValue().equals(pair.getValue()) : pair.getValue() == null;
-	}
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        Pair<K, V> pair = (Pair<K, V>) object;
+        boolean keyEquals = getKey() != null ? getKey().equals(pair.getKey()) : pair.getKey() == null;
+        if (!keyEquals) {
+            return false;
+        }
+        return getValue() != null ? getValue().equals(pair.getValue()) : pair.getValue() == null;
+    }
 }

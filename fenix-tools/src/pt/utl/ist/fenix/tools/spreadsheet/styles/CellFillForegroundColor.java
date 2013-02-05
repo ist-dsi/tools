@@ -7,28 +7,28 @@ import org.apache.poi.hssf.util.HSSFColor;
 
 public class CellFillForegroundColor extends CellStyle {
 
-	private final HSSFColor color;
+    private final HSSFColor color;
 
-	public CellFillForegroundColor(HSSFColor color) {
-		this.color = color;
-	}
+    public CellFillForegroundColor(HSSFColor color) {
+        this.color = color;
+    }
 
-	@Override
-	protected void appendToStyle(HSSFWorkbook book, HSSFCellStyle style, HSSFFont font) {
-		style.setFillForegroundColor(color.getIndex());
-	}
+    @Override
+    protected void appendToStyle(HSSFWorkbook book, HSSFCellStyle style, HSSFFont font) {
+        style.setFillForegroundColor(color.getIndex());
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof CellFillForegroundColor) {
-			CellFillForegroundColor cellFillForegroundColor = (CellFillForegroundColor) obj;
-			return color.equals(cellFillForegroundColor.color);
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CellFillForegroundColor) {
+            CellFillForegroundColor cellFillForegroundColor = (CellFillForegroundColor) obj;
+            return color.equals(cellFillForegroundColor.color);
+        }
+        return false;
+    }
 
-	@Override
-	public int hashCode() {
-		return color.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return color.hashCode();
+    }
 }

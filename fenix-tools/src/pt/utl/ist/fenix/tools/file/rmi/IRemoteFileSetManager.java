@@ -31,30 +31,30 @@ import pt.utl.ist.fenix.tools.file.dspace.FileSetUploadException;
 public interface IRemoteFileSetManager extends Remote {
 //The interface must extend Remote because of RMI
 
-	public FileSetDescriptor uploadFileSet(IRemoteFile baseDir, VirtualPath path, String originalFileName, boolean privateFile,
-			FileSet fs, String username, String password) throws FileSetUploadException, RemoteException;
+    public FileSetDescriptor uploadFileSet(IRemoteFile baseDir, VirtualPath path, String originalFileName, boolean privateFile,
+            FileSet fs, String username, String password) throws FileSetUploadException, RemoteException;
 
-	public void changeFileSetPermissions(FileSetDescriptor descriptor, boolean privateFile, String username, String password)
-			throws FileSetPermissionChangeException, RemoteException;
+    public void changeFileSetPermissions(FileSetDescriptor descriptor, boolean privateFile, String username, String password)
+            throws FileSetPermissionChangeException, RemoteException;
 
-	public void deleteFileSet(FileSetDescriptor descriptor, String username, String password) throws FileSetDeleteException,
-			RemoteException;
+    public void deleteFileSet(FileSetDescriptor descriptor, String username, String password) throws FileSetDeleteException,
+            RemoteException;
 
-	public FileSetDescriptor listRecursiveFromRoot(FileSetDescriptor descriptor, String username, String password)
-			throws RemoteException;
+    public FileSetDescriptor listRecursiveFromRoot(FileSetDescriptor descriptor, String username, String password)
+            throws RemoteException;
 
-	/**
-	 * @return A remote temporary directory handle
-	 */
-	public IRemoteFile getBaseRemoteDir(String username, String password) throws RemoteException;
+    /**
+     * @return A remote temporary directory handle
+     */
+    public IRemoteFile getBaseRemoteDir(String username, String password) throws RemoteException;
 
-	public IRemoteFile retrieveBaseRemoteDir(FileSetDescriptor descriptor, String username, String password)
-			throws RemoteException;
+    public IRemoteFile retrieveBaseRemoteDir(FileSetDescriptor descriptor, String username, String password)
+            throws RemoteException;
 
-	public FileSetDescriptor getRootDescriptor(FileSetDescriptor innerChildDescriptor, String username, String password)
-			throws RemoteException;
+    public FileSetDescriptor getRootDescriptor(FileSetDescriptor innerChildDescriptor, String username, String password)
+            throws RemoteException;
 
-	public FileSetQueryResults searchFileSets(FilesetMetadataQuery query, VirtualPath optionalPathToRestrictSearch,
-			String username, String password) throws RemoteException;
+    public FileSetQueryResults searchFileSets(FilesetMetadataQuery query, VirtualPath optionalPathToRestrictSearch,
+            String username, String password) throws RemoteException;
 
 }

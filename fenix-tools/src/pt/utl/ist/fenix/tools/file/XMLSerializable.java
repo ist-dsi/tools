@@ -9,7 +9,7 @@ package pt.utl.ist.fenix.tools.file;
  */
 public interface XMLSerializable {
 
-	public String toXMLString();
+    public String toXMLString();
 
-	public void fromXMLString(String xml);
+    public void fromXMLString(String xml);
 }

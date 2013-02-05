@@ -3,7 +3,6 @@
  */
 package pt.linkare.scorm.utils.deprecated;
 
-
 /**
  * @author oferreira
  *

@@ -6,28 +6,28 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class XCellWrapText extends XCellStyle {
 
-	private final boolean wrap;
+    private final boolean wrap;
 
-	public XCellWrapText(boolean wrap) {
-		this.wrap = wrap;
-	}
+    public XCellWrapText(boolean wrap) {
+        this.wrap = wrap;
+    }
 
-	@Override
-	protected void appendToStyle(XSSFWorkbook book, XSSFCellStyle style, XSSFFont font) {
-		style.setWrapText(wrap);
-	}
+    @Override
+    protected void appendToStyle(XSSFWorkbook book, XSSFCellStyle style, XSSFFont font) {
+        style.setWrapText(wrap);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof XCellWrapText) {
-			XCellWrapText cellWrapText = (XCellWrapText) obj;
-			return wrap == cellWrapText.wrap;
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof XCellWrapText) {
+            XCellWrapText cellWrapText = (XCellWrapText) obj;
+            return wrap == cellWrapText.wrap;
+        }
+        return false;
+    }
 
-	@Override
-	public int hashCode() {
-		return wrap ? 1 : 0;
-	}
+    @Override
+    public int hashCode() {
+        return wrap ? 1 : 0;
+    }
 }

@@ -5,10 +5,10 @@ import java.rmi.RemoteException;
 
 public interface IRemoteInputStream extends Remote {
 
-	public int read() throws RemoteException;
+    public int read() throws RemoteException;
 
-	public int available() throws RemoteException;
+    public int available() throws RemoteException;
 
-	public void close() throws RemoteException;
+    public void close() throws RemoteException;
 
 }

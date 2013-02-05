@@ -7,37 +7,37 @@ import org.apache.poi.hssf.util.HSSFColor;
 
 public class FontColor extends CellStyle {
 
-	private final HSSFColor color;
+    private final HSSFColor color;
 
-	public FontColor(HSSFColor color) {
-		this.color = color;
-	}
+    public FontColor(HSSFColor color) {
+        this.color = color;
+    }
 
-	@Override
-	protected void appendToStyle(HSSFWorkbook book, HSSFCellStyle style, HSSFFont font) {
-		font.setColor(color.getIndex());
-	}
+    @Override
+    protected void appendToStyle(HSSFWorkbook book, HSSFCellStyle style, HSSFFont font) {
+        font.setColor(color.getIndex());
+    }
 
-	@Override
-	public HSSFCellStyle getStyle(HSSFWorkbook book) {
-		HSSFCellStyle style = book.createCellStyle();
-		HSSFFont font = book.createFont();
-		appendToStyle(book, style, font);
-		style.setFont(font);
-		return style;
-	}
+    @Override
+    public HSSFCellStyle getStyle(HSSFWorkbook book) {
+        HSSFCellStyle style = book.createCellStyle();
+        HSSFFont font = book.createFont();
+        appendToStyle(book, style, font);
+        style.setFont(font);
+        return style;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof FontColor) {
-			FontColor fontColor = (FontColor) obj;
-			return color.equals(fontColor.color);
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof FontColor) {
+            FontColor fontColor = (FontColor) obj;
+            return color.equals(fontColor.color);
+        }
+        return false;
+    }
 
-	@Override
-	public int hashCode() {
-		return color.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return color.hashCode();
+    }
 }

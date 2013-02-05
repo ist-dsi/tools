@@ -26,111 +26,111 @@ import pt.utl.ist.fenix.tools.util.StringNormalizer;
 
 public class ScormFileManager extends DSpaceFileManager implements IScormFileManager {
 
-	public ScormFileManager() {
-		super();
-	}
+    public ScormFileManager() {
+        super();
+    }
 
-	public ScormFileManager(Properties properties) {
-		super(properties);
-	}
+    public ScormFileManager(Properties properties) {
+        super(properties);
+    }
 
-	@Override
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
-			String title, InputStream fileInputStream, FileSetType type) {
-		return saveScormFile(filePath, originalFilename, privateFile, createMetaData(author, title), fileInputStream, type);
+    @Override
+    public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+            String title, InputStream fileInputStream, FileSetType type) {
+        return saveScormFile(filePath, originalFilename, privateFile, createMetaData(author, title), fileInputStream, type);
 
-	}
+    }
 
-	@Override
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
-			Collection<FileSetMetaData> metaData, InputStream fileInputStream, FileSetType type) {
+    @Override
+    public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
+            Collection<FileSetMetaData> metaData, InputStream fileInputStream, FileSetType type) {
 
-		FileSet fs = new FileSet();
-		File dirTemp;
-		originalFilename = StringNormalizer.normalize(originalFilename);
-		try {
-			dirTemp = FileUtils.createTemporaryDir("ScormPackageTmpUpload", "tmp");
-			File originalFile = new File(dirTemp, originalFilename);
-			FileOutputStream fos = new FileOutputStream(originalFile);
-			FileUtils.copyInputStreamToOutputStream(fileInputStream, fos);
+        FileSet fs = new FileSet();
+        File dirTemp;
+        originalFilename = StringNormalizer.normalize(originalFilename);
+        try {
+            dirTemp = FileUtils.createTemporaryDir("ScormPackageTmpUpload", "tmp");
+            File originalFile = new File(dirTemp, originalFilename);
+            FileOutputStream fos = new FileOutputStream(originalFile);
+            FileUtils.copyInputStreamToOutputStream(fileInputStream, fos);
 
-			fs.addContentFile(originalFile);
-			fs.addMetaInfo(metaData);
-			FileSetDescriptor descriptor = saveFileSet(filePath, originalFilename, privateFile, fs, type);
-			return getScormFileDescriptor(descriptor.getContentFilesDescriptors());
+            fs.addContentFile(originalFile);
+            fs.addMetaInfo(metaData);
+            FileSetDescriptor descriptor = saveFileSet(filePath, originalFilename, privateFile, fs, type);
+            return getScormFileDescriptor(descriptor.getContentFilesDescriptors());
 
-		} catch (IOException e) {
-			throw new FileManagerException(e);
-		}
+        } catch (IOException e) {
+            throw new FileManagerException(e);
+        }
 
-	}
+    }
 
-	@Override
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
-			String title, File fileToSave, FileSetType type) {
-		FileSet fs = new FileSet();
-		fs.addMetaInfo(createMetaData(author, title));
-		fs.addContentFile(fileToSave);
-		FileSetDescriptor fsDescriptor = saveFileSet(filePath, originalFilename, privateFile, fs, type);
-		return fsDescriptor.getContentFileDescriptor(0);
-	}
+    @Override
+    public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+            String title, File fileToSave, FileSetType type) {
+        FileSet fs = new FileSet();
+        fs.addMetaInfo(createMetaData(author, title));
+        fs.addContentFile(fileToSave);
+        FileSetDescriptor fsDescriptor = saveFileSet(filePath, originalFilename, privateFile, fs, type);
+        return fsDescriptor.getContentFileDescriptor(0);
+    }
 
-	@Override
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
-			String title, File fileToSave, ScormMetaDataHash scormParameters) {
-		try {
-			FileInputStream inputStream = new FileInputStream(fileToSave);
-			return saveScormFile(filePath, originalFilename, privateFile, author, title, inputStream, scormParameters);
-		} catch (IOException e) {
-			throw new FileManagerException(e);
-		}
-	}
+    @Override
+    public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+            String title, File fileToSave, ScormMetaDataHash scormParameters) {
+        try {
+            FileInputStream inputStream = new FileInputStream(fileToSave);
+            return saveScormFile(filePath, originalFilename, privateFile, author, title, inputStream, scormParameters);
+        } catch (IOException e) {
+            throw new FileManagerException(e);
+        }
+    }
 
-	@Override
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
-			String title, InputStream inputStream, ScormMetaDataHash scormParameters) {
-		return saveScormFile(filePath, originalFilename, privateFile, createMetaData(author, title), inputStream, scormParameters);
-	}
+    @Override
+    public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile, String author,
+            String title, InputStream inputStream, ScormMetaDataHash scormParameters) {
+        return saveScormFile(filePath, originalFilename, privateFile, createMetaData(author, title), inputStream, scormParameters);
+    }
 
-	@Override
-	public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
-			Collection<FileSetMetaData> metaData, InputStream fileInputStream, ScormMetaDataHash scormParameters) {
-		FileSetDescriptor descriptor = null;
-		originalFilename = StringNormalizer.normalize(originalFilename);
+    @Override
+    public FileDescriptor saveScormFile(VirtualPath filePath, String originalFilename, boolean privateFile,
+            Collection<FileSetMetaData> metaData, InputStream fileInputStream, ScormMetaDataHash scormParameters) {
+        FileSetDescriptor descriptor = null;
+        originalFilename = StringNormalizer.normalize(originalFilename);
 
-		try {
-			File dirTemp = FileUtils.createTemporaryDir("ScormPackageTmpUpload", "tmp");
-			File originalFile = new File(dirTemp, originalFilename);
-			FileOutputStream fos = new FileOutputStream(originalFile);
-			FileUtils.copyInputStreamToOutputStream(fileInputStream, fos);
-			fos.close();
+        try {
+            File dirTemp = FileUtils.createTemporaryDir("ScormPackageTmpUpload", "tmp");
+            File originalFile = new File(dirTemp, originalFilename);
+            FileOutputStream fos = new FileOutputStream(originalFile);
+            FileUtils.copyInputStreamToOutputStream(fileInputStream, fos);
+            fos.close();
 
-			Collection<File> originalFileList = Collections.singletonList(originalFile);
+            Collection<File> originalFileList = Collections.singletonList(originalFile);
 
-			String identifier = "FENIX_MANIFEST_" + UUID.randomUUID().toString();
+            String identifier = "FENIX_MANIFEST_" + UUID.randomUUID().toString();
 
-			ScormData data =
-					ScormHandlerFactory.getScormHandler().createScormPifFile(identifier, scormParameters, originalFileList);
-			FileSet fileset = FileSet.createFileSetFromScormData(data);
-			fileset.getMetaInfo().addAll(metaData);
-			descriptor = saveFileSet(filePath, originalFilename, privateFile, fileset, FileSetType.UNPACKAGED_SCORM_1_2);
+            ScormData data =
+                    ScormHandlerFactory.getScormHandler().createScormPifFile(identifier, scormParameters, originalFileList);
+            FileSet fileset = FileSet.createFileSetFromScormData(data);
+            fileset.getMetaInfo().addAll(metaData);
+            descriptor = saveFileSet(filePath, originalFilename, privateFile, fileset, FileSetType.UNPACKAGED_SCORM_1_2);
 
-		} catch (Exception e) {
-			throw new FileManagerException(e);
-		}
+        } catch (Exception e) {
+            throw new FileManagerException(e);
+        }
 
-		return getScormFileDescriptor(descriptor.getContentFilesDescriptors());
+        return getScormFileDescriptor(descriptor.getContentFilesDescriptors());
 
-	}
+    }
 
-	private FileDescriptor getScormFileDescriptor(Collection<FileDescriptor> contentFilesDescriptors) {
-		for (FileDescriptor descriptor : contentFilesDescriptors) {
-			if (descriptor.getFilename().contains(".zip")) {
-				return descriptor;
-			}
-		}
-		return (FileDescriptor) contentFilesDescriptors.toArray()[0];
+    private FileDescriptor getScormFileDescriptor(Collection<FileDescriptor> contentFilesDescriptors) {
+        for (FileDescriptor descriptor : contentFilesDescriptors) {
+            if (descriptor.getFilename().contains(".zip")) {
+                return descriptor;
+            }
+        }
+        return (FileDescriptor) contentFilesDescriptors.toArray()[0];
 
-	}
+    }
 
 }

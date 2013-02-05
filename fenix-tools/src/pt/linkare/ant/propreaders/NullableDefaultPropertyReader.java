@@ -4,13 +4,13 @@ import pt.linkare.ant.InvalidPropertySpecException;
 
 public class NullableDefaultPropertyReader extends AbstractPropertyReader {
 
-	public NullableDefaultPropertyReader() {
-		super();
-	}
+    public NullableDefaultPropertyReader() {
+        super();
+    }
 
-	@Override
-	public String readProperty() throws InvalidPropertySpecException {
-		return getProperty().getPropertyDefaultValue();
-	}
+    @Override
+    public String readProperty() throws InvalidPropertySpecException {
+        return getProperty().getPropertyDefaultValue();
+    }
 
 }

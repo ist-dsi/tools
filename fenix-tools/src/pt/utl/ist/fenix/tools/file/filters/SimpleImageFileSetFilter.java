@@ -20,38 +20,38 @@ import pt.utl.ist.fenix.tools.file.FileSetMetaData;
  */
 public class SimpleImageFileSetFilter implements FileSetFilter {
 
-	/**
+    /**
 	 * 
 	 */
-	public SimpleImageFileSetFilter() {
-		super();
-	}
+    public SimpleImageFileSetFilter() {
+        super();
+    }
 
-	/* (non-Javadoc)
-	 * @see pt.utl.ist.fenix.tools.file.filters.FileSetFilter#handleFileSet(pt.utl.ist.fenix.tools.file.FileSet)
-	 */
-	@Override
-	public void handleFileSet(FileSet fs) throws FileSetFilterException {
-		Collection<File> supposedGifFiles = fs.getContentFiles();
-		if (supposedGifFiles != null && supposedGifFiles.size() != 0) {
-			File supposedGifFile = supposedGifFiles.toArray(new File[0])[0];
-			if (supposedGifFile.exists()
-					&& supposedGifFile.canRead()
-					&& (supposedGifFile.getName().endsWith(".gif") || supposedGifFile.getName().endsWith(".jpg") || supposedGifFile
-							.getName().endsWith(".png"))) {
-				BufferedImage bfImage;
-				try {
-					bfImage = ImageIO.read(supposedGifFile);
-				} catch (IOException e) {
-					throw new IOFileSetFilterException(e);
-				}
-				fs.addMetaInfo(FileSetMetaData.createWidthMeta(bfImage.getWidth()));
-				fs.addMetaInfo(FileSetMetaData.createHeightMeta(bfImage.getHeight()));
-				//TODO - Some more meta info may be extracted from this files,
-				//as its pixel size, number of colors, etc...
-			}
+    /* (non-Javadoc)
+     * @see pt.utl.ist.fenix.tools.file.filters.FileSetFilter#handleFileSet(pt.utl.ist.fenix.tools.file.FileSet)
+     */
+    @Override
+    public void handleFileSet(FileSet fs) throws FileSetFilterException {
+        Collection<File> supposedGifFiles = fs.getContentFiles();
+        if (supposedGifFiles != null && supposedGifFiles.size() != 0) {
+            File supposedGifFile = supposedGifFiles.toArray(new File[0])[0];
+            if (supposedGifFile.exists()
+                    && supposedGifFile.canRead()
+                    && (supposedGifFile.getName().endsWith(".gif") || supposedGifFile.getName().endsWith(".jpg") || supposedGifFile
+                            .getName().endsWith(".png"))) {
+                BufferedImage bfImage;
+                try {
+                    bfImage = ImageIO.read(supposedGifFile);
+                } catch (IOException e) {
+                    throw new IOFileSetFilterException(e);
+                }
+                fs.addMetaInfo(FileSetMetaData.createWidthMeta(bfImage.getWidth()));
+                fs.addMetaInfo(FileSetMetaData.createHeightMeta(bfImage.getHeight()));
+                //TODO - Some more meta info may be extracted from this files,
+                //as its pixel size, number of colors, etc...
+            }
 
-		}
-	}
+        }
+    }
 
 }

@@ -19,39 +19,39 @@ import java.rmi.RemoteException;
  */
 public interface IRemoteOutputStream extends Remote {
 
-	/**
-	 * @see java.io.BufferedOutputStream#flush()
-	 * @throws RemoteException
-	 */
-	public void flush() throws RemoteException;
+    /**
+     * @see java.io.BufferedOutputStream#flush()
+     * @throws RemoteException
+     */
+    public void flush() throws RemoteException;
 
-	/**
-	 * @see java.io.BufferedOutputStream#write(byte[], int, int)
-	 * @param b The byte[] from which to write data
-	 * @param off The offset from which to start from
-	 * @param len The number of bytes to write from b
-	 * @throws RemoteException
-	 */
-	public void write(byte[] b, int off, int len) throws RemoteException;
+    /**
+     * @see java.io.BufferedOutputStream#write(byte[], int, int)
+     * @param b The byte[] from which to write data
+     * @param off The offset from which to start from
+     * @param len The number of bytes to write from b
+     * @throws RemoteException
+     */
+    public void write(byte[] b, int off, int len) throws RemoteException;
 
-	/**
-	 * @see java.io.BufferedOutputStream#write(int)
-	 * @param b The byte value to write
-	 * @throws RemoteException If a comm exception or an underlying IOException occurs
-	 */
-	public void write(int b) throws RemoteException;
+    /**
+     * @see java.io.BufferedOutputStream#write(int)
+     * @param b The byte value to write
+     * @throws RemoteException If a comm exception or an underlying IOException occurs
+     */
+    public void write(int b) throws RemoteException;
 
-	/**
-	 * @see java.io.FilterOutputStream#close()
-	 * @throws RemoteException
-	 */
-	public void close() throws RemoteException;
+    /**
+     * @see java.io.FilterOutputStream#close()
+     * @throws RemoteException
+     */
+    public void close() throws RemoteException;
 
-	/**
-	 * @see java.io.FilterOutputStream#write(byte[])
-	 * @param b The byte[] from which to write
-	 * @throws RemoteException
-	 */
-	public void write(byte[] b) throws RemoteException;
+    /**
+     * @see java.io.FilterOutputStream#write(byte[])
+     * @param b The byte[] from which to write
+     * @throws RemoteException
+     */
+    public void write(byte[] b) throws RemoteException;
 
 }

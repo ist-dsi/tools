@@ -10,5 +10,5 @@ package pt.utl.ist.fenix.tools.spreadsheet.converters;
  * @author Pedro Santos
  */
 public interface CellConverter {
-	public Object convert(Object source);
+    public Object convert(Object source);
 }

@@ -4,21 +4,21 @@ import pt.linkare.ant.InvalidPropertySpecException;
 
 public class DefaultPropertyReader extends AbstractPropertyReader {
 
-	public DefaultPropertyReader() {
-		super();
-	}
+    public DefaultPropertyReader() {
+        super();
+    }
 
-	@Override
-	public String readProperty() throws InvalidPropertySpecException {
-		return readPropertySimple();
-	}
+    @Override
+    public String readProperty() throws InvalidPropertySpecException {
+        return readPropertySimple();
+    }
 
-	private String readPropertySimple() throws InvalidPropertySpecException {
-		if (getProperty().getPropertyDefaultValue() == null) {
-			throw new InvalidPropertySpecException("DefaultGUIPropertyReader needs a defaultValue for the property");
-		} else {
-			return getProperty().getPropertyDefaultValue();
-		}
-	}
+    private String readPropertySimple() throws InvalidPropertySpecException {
+        if (getProperty().getPropertyDefaultValue() == null) {
+            throw new InvalidPropertySpecException("DefaultGUIPropertyReader needs a defaultValue for the property");
+        } else {
+            return getProperty().getPropertyDefaultValue();
+        }
+    }
 
 }

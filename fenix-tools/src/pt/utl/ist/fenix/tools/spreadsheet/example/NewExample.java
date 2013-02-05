@@ -16,65 +16,65 @@ import pt.utl.ist.fenix.tools.spreadsheet.SpreadsheetBuilder;
 import pt.utl.ist.fenix.tools.spreadsheet.WorkbookExportFormat;
 
 public class NewExample {
-	public static class SomeBean {
-		public BigDecimal getBigDecimal() {
-			return new BigDecimal(new Random().nextDouble());
-		}
+    public static class SomeBean {
+        public BigDecimal getBigDecimal() {
+            return new BigDecimal(new Random().nextDouble());
+        }
 
-		public DateTime getDateTime() {
-			return new DateTime();
-		}
+        public DateTime getDateTime() {
+            return new DateTime();
+        }
 
-		public Integer getInteger() {
-			return new Random().nextInt();
-		}
+        public Integer getInteger() {
+            return new Random().nextInt();
+        }
 
-		public LocalDate getLocalDate() {
-			return new LocalDate();
-		}
+        public LocalDate getLocalDate() {
+            return new LocalDate();
+        }
 
-		public Boolean getBoolean() {
-			return new Random().nextBoolean();
-		}
+        public Boolean getBoolean() {
+            return new Random().nextBoolean();
+        }
 
-		public Double getDouble() {
-			return new Random().nextDouble();
-		}
+        public Double getDouble() {
+            return new Random().nextDouble();
+        }
 
-		public String getString() {
-			return "hello";
-		}
+        public String getString() {
+            return "hello";
+        }
 
-		public Calendar getCalendar() {
-			return Calendar.getInstance();
-		}
+        public Calendar getCalendar() {
+            return Calendar.getInstance();
+        }
 
-		public Date getDate() {
-			return new Date();
-		}
-	}
+        public Date getDate() {
+            return new Date();
+        }
+    }
 
-	public static void main(String[] args) throws IOException {
-		List<SomeBean> beans = new ArrayList<SomeBean>();
-		for (int i = 0; i < 500; i++) {
-			beans.add(new SomeBean());
-		}
+    public static void main(String[] args) throws IOException {
+        List<SomeBean> beans = new ArrayList<SomeBean>();
+        for (int i = 0; i < 500; i++) {
+            beans.add(new SomeBean());
+        }
 
-		SheetData<SomeBean> data = new SheetData<SomeBean>(beans) {
-			@Override
-			protected void makeLine(SomeBean item) {
-				addCell(new String[] { "Number Stuff", "BigDecimal" }, new short[] { 3, 1 }, item.getBigDecimal(), (short) 1);
-				addCell("Integer", item.getInteger());
-				addCell("Double", item.getDouble());
-				addCell(new String[] { "Date Stuff", "DateTime" }, new short[] { 4, 1 }, item.getDateTime(), (short) 1);
-				addCell("LocalDate", item.getLocalDate());
-				addCell("Calendar", item.getCalendar());
-				addCell("Date", item.getDate());
-				addCell(new String[] { "Other Stuff", "Boolean" }, new short[] { 2, 1 }, item.getBoolean(), (short) 1);
-				addCell("String", item.getString());
-			}
-		};
-		new SpreadsheetBuilder().addSheet("test", data).build(WorkbookExportFormat.EXCEL, "test.xls");
-		new SpreadsheetBuilder().addSheet("test", data).build(WorkbookExportFormat.CSV, "test.csv");
-	}
+        SheetData<SomeBean> data = new SheetData<SomeBean>(beans) {
+            @Override
+            protected void makeLine(SomeBean item) {
+                addCell(new String[] { "Number Stuff", "BigDecimal" }, new short[] { 3, 1 }, item.getBigDecimal(), (short) 1);
+                addCell("Integer", item.getInteger());
+                addCell("Double", item.getDouble());
+                addCell(new String[] { "Date Stuff", "DateTime" }, new short[] { 4, 1 }, item.getDateTime(), (short) 1);
+                addCell("LocalDate", item.getLocalDate());
+                addCell("Calendar", item.getCalendar());
+                addCell("Date", item.getDate());
+                addCell(new String[] { "Other Stuff", "Boolean" }, new short[] { 2, 1 }, item.getBoolean(), (short) 1);
+                addCell("String", item.getString());
+            }
+        };
+        new SpreadsheetBuilder().addSheet("test", data).build(WorkbookExportFormat.EXCEL, "test.xls");
+        new SpreadsheetBuilder().addSheet("test", data).build(WorkbookExportFormat.CSV, "test.csv");
+    }
 }

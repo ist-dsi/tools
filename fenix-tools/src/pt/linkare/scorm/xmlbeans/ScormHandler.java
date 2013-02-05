@@ -15,9 +15,9 @@ import pt.linkare.scorm.utils.ScormMetaDataHash;
  */
 public interface ScormHandler {
 
-	public ScormData parseScormPifFile(File pifFile) throws Exception;
+    public ScormData parseScormPifFile(File pifFile) throws Exception;
 
-	public ScormData createScormPifFile(String manifestIdentifier, ScormMetaDataHash scormMetaDataMap,
-			Collection<File> originalContentFiles) throws ScormException;
+    public ScormData createScormPifFile(String manifestIdentifier, ScormMetaDataHash scormMetaDataMap,
+            Collection<File> originalContentFiles) throws ScormException;
 
 }

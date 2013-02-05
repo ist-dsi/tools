@@ -5,11 +5,11 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 public abstract class CellStyle implements ICellStyle {
-	public HSSFCellStyle getStyle(HSSFWorkbook book) {
-		HSSFCellStyle style = book.createCellStyle();
-		appendToStyle(book, style, null);
-		return style;
-	}
+    public HSSFCellStyle getStyle(HSSFWorkbook book) {
+        HSSFCellStyle style = book.createCellStyle();
+        appendToStyle(book, style, null);
+        return style;
+    }
 
-	protected abstract void appendToStyle(HSSFWorkbook book, HSSFCellStyle style, HSSFFont font);
+    protected abstract void appendToStyle(HSSFWorkbook book, HSSFCellStyle style, HSSFFont font);
 }

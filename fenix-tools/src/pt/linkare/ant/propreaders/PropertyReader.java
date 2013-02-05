@@ -8,15 +8,15 @@ import pt.linkare.ant.InvalidPropertySpecException;
 
 public interface PropertyReader {
 
-	public void setProperty(InputProperty prop);
+    public void setProperty(InputProperty prop);
 
-	public Collection<InputProperty> readPropertyValue(boolean fromDefault) throws InvalidPropertySpecException,
-			UnsupportedEncodingException;
+    public Collection<InputProperty> readPropertyValue(boolean fromDefault) throws InvalidPropertySpecException,
+            UnsupportedEncodingException;
 
-	public boolean isDebug();
+    public boolean isDebug();
 
-	public void setDebug(boolean debug);
+    public void setDebug(boolean debug);
 
-	public void setEncoding(String encoding);
+    public void setEncoding(String encoding);
 
 }
