@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public interface ExternalDbCall extends ExternalDbQuery {
 
-	public void prepareCall(final CallableStatement callableStatement) throws SQLException;
+    public void prepareCall(final CallableStatement callableStatement) throws SQLException;
 
-	public void processResultSet(final ResultSet resultSet, final CallableStatement callableStatement) throws SQLException;
+    public void processResultSet(final ResultSet resultSet, final CallableStatement callableStatement) throws SQLException;
 
 }

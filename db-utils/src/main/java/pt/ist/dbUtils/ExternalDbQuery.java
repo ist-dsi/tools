@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 public interface ExternalDbQuery {
 
-	public String getQueryString();
+    public String getQueryString();
 
-	public void processResultSet(final ResultSet resultSet) throws SQLException;
+    public void processResultSet(final ResultSet resultSet) throws SQLException;
 
 }
