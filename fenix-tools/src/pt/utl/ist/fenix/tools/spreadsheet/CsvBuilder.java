@@ -66,7 +66,7 @@ class CsvBuilder extends AbstractSheetBuilder {
                 for (final List<Cell> line : data.matrix) {
                     List<String> column = new ArrayList<String>();
                     for (Cell cell : line) {
-                        column.add(cell.value != null ? convert(cell.value).toString() : "");
+                        column.add(cell.value != null ? convert(cell.value).toString().replace(separator, " ") : "");
                         if (cell.span > 1) {
                             column.addAll(Arrays.asList(new String[cell.span - 1]));
                         }
