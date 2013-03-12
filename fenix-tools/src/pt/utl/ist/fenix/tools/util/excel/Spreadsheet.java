@@ -60,6 +60,26 @@ public class Spreadsheet {
             return this;
         }
 
+        public Row setCell(final String header, final String cellValue) {
+            cells.add(getHeaderIndex(header), cellValue);
+            return this;
+        }
+
+        public Row setCell(final String header, final Integer cellValue) {
+            cells.add(getHeaderIndex(header), (cellValue != null) ? cellValue.toString() : "");
+            return this;
+        }
+
+        public Row setCell(final String header, final Double cellValue) {
+            cells.add(getHeaderIndex(header), (cellValue != null) ? cellValue.toString() : "");
+            return this;
+        }
+
+        public Row setCell(final String header, final BigDecimal cellValue) {
+            cells.add(getHeaderIndex(header), (cellValue != null) ? cellValue.toPlainString() : "");
+            return this;
+        }
+
         public Row setValues(final String[] values) {
             for (int i = 0; i < values.length; i++) {
                 setCell(i, values[i]);
@@ -74,9 +94,11 @@ public class Spreadsheet {
 
     private String name;
 
-    private final List<Object> header;
+    private final List<Object> headers;
 
     private List<Row> rows = new ArrayList<Row>();
+
+    private Spreadsheet next = null;
 
     public Spreadsheet(final String name) {
         this(name, new ArrayList<Object>());
@@ -84,7 +106,31 @@ public class Spreadsheet {
 
     public Spreadsheet(final String name, final List<Object> header) {
         setName(name);
-        this.header = header;
+        this.headers = header;
+    }
+
+    public Spreadsheet addSpreadsheet(final String name) {
+        return next = new Spreadsheet(name);
+    }
+
+    public Spreadsheet addSpreadsheet(final String name, final List<Object> header) {
+        return next = new Spreadsheet(name, header);        
+    }
+
+    public Spreadsheet getNextSpreadsheet() {
+        return next;
+    }
+
+    private int getHeaderIndex(final String header) {
+        int i = 0;
+        for (final Object o : headers) {
+            if (header.equals(o)) {
+                return i;
+            }
+            i++;
+        }
+        setHeader(header);
+        return i;
     }
 
     protected String getName() {
@@ -96,19 +142,19 @@ public class Spreadsheet {
     }
 
     protected List<Object> getHeader() {
-        return header;
+        return headers;
     }
 
     public Spreadsheet setHeader(final int columnNumber, final String columnHeader) {
-        for (int i = header.size(); i < columnNumber; i++) {
-            header.add("");
+        for (int i = headers.size(); i < columnNumber; i++) {
+            headers.add("");
         }
-        header.add(columnNumber, columnHeader);
+        headers.add(columnNumber, columnHeader);
         return this;
     }
 
     public Spreadsheet setHeader(final String columnHeader) {
-        header.add(columnHeader);
+        headers.add(columnHeader);
         return this;
     }
 
@@ -150,7 +196,7 @@ public class Spreadsheet {
 
     public void exportToCSV(final OutputStream outputStream, final String columnSeperator, final String lineSepeator)
             throws IOException {
-        exportCSVLine(outputStream, columnSeperator, lineSepeator, header);
+        exportCSVLine(outputStream, columnSeperator, lineSepeator, headers);
         for (final Row row : rows) {
             exportCSVLine(outputStream, columnSeperator, lineSepeator, row.getCells());
         }

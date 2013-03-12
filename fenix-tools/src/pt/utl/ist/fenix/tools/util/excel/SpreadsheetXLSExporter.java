@@ -74,6 +74,11 @@ public class SpreadsheetXLSExporter {
         for (final Row row : spreadsheet.getRows()) {
             exportXLSRowLine(sheet, cellStyle, row.getCells());
         }
+
+        final Spreadsheet next = spreadsheet.getNextSpreadsheet();
+        if (next != null) {
+            exportToXLSSheet(workbook, next, headerCellStyle, cellStyle);
+        }
     }
 
     protected void exportXLSHeaderLine(final HSSFSheet sheet, final HSSFCellStyle cellStyle, final List<Object> cells) {
