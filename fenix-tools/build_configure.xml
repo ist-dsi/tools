@@ -1,0 +1,37 @@
+	<property environment="env"/>
+	<property name="encoding" value="ISO-8859-1"/>
+
+	<property name="src" location="src"/>
+
+	<!-- Directories for compiled code -->
+	<property name="build.home" location="build"/>
+
+	<!-- Directories for deploy -->
+	<property name="deploy.home" location="deploy"/>
+
+	<!-- Directories with libraries (JARs) -->
+	<property name="lib" location="lib" />
+	
+	<!-- Compilation options -->
+	<property name="compile.debug" value="on"/>
+	<property name="compile.deprecation" value="off"/>
+	<property name="compile.optimize" value="on"/>
+	
+	<!-- Scorm tools specific properties  -->
+	<property name="scorm.jar" value="linkare-scorm-tools.jar"/>
+	<property name="scorm.xmlbeans.jar" value="linkare-scorm-xmlbeans.jar"/>
+	<property name="scorm.schemas.dir" value="etc/scorm/schemas"/>
+	<property name="scorm.scobase.dir" value="etc/scorm/scobase"/>
+	<property name="scorm.gen.dir" value="src_gen"/>
+	
+	<path id="xmlbean.classpath">
+		<fileset dir="${lib}">
+			<include name="**/jsr173_1.0_api.jar"/>
+			<include name="**/xmlbeans-2.3.0.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Defining xmlbeans generation task -->
+	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" classpathref="xmlbean.classpath" />	
+
+	

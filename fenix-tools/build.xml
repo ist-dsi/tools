@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project [
+       <!ENTITY configure SYSTEM "build_configure.xml">
+]>
+<project basedir="." default="compile" name="Compilation Scripts">
+
+	&configure;
+
+	<target name="clean-all"
+    		description="Removes any generated files">
+		<delete dir="${build.home}"/>
+		<delete dir="${deploy.home}"/>
+		<ant antfile="build_scorm.xml" target="scorm-clean"/>
+	</target>
+
+	<target name="prepare" description="runs prepare targets">
+			<ant antfile="build_scorm.xml" target="scorm-prepare"/>
+	</target>
+	
+	<target name="generate" description="runs code generation targets" depends="prepare">
+			<ant antfile="build_scorm.xml" target="scorm-xmlbean-code-generate"/>
+	</target>
+
+	<target name="compile" description="Compile java code"  depends="generate">
+		<mkdir dir="${build.home}"/>
+		<ant antfile="build_scorm.xml" target="scorm-compile"/>
+		<javac destdir="${build.home}"
+				extdirs="${lib}"
+				debug="${compile.debug}"
+				optimize="${compile.optimize}"
+				deprecation="${compile.deprecation}"
+				encoding="${encoding}"
+				target="1.5"
+				source="1.5"	
+				nowarn="true">
+			<src path="${src}"/>
+			<src path="${scorm.gen.dir}"/>
+		</javac>
+	</target>
+
+	<target name="jar" description="Generates a java archive of compiled java code."
+				depends="compile">
+			<mkdir dir="${deploy.home}"/>
+			<jar destfile="${deploy.home}/fenix-tools.jar">
+				<fileset dir="${build.home}">
+					<exclude name="pt/linkare/ant/**/*.class"/>
+				</fileset>
+			</jar>
+			<jar destfile="${deploy.home}/ant-properties-configurator.jar">
+				<fileset dir="${build.home}">
+					<include name="pt/linkare/ant/**/*.class"/>
+				</fileset>
+			</jar>
+		</target>
+
+	<target name="dwg">
+		<java classname="pt.utl.ist.fenix.tools.image.DWGProcessor"
+				fork="yes" failonerror="true" maxmemory="1024m" jvmargs="-Dfile.encoding=iso8859-1">
+			<arg value="/home/nmgo/Fenix/plantas"/>
+			<arg value="/home/nmgo/Fenix/plantas"/>
+			<arg value="1200"/>
+			<classpath>
+				<pathelement path="${build.home}"/>
+				<fileset dir="${lib}/">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+
+
+</project>
