@@ -3,7 +3,7 @@
   <parent>
     <groupId>pt.ist</groupId>
     <artifactId>bennu-project</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0-rc1</version>
   </parent>
   <groupId>pt.ist</groupId>
   <artifactId>db-utils</artifactId>
@@ -11,8 +11,8 @@
   <packaging>jar</packaging>
   <name>db-utils</name>
   <properties>
-    <version.pt.ist.bennu.core>1.0.0</version.pt.ist.bennu.core>
-    <version.pt.ist.scheduler>1.0.0</version.pt.ist.scheduler>
+    <version.pt.ist.bennu.core>1.1.0-rc1</version.pt.ist.bennu.core>
+    <version.pt.ist.scheduler>1.1.0-rc1</version.pt.ist.scheduler>
   </properties>
   <dependencies>
     <dependency>
