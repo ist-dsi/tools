@@ -5,18 +5,25 @@
     <parent>
         <groupId>pt.ist</groupId>
         <artifactId>bennu-project</artifactId>
-        <version>1.1.0-rc1</version>
+        <version>1.1.0-rc2</version>
     </parent>
 
     <groupId>pt.ist</groupId>
     <artifactId>db-utils</artifactId>
-    <version>1.1.0-rc1</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>db-utils</name>
 
+    <scm>
+        <connection>scm:git:git@github.com:ist-dsi/tools.git</connection>
+        <developerConnection>scm:git:git@github.com:ist-dsi/tools.git</developerConnection>
+        <url>http://ist-dsi.github.io/tools/</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <properties>
-        <version.pt.ist.bennu.core>1.1.0-rc1</version.pt.ist.bennu.core>
-        <version.pt.ist.scheduler>1.1.0-rc1</version.pt.ist.scheduler>
+        <version.pt.ist.bennu.core>1.1.0-rc2</version.pt.ist.bennu.core>
+        <version.pt.ist.scheduler>1.1.0-rc2</version.pt.ist.scheduler>
     </properties>
 
     <dependencies>
