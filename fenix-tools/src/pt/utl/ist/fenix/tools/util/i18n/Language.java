@@ -25,7 +25,10 @@ public enum Language {
     private static InheritableThreadLocal<Locale> localeLocalThreadVariable = new InheritableThreadLocal<Locale>();
 
     public static Locale getLocale() {
-        return localeLocalThreadVariable.get();
+        if (localeLocalThreadVariable.get() != null) {
+            return localeLocalThreadVariable.get();
+        }
+        return Locale.getDefault();
     }
 
     public static void setLocale(final Locale locale) {
