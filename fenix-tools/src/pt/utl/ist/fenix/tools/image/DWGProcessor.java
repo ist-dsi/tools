@@ -5,13 +5,11 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.Properties;
 import java.util.Vector;
@@ -290,30 +288,9 @@ public class DWGProcessor {
     protected DwgFile readDwgFile(final String filename) throws IOException {
         final DwgFile dwgFile = new DwgFile(filename);
 
-        final PrintStream outPrintStream = System.out;
-        final PrintStream errPrintStream = System.err;
+        dwgFile.read();
+        initializeDwgFile(dwgFile);
 
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final PrintStream outputStream = new PrintStream(byteArrayOutputStream);
-        System.setOut(outputStream);
-        System.setErr(outputStream);
-        try {
-            dwgFile.read();
-            initializeDwgFile(dwgFile);
-        } finally {
-            System.setOut(outPrintStream);
-            System.setErr(errPrintStream);
-            outputStream.close();
-        }
-        final String generatedOutput = byteArrayOutputStream.toString();
-        final int indexOfError = generatedOutput.indexOf("ERROR: ");
-        if (indexOfError != -1) {
-            final int indexOfEndOfErrorMessage = generatedOutput.indexOf("\n", indexOfError);
-            final String errorMessage =
-                    indexOfEndOfErrorMessage > indexOfError ? generatedOutput.substring(indexOfError + 7,
-                            indexOfEndOfErrorMessage) : generatedOutput.substring(indexOfError + 7);
-            throw new Error(errorMessage);
-        }
         return dwgFile;
     }
 
