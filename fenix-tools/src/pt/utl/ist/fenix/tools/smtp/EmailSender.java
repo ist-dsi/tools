@@ -48,7 +48,7 @@ public class EmailSender {
     }
 
     private static final int MAX_MAIL_RECIPIENTS;
-
+    
     private static final Session session;
     static {
         try {
@@ -59,9 +59,6 @@ public class EmailSender {
             properties.put("mailSender.max.recipients", allProperties.get("mailSender.max.recipients"));
             properties.put("mailingList.host.name", allProperties.get("mailingList.host.name"));
             session = Session.getDefaultInstance(properties, null);
-            for (final Entry<Object, Object> entry : session.getProperties().entrySet()) {
-                System.out.println("key: " + entry.getKey() + "   value: " + entry.getValue());
-            }
             MAX_MAIL_RECIPIENTS = Integer.parseInt(properties.getProperty("mailSender.max.recipients"));
         } catch (IOException e) {
             throw new RuntimeException(e);
