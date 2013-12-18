@@ -163,7 +163,7 @@ public class Spreadsheet {
         return this;
     }
 
-    public Spreadsheet setHeaders(final String[] headers) {
+    public Spreadsheet setHeaders(final String... headers) {
         for (int i = 0; i < headers.length; i++) {
             setHeader(i, headers[i]);
         }
