@@ -60,6 +60,11 @@ public class Spreadsheet {
             return this;
         }
 
+        public Row setCell(final Boolean cellValue) {
+            cells.add((cellValue != null) ? cellValue.toString() : "");
+            return this;
+        }
+
         public Row setCell(final String header, final String cellValue) {
             cells.add(getHeaderIndex(header), cellValue);
             return this;
@@ -114,7 +119,7 @@ public class Spreadsheet {
     }
 
     public Spreadsheet addSpreadsheet(final String name, final List<Object> header) {
-        return next = new Spreadsheet(name, header);        
+        return next = new Spreadsheet(name, header);
     }
 
     public Spreadsheet getNextSpreadsheet() {
