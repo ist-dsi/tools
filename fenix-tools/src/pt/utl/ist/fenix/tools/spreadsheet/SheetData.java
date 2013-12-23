@@ -10,9 +10,11 @@ import java.util.List;
  * anonymous classes) to define the contents of the sheet. Overriders must
  * implement the {@link #makeLine(Object)} method to populate a single line
  * given an Item object, a list of these is passed onto the constructor who in
- * turn calls the {@link #makeLine(Object)}.
+ * turn calls the {@link #makeLine(Object)}. Optionally you may override
+ * the {@link #filter(Object)} method to filter any undesirable items present
+ * in the list.
  * 
- * @author Pedro Santos (pedro.miguel.santos@ist.utl.pt)
+ * @author Pedro Santos (pedro.miguel.santos@ist.utl.pt), Gil Lacerda (gil.lacerda@tecnico.ulisboa.pt)
  * 
  * @param <Item>
  *            Type of object that will be used to populate cells.
@@ -36,16 +38,33 @@ public abstract class SheetData<Item> {
     private List<Cell> current;
 
     public SheetData(Iterable<Item> items) {
+        isFooter = false;
         isHeader = true;
         headers.add(new ArrayList<Cell>());
         Iterator<Item> iterator = items.iterator();
+        Item curr = null;
+        Item prev = null;
+        boolean include = false;
         while (iterator.hasNext()) {
-            Item item = iterator.next();
+            do {
+                curr = iterator.next();
+                include = filter(curr);
+            } while (!include && iterator.hasNext());
+            if (include) {
+                if (prev != null) {
+                    current = new ArrayList<Cell>();
+                    makeLine(prev);
+                    matrix.add(current);
+                    isHeader = false;
+                }
+                prev = curr;
+            }
+        }
+        if (prev != null) {
+            isFooter = true;
             current = new ArrayList<Cell>();
-            isFooter = !iterator.hasNext();
-            makeLine(item);
+            makeLine(prev);
             matrix.add(current);
-            isHeader = false;
         }
         Collections.reverse(headers);
     }
@@ -59,6 +78,17 @@ public abstract class SheetData<Item> {
      *            the object that will source the current sheet line.
      */
     protected abstract void makeLine(Item item);
+
+    /**
+     * Analyzes an item and returns a boolean remarking whether the item is
+     * to be included in the current sheet.
+     * 
+     * @param item
+     *            the object to be analyzed.
+     */
+    protected boolean filter(Item item) {
+        return true;
+    }
 
     protected void addCell(Object header, Object value) {
         if (isHeader) {
