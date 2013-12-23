@@ -55,13 +55,15 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
                     }
 
                     if (!className.equals("DomainObject")) {
-                        methods.format("\n\tpublic %s read%sByOID(Integer idInternal){\n", otherDomainClass.getFullName(),
+                        methods.format(
+                                "\n\t/**\n\t* @deprecated Use {@link DomainObject#getExternalId} combined with\n\t*\t{@link FenixFramework#getDomainObject(String)}\n\t*/\n\t@Deprecated\n\tpublic %s read%sByOID(Integer idInternal) {\n",
+                                otherDomainClass.getFullName(),
                                 className);
 
                         methods.format(
                                 "\t\tfinal %s domainObject = (%s) pt.ist.fenixframework.pstm.Transaction.readDomainObject(%s.class.getName(), idInternal);\n",
                                 otherDomainClass.getFullName(), otherDomainClass.getFullName(), otherDomainClass.getFullName());
-                        methods.format("return (domainObject == null || domainObject.getRootDomainObject() == null) ? null : domainObject;\n\t}\n");
+                        methods.format("\t\treturn (domainObject == null || domainObject.getRootDomainObject() == null) ? null : domainObject;\n\t}\n");
 
                         usedNames.add(className);
                         classes.put(otherDomainClass, className);
@@ -94,11 +96,11 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
         resultSourceCode.append("\n\tprivate interface DomainObjectReader {");
         resultSourceCode.append("\n\t\tpublic DomainObject readDomainObjectByOID(final Integer idInternal);");
         resultSourceCode.append("\n\t\tpublic java.util.Set readAllDomainObjects();");
-        resultSourceCode.append("\n\t}");
+        resultSourceCode.append("\n\t}\n");
         resultSourceCode
-                .append("\n\tprivate static final java.util.Map<String, DomainObjectReader> closureAccessMap = new java.util.HashMap<String, DomainObjectReader>();");
+                .append("\n\tprivate static final java.util.Map<String, DomainObjectReader> closureAccessMap = new java.util.HashMap<String, DomainObjectReader>();\n");
         resultSourceCode
-                .append("\n\tpublic static DomainObject readDomainObjectByOID(final Class domainClass, final Integer idInternal) {");
+                .append("\n\t/**\n\t* @deprecated Use {@link DomainObject#getExternalId} combined with\n\t*\t{@link FenixFramework#getDomainObject(String)}\n\t*/\n\t@Deprecated\n\tpublic static DomainObject readDomainObjectByOID(final Class domainClass, final Integer idInternal) {");
         resultSourceCode.append("\n\t\tif (domainClass != null) {");
         resultSourceCode
                 .append("\n\t\t\tfinal DomainObjectReader domainObjectReader = closureAccessMap.get(domainClass.getName());");
@@ -109,7 +111,7 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
         resultSourceCode.append("\n\t\t\t}");
         resultSourceCode.append("\n\t\t}");
         resultSourceCode.append("\n\t\treturn null;");
-        resultSourceCode.append("\n\t}");
+        resultSourceCode.append("\n\t}\n");
         resultSourceCode.append("\n\tpublic static java.util.Set readAllDomainObjects(final Class domainClass) {");
         resultSourceCode.append("\n\t\tfinal java.util.Set domainObjects = readAllDomainObjectsAux(domainClass);");
         resultSourceCode.append("\n\t\tfinal java.util.Set resultSet = new java.util.HashSet();");
@@ -121,7 +123,7 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
         resultSourceCode.append("\n\t\t\t}");
         resultSourceCode.append("\n\t\t}");
         resultSourceCode.append("\n\t\treturn resultSet;");
-        resultSourceCode.append("\n\t}");
+        resultSourceCode.append("\n\t}\n");
         resultSourceCode.append("\n\tpublic static java.util.Set readAllDomainObjectsAux(final Class domainClass) {");
         resultSourceCode.append("\n\t\tif (domainClass != null) {");
         resultSourceCode
@@ -133,7 +135,7 @@ public class RootDomainObjectGenerator extends DomainObjectGenerator {
         resultSourceCode.append("\n\t\t\t}");
         resultSourceCode.append("\n\t\t}");
         resultSourceCode.append("\n\t\treturn null;");
-        resultSourceCode.append("\n\t}");
+        resultSourceCode.append("\n\t}\n");
     }
 
     private void appendAddToClosureAccessMap(final StringBuilder resultSourceCode, final String fullName, final String name,
