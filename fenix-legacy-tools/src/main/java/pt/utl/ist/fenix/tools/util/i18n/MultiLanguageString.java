@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+@Deprecated
 public class MultiLanguageString implements Serializable, Comparable<MultiLanguageString> {
 
     private final Map<Language, String> contentsMap;

@@ -2,6 +2,7 @@ package pt.utl.ist.fenix.tools.util.i18n;
 
 import java.util.Locale;
 
+@Deprecated
 public enum Language {
 
     pt, en, es, de, fr, it, ar, bg, cs, da, el, eo, et, fi, hr, hu, id, is, ja, ko, lt, lv, nl, no, pl, ro, ru, sk, sl, sr, sv,

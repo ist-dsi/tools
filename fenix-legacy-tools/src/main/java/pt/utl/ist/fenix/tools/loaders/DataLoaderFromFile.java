@@ -15,7 +15,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class DataLoaderFromFile<T extends IFileLine> {
 
-    protected final static Logger logger = Logger.getLogger(DataLoaderFromFile.class);
+    protected final static Logger logger = LoggerFactory.getLogger(DataLoaderFromFile.class);
 
     public Collection<T> load(Class<T> clazz, String fileFullPathAndname) {
         return loadToMap(clazz, readFile(fileFullPathAndname)).values();
@@ -74,11 +75,11 @@ public class DataLoaderFromFile<T extends IFileLine> {
             t = clazz.newInstance();
 
         } catch (InstantiationException e) {
-            logger.fatal(e);
+            logger.error("", e);
             throw new RuntimeException(e);
 
         } catch (IllegalAccessException e) {
-            logger.fatal(e);
+            logger.error("", e);
             throw new RuntimeException(e);
 
         }

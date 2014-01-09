@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.util.CellReference;
+
+import com.google.common.base.Joiner;
 
 public class Formula {
     public static final Formula SUM = new Formula("sum(%row)");
@@ -58,7 +59,7 @@ public class Formula {
                 for (short col : formulaColumns) {
                     parts.add(new CellReference(cell.getRowIndex(), col).formatAsString());
                 }
-                result = result.replaceAll("%row", Matcher.quoteReplacement(StringUtils.join(parts, ", ")));
+                result = result.replaceAll("%row", Matcher.quoteReplacement(Joiner.on(", ").join(parts)));
             }
         }
         return result;

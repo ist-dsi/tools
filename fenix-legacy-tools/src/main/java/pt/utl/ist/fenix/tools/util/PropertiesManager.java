@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@Deprecated
 public class PropertiesManager {
 
     private static final PropertiesManager instance = new PropertiesManager();
