@@ -3,7 +3,7 @@ package pt.utl.ist.fenix.tools.resources;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import pt.utl.ist.fenix.tools.util.i18n.Language;
+import org.fenixedu.commons.i18n.I18N;
 
 public class DefaultResourceBundleProvider extends AbstractMessageResourceProvider {
 
@@ -18,9 +18,9 @@ public class DefaultResourceBundleProvider extends AbstractMessageResourceProvid
     @Override
     public String getMessage(String bundle, String key, String... args) {
         if (containsMapping(bundle)) {
-            return format(ResourceBundle.getBundle(getBundleMapping(bundle), Language.getLocale()).getString(key), args);
+            return format(ResourceBundle.getBundle(getBundleMapping(bundle), I18N.getLocale()).getString(key), args);
         } else {
-            return format(ResourceBundle.getBundle(bundle, Language.getLocale()).getString(key), args);
+            return format(ResourceBundle.getBundle(bundle, I18N.getLocale()).getString(key), args);
         }
     }
 

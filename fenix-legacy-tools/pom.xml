@@ -11,21 +11,18 @@
 
     <groupId>pt.ist</groupId>
     <artifactId>fenix-legacy-tools</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <name>Fenix Old Toolkit</name>
 
     <properties>
-        <version.com.google.code.gson.gson>2.2.4</version.com.google.code.gson.gson>
-        <version.com.google.guava.guava>15.0</version.com.google.guava.guava>
-        <version.javax.servlet.javax.servlet.api>3.0.1</version.javax.servlet.javax.servlet.api>
+        <version.com.google.guava.guava>16.0.1</version.com.google.guava.guava>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${version.javax.servlet.javax.servlet.api}</version>
-            <scope>provided</scope>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>fenixedu-commons</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -33,9 +30,9 @@
             <version>${version.com.google.guava.guava}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${version.com.google.code.gson.gson}</version>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -80,7 +77,7 @@
         <dependency>
             <groupId>com.googlecode.libphonenumber</groupId>
             <artifactId>libphonenumber</artifactId>
-            <version>5.4</version>
+            <version>5.9</version>
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
