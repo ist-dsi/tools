@@ -21,6 +21,12 @@
 			<ant antfile="build_scorm.xml" target="scorm-xmlbean-code-generate"/>
 	</target>
 
+	<target name="create-source-jar" description="create jar with sources">
+		<jar destfile="build/fenix-tools-1.0-sources.jar">
+			<fileset dir="src" includes="**/*.java"/>	
+		</jar>
+	</target>
+
 	<target name="compile" description="Compile java code"  depends="generate">
 		<mkdir dir="${build.home}"/>
 		<ant antfile="build_scorm.xml" target="scorm-compile"/>

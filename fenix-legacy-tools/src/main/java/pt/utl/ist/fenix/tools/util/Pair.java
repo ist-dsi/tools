@@ -13,6 +13,7 @@ import java.io.Serializable;
  *         Created on 13:27:42,31/Mar/2006
  * @version $Id: Pair.java 35158 2008-04-07 15:23:35Z nmgo $
  */
+@Deprecated
 public class Pair<K, V> implements Serializable {
 
     private K key;

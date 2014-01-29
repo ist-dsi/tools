@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class Strings implements Serializable {
 
     private final ArrayList<String> stringList;

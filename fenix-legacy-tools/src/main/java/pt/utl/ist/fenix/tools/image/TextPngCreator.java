@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import com.chimpen.txt2png.Txt2PngFactory;
 
+@Deprecated
 public class TextPngCreator {
 
     public static byte[] createPng(final String fontFace, final int fontSize, final String fontColor, final String text)

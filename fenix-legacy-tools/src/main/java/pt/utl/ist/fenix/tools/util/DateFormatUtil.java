@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class DateFormatUtil {
 
     private static final Map<String, DateFormat> dateFormatMap = new HashMap<String, DateFormat>();
