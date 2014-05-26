@@ -21,11 +21,11 @@ public class BigDecimalCellConverter implements CellConverter {
     }
 
     @Override
-    public Object convert(Object source) {
-        if (source != null) {
-            final BigDecimal value = (BigDecimal) source;
-            return custom ? value.setScale(scale, mode).doubleValue() : value.doubleValue();
-        }
-        return null;
+    public Object convert(final Object source) {
+        return source == null ? null : new Double(scale((BigDecimal) source));
+    }
+
+    private double scale(final BigDecimal value) {
+        return custom ? value.setScale(scale, mode).doubleValue() : value.doubleValue();
     }
 }
