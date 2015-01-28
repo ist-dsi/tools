@@ -20,25 +20,25 @@
     </scm>
 
     <properties>
-        <version.org.fenixedu.bennu.core>3.4.0</version.org.fenixedu.bennu.core>
-        <version.org.fenixedu.scheduler>3.4.0</version.org.fenixedu.scheduler>
+        <version.org.fenixedu.bennu>3.4.1</version.org.fenixedu.bennu>
+        <version.com.oracle.ojdbc14>9.0.2.0.0</version.com.oracle.ojdbc14>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>bennu-core</artifactId>
-            <version>${version.org.fenixedu.bennu.core}</version>
+            <version>${version.org.fenixedu.bennu}</version>
         </dependency>
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>bennu-scheduler</artifactId>
-            <version>${version.org.fenixedu.scheduler}</version>
+            <version>${version.org.fenixedu.bennu}</version>
         </dependency>
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc14</artifactId>
-            <version>9.0.2.0.0</version>
+            <version>${version.com.oracle.ojdbc14}</version>
         </dependency>
     </dependencies>
 
