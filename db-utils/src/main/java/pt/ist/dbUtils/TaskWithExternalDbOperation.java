@@ -2,7 +2,9 @@ package pt.ist.dbUtils;
 
 import java.sql.SQLException;
 
-public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOperation_Base {
+import org.fenixedu.bennu.scheduler.CronTask;
+
+public abstract class TaskWithExternalDbOperation extends CronTask {
 
     private static ThreadLocal<DbTransaction> transaction = new InheritableThreadLocal<DbTransaction>();
 
@@ -20,8 +22,8 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
         }
 
         @Override
-        protected String getDbPropertyPrefix() {
-            return instance.getDbPropertyPrefix();
+        protected String getDatabaseUrl() {
+            return instance.getDatabaseUrl();
         }
 
         @Override
@@ -32,7 +34,7 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
     }
 
     @Override
-    public void executeTask() {
+    public void runTask() {
         try {
             final EmbededExternalDbOperation embededExternalDbOperation = new EmbededExternalDbOperation(this);
             transaction.set(embededExternalDbOperation);
@@ -54,7 +56,7 @@ public abstract class TaskWithExternalDbOperation extends TaskWithExternalDbOper
         }
     }
 
-    protected abstract String getDbPropertyPrefix();
+    protected abstract String getDatabaseUrl();
 
     protected abstract void doOperation() throws SQLException;
 

@@ -7,24 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import pt.ist.bennu.core._development.PropertiesManager;
-
 public abstract class DbTransaction {
 
     private Connection connection = null;
 
-    protected String getDatabaseUrl() {
-        StringBuilder stringBuffer = new StringBuilder();
-        stringBuffer.append("jdbc:oracle:thin:");
-        stringBuffer.append(PropertiesManager.getProperty(getDbPropertyPrefix() + ".user"));
-        stringBuffer.append("/");
-        stringBuffer.append(PropertiesManager.getProperty(getDbPropertyPrefix() + ".pass"));
-        stringBuffer.append("@");
-        stringBuffer.append(PropertiesManager.getProperty(getDbPropertyPrefix() + ".alias"));
-        return stringBuffer.toString();
-    }
-
-    protected abstract String getDbPropertyPrefix();
+    protected abstract String getDatabaseUrl();
 
     public void executeQuery(final ExternalDbQuery externalDbQuery) throws SQLException {
         if (connection == null) {

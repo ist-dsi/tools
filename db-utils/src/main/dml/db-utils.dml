@@ -1,6 +1,0 @@
-package pt.ist.dbUtils;
-
-
-class TaskWithExternalDbOperation extends .pt.ist.bennu.core.domain.scheduler.Task {
-}
-
