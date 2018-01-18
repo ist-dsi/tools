@@ -20,7 +20,7 @@
     </scm>
 
     <properties>
-        <version.org.fenixedu.bennu>3.4.1</version.org.fenixedu.bennu>
+        <version.org.fenixedu.bennu>5.0.0</version.org.fenixedu.bennu>
         <version.com.oracle.ojdbc14>9.0.2.0.0</version.com.oracle.ojdbc14>
     </properties>
 
