@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>db-utils</artifactId>
-    <version>DEV-SNAPSHOT</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
     <name>Oracle DB Utils</name>
 
@@ -16,7 +16,7 @@
         <connection>scm:git:git@github.com:ist-dsi/tools.git</connection>
         <developerConnection>scm:git:git@github.com:ist-dsi/tools.git</developerConnection>
         <url>http://ist-dsi.github.io/tools/</url>
-        <tag>HEAD</tag>
+        <tag>v3.0.0</tag>
     </scm>
 
     <properties>
